@@ -57,6 +57,10 @@ public class FinancialReportPresentationRepository {
 		return hbaseAssistant.get(rowKey) != null;
 	}
 
+//	public void delete(Key rowKey) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+//		hbaseAssistant.delete(rowKey);
+//	}
+	
 	private FinancialReportPresentation createEntity(
 			XbrlTaxonomyVersion version, List<String> presentationIds,
 			ObjectNode presentNode) {
