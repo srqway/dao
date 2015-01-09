@@ -8,6 +8,7 @@ import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Presentation;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,13 +24,18 @@ public class FinancialReportPresentationRepositoryTest {
 	private FinancialReportPresentationRepository repository;
 	private TaxonomyAssistant taxonomyAssistant;
 	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_BASI_CR_2013_03_31;
-	
+
 	@BeforeClass
-	public void beforeClass() throws IOException {
+	public void beforeClass() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
 		ApplicationContext applicationContext = TestngSuitSetting
 				.getApplicationContext();
 		repository = applicationContext.getBean(FinancialReportPresentationRepository.class);
 		taxonomyAssistant = applicationContext.getBean(TaxonomyAssistant.class);
+		String tableName = FinancialReportPresentation.class.getSimpleName();
+		if(repository.isTableExists(tableName)) {
+			repository.dropTable(tableName);
+			repository.createTable(FinancialReportPresentation.class);
+		}
 	}
 
 	@Test
@@ -44,9 +50,8 @@ public class FinancialReportPresentationRepositoryTest {
 
 	private Key generateKey() {
 		FinancialReportPresentation entity = new FinancialReportPresentation();
-		return entity.new Key(version.toString());
+		return entity.new Key(version.toString(), entity);
 	}
-
 	
 	private List<String> generatePresentIds() {
 		List<String> presentIds = new ArrayList<String>(4);

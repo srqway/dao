@@ -6,6 +6,7 @@ import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.Key;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +39,37 @@ public class FinancialReportPresentationRepository {
 	}
 
 	/**
+	 * Drop table.
+	 * 
+	 * @param tableName
+	 * @throws IOException
+	 */
+	public void dropTable(String tableName) throws IOException {
+		hbaseAssistant.dropTable(tableName);
+	}
+
+	/**
+	 * Create table.
+	 * 
+	 * @param clazz
+	 * @throws IOException
+	 */
+	public void createTable(Class<?> clazz) throws IOException {
+		hbaseAssistant.createTable(clazz);
+	}
+
+	/**
+	 * Check if table exists.
+	 * 
+	 * @param tableName
+	 * @return
+	 * @throws IOException
+	 */
+	public boolean isTableExists(String tableName) throws IOException {
+		return hbaseAssistant.isTableExists(tableName);
+	}
+
+	/**
 	 * Check if entity exists.
 	 * 
 	 * @param rowKey
@@ -57,10 +89,11 @@ public class FinancialReportPresentationRepository {
 		return hbaseAssistant.get(rowKey) != null;
 	}
 
-//	public void delete(Key rowKey) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-//		hbaseAssistant.delete(rowKey);
-//	}
-	
+	// public void delete(Key rowKey) throws NoSuchFieldException,
+	// SecurityException, IllegalArgumentException, IllegalAccessException {
+	// hbaseAssistant.delete(rowKey);
+	// }
+
 	private FinancialReportPresentation createEntity(
 			XbrlTaxonomyVersion version, List<String> presentationIds,
 			ObjectNode presentNode) {
@@ -73,7 +106,7 @@ public class FinancialReportPresentationRepository {
 
 	private void generateRowKey(FinancialReportPresentation entity,
 			XbrlTaxonomyVersion version) {
-		Key key = entity.new Key(version.toString());
+		Key key = entity.new Key(version.toString(), entity);
 		entity.setRowKey(key);
 	}
 

@@ -35,17 +35,13 @@ public class FinancialReportPresentation extends HBaseTable {
 	public class Key extends HBaseRowKey {
 		private String taxonomyVersion;
 
-		public Key() {
-			super();
-		}
-
-		public Key(String taxonomyVersion) {
-			super();
+		public Key(String taxonomyVersion, HBaseTable table) {
+			super(table);
 			this.taxonomyVersion = taxonomyVersion;
 		}
 
-		public Key(byte[] rowKey) {
-			super();
+		public Key(byte[] rowKey, HBaseTable table) {
+			super(table);
 			fromBytes(rowKey);
 		}
 
