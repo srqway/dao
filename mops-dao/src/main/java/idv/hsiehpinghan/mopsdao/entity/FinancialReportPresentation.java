@@ -25,6 +25,9 @@ public class FinancialReportPresentation extends HBaseTable {
 	}
 
 	public JsonFamily getJsonFamily() {
+		if(jsonFamily == null) {
+			jsonFamily = this.new JsonFamily();
+		}
 		return jsonFamily;
 	}
 

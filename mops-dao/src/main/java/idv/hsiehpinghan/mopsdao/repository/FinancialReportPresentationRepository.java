@@ -45,6 +45,11 @@ public class FinancialReportPresentationRepository extends
 		return FinancialReportPresentation.class;
 	}
 
+	@Override
+	public HbaseAssistant getHbaseAssistant() {
+		return hbaseAssistant;
+	}
+
 	/**
 	 * Put presentationNode to hbase.
 	 * 
@@ -55,7 +60,7 @@ public class FinancialReportPresentationRepository extends
 	 */
 	public void put(XbrlTaxonomyVersion version, List<String> presentationIds,
 			ObjectNode presentationNode) throws IllegalAccessException {
-		FinancialReportPresentation entity = getEntity(version,
+		FinancialReportPresentation entity = generateEntity(version,
 				presentationIds, presentationNode);
 		hbaseAssistant.put(entity);
 	}
@@ -82,11 +87,12 @@ public class FinancialReportPresentationRepository extends
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException,
 			InstantiationException, JsonProcessingException, IOException {
-		return get(version ,null);
+		return get(version, null);
 	}
 
 	/**
 	 * Get presentationNodes of presentationIds from hbase.
+	 * 
 	 * @param version
 	 * @param presentationIds
 	 * @return
@@ -100,11 +106,12 @@ public class FinancialReportPresentationRepository extends
 	 * @throws JsonProcessingException
 	 * @throws IOException
 	 */
-	public ObjectNode get(XbrlTaxonomyVersion version, List<String> presentationIds)
-			throws NoSuchFieldException, SecurityException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException,
-			InstantiationException, JsonProcessingException, IOException {
+	public ObjectNode get(XbrlTaxonomyVersion version,
+			List<String> presentationIds) throws NoSuchFieldException,
+			SecurityException, IllegalArgumentException,
+			IllegalAccessException, NoSuchMethodException,
+			InvocationTargetException, InstantiationException,
+			JsonProcessingException, IOException {
 		HBaseRowKey rowKey = getRowKey(version);
 		FinancialReportPresentation entity = (FinancialReportPresentation) hbaseAssistant
 				.get(rowKey);
@@ -115,7 +122,8 @@ public class FinancialReportPresentationRepository extends
 				.entrySet()) {
 			String presentId = ((IdQualifier) qualEntry.getKey())
 					.getPresentationId();
-			if(presentationIds != null && presentationIds.contains(presentId) == false) {
+			if (presentationIds != null
+					&& presentationIds.contains(presentId) == false) {
 				continue;
 			}
 			NavigableMap<Date, HBaseValue> verMap = qualEntry.getValue();
@@ -130,6 +138,7 @@ public class FinancialReportPresentationRepository extends
 		}
 		return presentNode;
 	}
+
 	/**
 	 * Drop table.
 	 * 
@@ -189,8 +198,9 @@ public class FinancialReportPresentationRepository extends
 		return entity.getRowKey();
 	}
 
-	private FinancialReportPresentation getEntity(XbrlTaxonomyVersion version,
-			List<String> presentationIds, ObjectNode presentNode) {
+	private FinancialReportPresentation generateEntity(
+			XbrlTaxonomyVersion version, List<String> presentationIds,
+			ObjectNode presentNode) {
 		FinancialReportPresentation entity = new FinancialReportPresentation();
 		generateRowKey(entity, version);
 		generateColumnFamily(entity, presentationIds, presentNode);
@@ -206,8 +216,7 @@ public class FinancialReportPresentationRepository extends
 
 	private void generateColumnFamily(FinancialReportPresentation entity,
 			List<String> presentationIds, ObjectNode presentNode) {
-		JsonFamily family = entity.new JsonFamily();
-		entity.setJsonFamily(family);
+		JsonFamily family = entity.getJsonFamily();
 		Date date = Calendar.getInstance().getTime();
 		for (String presentId : presentationIds) {
 			JsonNode node = presentNode.get(presentId);

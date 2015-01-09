@@ -40,7 +40,7 @@ public class FinancialReportPresentationRepositoryTest {
 		objectMapper = applicationContext.getBean(ObjectMapper.class);
 	}
 
-//	@Test
+	@Test
 	public void put() throws Exception {
 		dropTable();
 		Assert.assertFalse(repository.exists(version));
@@ -51,8 +51,7 @@ public class FinancialReportPresentationRepositoryTest {
 		Assert.assertTrue(repository.exists(version));
 	}
 
-//	@Test(dependsOnMethods={"put"})
-	@Test
+	@Test(dependsOnMethods={"put"})
 	public void get() throws Exception {
 		ObjectNode objNode = repository.get(version);
 		

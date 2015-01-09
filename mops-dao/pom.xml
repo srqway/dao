@@ -20,6 +20,7 @@
 		<commons-lang3.version>3.3.2</commons-lang3.version>
 		<hbase-assistant.version>1.0.0</hbase-assistant.version>
 		<xbrl-assistant.version>1.0.0</xbrl-assistant.version>
+		<collection-utility.version>1.0.0</collection-utility.version>
 		<package-utility.version>1.0.0</package-utility.version>
 	</properties>
 
@@ -67,6 +68,13 @@
 			<version>${xbrl-assistant.version}</version>
 		</dependency>
 
+		<!-- collection-utility -->
+		<dependency>
+			<groupId>idv.hsiehpinghan</groupId>
+			<artifactId>collection-utility</artifactId>
+			<version>${collection-utility.version}</version>
+		</dependency>
+
 		<!-- package-utility -->
 		<dependency>
 			<groupId>idv.hsiehpinghan</groupId>
@@ -74,6 +82,5 @@
 			<version>${package-utility.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 </project>
