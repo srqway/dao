@@ -81,7 +81,7 @@ public class FinancialReportInstance extends HBaseTable {
 			byte[] stockCodeBytes = Bytes.toBytes(StringUtils.leftPad(
 					stockCode, STOCK_CODE_LENTH));
 			byte[] reportTypeBytes = Bytes.toBytes(StringUtils.leftPad(
-					stockCode, REPORT_TYPE_LENTH));
+					reportType.name(), REPORT_TYPE_LENTH));
 			byte[] yearBytes = Bytes.toBytes(year);
 			byte[] seasonBytes = Bytes.toBytes(season);
 			return ArrayUtility.addAll(stockCodeBytes, reportTypeBytes,
@@ -91,9 +91,9 @@ public class FinancialReportInstance extends HBaseTable {
 		@Override
 		public void fromBytes(byte[] bytes) {
 			this.stockCode = Bytes.toString(ArrayUtils.subarray(bytes,
-					STOCK_CODE_BEGIN_INDEX, STOCK_CODE_END_INDEX));
+					STOCK_CODE_BEGIN_INDEX, STOCK_CODE_END_INDEX)).trim();
 			String reportTypeStr = Bytes.toString(ArrayUtils.subarray(bytes,
-					REPORT_TYPE_BEGIN_INDEX, REPORT_TYPE_END_INDEX));
+					REPORT_TYPE_BEGIN_INDEX, REPORT_TYPE_END_INDEX)).trim();
 			this.reportType = ReportType.valueOf(reportTypeStr);
 			this.year = Bytes.toInt(ArrayUtils.subarray(bytes,
 					YEAR_BEGIN_INDEX, YEAR_END_INDEX));

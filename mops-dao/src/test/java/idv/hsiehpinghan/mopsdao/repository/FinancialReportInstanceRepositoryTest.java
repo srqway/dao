@@ -52,6 +52,11 @@ public class FinancialReportInstanceRepositoryTest {
 				instanceNode);
 	}
 
+	@Test(dependsOnMethods = { "put" })
+	public void get() throws Exception {
+		repository.get(stockCode, reportType, year, season);
+	}
+
 	private List<String> getPresentIds() {
 		List<String> ids = new ArrayList<String>(4);
 		ids.add(Presentation.Id.BalanceSheet);
