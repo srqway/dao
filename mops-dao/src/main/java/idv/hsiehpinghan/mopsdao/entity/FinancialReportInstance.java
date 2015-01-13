@@ -10,7 +10,6 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.NavigableMap;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -30,14 +29,10 @@ public class FinancialReportInstance extends HBaseTable {
 	}
 
 	public InfoFamily getInfoFamily() {
-		if(infoFamily == null) {
-			infoFamily = this.new InfoFamily();
+		if (infoFamily == null) {
+			infoFamily = this.new InfoFamily(this);
 		}
 		return infoFamily;
-	}
-
-	public void setInfoFamily(InfoFamily infoFamily) {
-		this.infoFamily = infoFamily;
 	}
 
 	public class Key extends HBaseRowKey {
@@ -62,8 +57,12 @@ public class FinancialReportInstance extends HBaseTable {
 		private int year;
 		private int season;
 
+		public Key(FinancialReportInstance table) {
+			super(table);
+		}
+
 		public Key(String stockCode, ReportType reportType, int year,
-				int season, HBaseTable table) {
+				int season, FinancialReportInstance table) {
 			super(table);
 			this.stockCode = stockCode;
 			this.reportType = reportType;
@@ -71,7 +70,7 @@ public class FinancialReportInstance extends HBaseTable {
 			this.season = season;
 		}
 
-		public Key(byte[] rowKey, HBaseTable table) {
+		public Key(byte[] rowKey, FinancialReportInstance table) {
 			super(table);
 			fromBytes(rowKey);
 		}
@@ -90,10 +89,12 @@ public class FinancialReportInstance extends HBaseTable {
 
 		@Override
 		public void fromBytes(byte[] bytes) {
-			this.stockCode = Bytes.toString(ArrayUtils.subarray(bytes,
-					STOCK_CODE_BEGIN_INDEX, STOCK_CODE_END_INDEX)).trim();
-			String reportTypeStr = Bytes.toString(ArrayUtils.subarray(bytes,
-					REPORT_TYPE_BEGIN_INDEX, REPORT_TYPE_END_INDEX)).trim();
+			this.stockCode = Bytes.toString(
+					ArrayUtils.subarray(bytes, STOCK_CODE_BEGIN_INDEX,
+							STOCK_CODE_END_INDEX)).trim();
+			String reportTypeStr = Bytes.toString(
+					ArrayUtils.subarray(bytes, REPORT_TYPE_BEGIN_INDEX,
+							REPORT_TYPE_END_INDEX)).trim();
 			this.reportType = ReportType.valueOf(reportTypeStr);
 			this.year = Bytes.toInt(ArrayUtils.subarray(bytes,
 					YEAR_BEGIN_INDEX, YEAR_END_INDEX));
@@ -136,31 +137,15 @@ public class FinancialReportInstance extends HBaseTable {
 	}
 
 	public class InfoFamily extends HBaseColumnFamily {
+		private InfoFamily(FinancialReportInstance table) {
+			super(table);
+		}
+
 		public void add(String infoTitle, Date date, String infoContent) {
 			HBaseColumnQualifier qualifier = this.new InfoQualifier(infoTitle);
 			NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qualifier);
 			InfoValue val = new InfoValue(infoContent);
 			verMap.put(date, val);
-		}
-
-		@Override
-		public void fromMap(
-				NavigableMap<byte[], NavigableMap<Long, byte[]>> qualBytesMap) {
-			for (Map.Entry<byte[], NavigableMap<Long, byte[]>> qualBytesEntry : qualBytesMap
-					.entrySet()) {
-				InfoFamily.InfoQualifier qual = this.new InfoQualifier(
-						qualBytesEntry.getKey());
-				NavigableMap<Long, byte[]> verBytesMap = qualBytesEntry
-						.getValue();
-				NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qual);
-				for (Map.Entry<Long, byte[]> verBytesEntry : verBytesMap
-						.entrySet()) {
-					Date date = new Date(verBytesEntry.getKey());
-					InfoFamily.InfoValue val = this.new InfoValue(
-							verBytesEntry.getValue());
-					verMap.put(date, val);
-				}
-			}
 		}
 
 		public class InfoQualifier extends HBaseColumnQualifier {
@@ -241,6 +226,17 @@ public class FinancialReportInstance extends HBaseTable {
 			public void fromBytes(byte[] infoContentBytes) {
 				this.infoContent = Bytes.toString(infoContentBytes);
 			}
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(
+				byte[] qualifierBytes) {
+			return this.new InfoQualifier(qualifierBytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] valueBytes) {
+			return this.new InfoValue(valueBytes);
 		}
 	}
 }

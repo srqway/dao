@@ -7,7 +7,6 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.NavigableMap;
 
 import org.apache.hadoop.hbase.util.Bytes;
@@ -25,8 +24,8 @@ public class FinancialReportPresentation extends HBaseTable {
 	}
 
 	public JsonFamily getJsonFamily() {
-		if(jsonFamily == null) {
-			jsonFamily = this.new JsonFamily();
+		if (jsonFamily == null) {
+			jsonFamily = this.new JsonFamily(this);
 		}
 		return jsonFamily;
 	}
@@ -38,12 +37,16 @@ public class FinancialReportPresentation extends HBaseTable {
 	public class Key extends HBaseRowKey {
 		private String taxonomyVersion;
 
-		public Key(String taxonomyVersion, HBaseTable table) {
+		public Key(FinancialReportPresentation table) {
+			super(table);
+		}
+
+		public Key(String taxonomyVersion, FinancialReportPresentation table) {
 			super(table);
 			this.taxonomyVersion = taxonomyVersion;
 		}
 
-		public Key(byte[] rowKey, HBaseTable table) {
+		public Key(byte[] rowKey, FinancialReportPresentation table) {
 			super(table);
 			fromBytes(rowKey);
 		}
@@ -60,32 +63,16 @@ public class FinancialReportPresentation extends HBaseTable {
 	}
 
 	public class JsonFamily extends HBaseColumnFamily {
+		private JsonFamily(FinancialReportPresentation table) {
+			super(table);
+		}
+
 		public void add(String presentationId, Date date, String json) {
 			HBaseColumnQualifier qualifier = this.new IdQualifier(
 					presentationId);
 			NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qualifier);
 			JsonValue val = new JsonValue(json);
 			verMap.put(date, val);
-		}
-
-		@Override
-		public void fromMap(
-				NavigableMap<byte[], NavigableMap<Long, byte[]>> qualBytesMap) {
-			for (Map.Entry<byte[], NavigableMap<Long, byte[]>> qualBytesEntry : qualBytesMap
-					.entrySet()) {
-				JsonFamily.IdQualifier qual = this.new IdQualifier(
-						qualBytesEntry.getKey());
-				NavigableMap<Long, byte[]> verBytesMap = qualBytesEntry
-						.getValue();
-				NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qual);
-				for (Map.Entry<Long, byte[]> verBytesEntry : verBytesMap
-						.entrySet()) {
-					Date date = new Date(verBytesEntry.getKey());
-					JsonFamily.JsonValue val = this.new JsonValue(
-							verBytesEntry.getValue());
-					verMap.put(date, val);
-				}
-			}
 		}
 
 		public class IdQualifier extends HBaseColumnQualifier {
@@ -158,6 +145,17 @@ public class FinancialReportPresentation extends HBaseTable {
 			public void fromBytes(byte[] bytes) {
 				this.json = Bytes.toString(bytes);
 			}
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(
+				byte[] qualifierBytes) {
+			return this.new IdQualifier(qualifierBytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] valueBytes) {
+			return this.new JsonValue(valueBytes);
 		}
 	}
 }

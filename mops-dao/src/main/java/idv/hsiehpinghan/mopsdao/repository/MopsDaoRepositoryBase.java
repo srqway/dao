@@ -1,8 +1,10 @@
 package idv.hsiehpinghan.mopsdao.repository;
 
-import idv.hsiehpinghan.hbaseassistant.utility.HbaseAssistant;
+import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
+import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 public abstract class MopsDaoRepositoryBase {
 	/**
@@ -14,7 +16,7 @@ public abstract class MopsDaoRepositoryBase {
 	public void createTable(Class<?> clazz) throws IOException {
 		getHbaseAssistant().createTable(clazz);
 	}
-	
+
 	/**
 	 * Check if table exists.
 	 * 
@@ -25,7 +27,7 @@ public abstract class MopsDaoRepositoryBase {
 	public boolean isTableExists(String tableName) throws IOException {
 		return getHbaseAssistant().isTableExists(tableName);
 	}
-	
+
 	/**
 	 * Drop table.
 	 * 
@@ -35,9 +37,35 @@ public abstract class MopsDaoRepositoryBase {
 	public void dropTable(String tableName) throws IOException {
 		getHbaseAssistant().dropTable(tableName);
 	}
-	
+
+	/**
+	 * Check if entity exists.
+	 * 
+	 * @param rowKey
+	 * @return
+	 * @throws NoSuchFieldException
+	 * @throws SecurityException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws InstantiationException
+	 * @throws IOException
+	 */
+	public boolean exists(HBaseRowKey rowKey) throws NoSuchFieldException,
+			SecurityException, IllegalArgumentException,
+			IllegalAccessException, NoSuchMethodException,
+			InvocationTargetException, InstantiationException, IOException {
+		return getHbaseAssistant().exist(rowKey);
+	}
+
+	/**
+	 * Get HBase assistant.
+	 * 
+	 * @return
+	 */
 	public abstract HbaseAssistant getHbaseAssistant();
-	
+
 	/**
 	 * Get this repository's target table name.
 	 * 

@@ -3,7 +3,7 @@ package idv.hsiehpinghan.mopsdao.repository;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseColumnQualifier;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
-import idv.hsiehpinghan.hbaseassistant.utility.HbaseAssistant;
+import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily.IdQualifier;
@@ -140,37 +140,6 @@ public class FinancialReportPresentationRepository extends
 	}
 
 	/**
-	 * Drop table.
-	 * 
-	 * @param tableName
-	 * @throws IOException
-	 */
-	public void dropTable(String tableName) throws IOException {
-		hbaseAssistant.dropTable(tableName);
-	}
-
-	/**
-	 * Create table.
-	 * 
-	 * @param clazz
-	 * @throws IOException
-	 */
-	public void createTable(Class<?> clazz) throws IOException {
-		hbaseAssistant.createTable(clazz);
-	}
-
-	/**
-	 * Check if table exists.
-	 * 
-	 * @param tableName
-	 * @return
-	 * @throws IOException
-	 */
-	public boolean isTableExists(String tableName) throws IOException {
-		return hbaseAssistant.isTableExists(tableName);
-	}
-
-	/**
 	 * Check if entity exists.
 	 * 
 	 * @param rowKey
@@ -182,14 +151,15 @@ public class FinancialReportPresentationRepository extends
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
 	 * @throws InstantiationException
+	 * @throws IOException 
 	 */
 	public boolean exists(XbrlTaxonomyVersion rowKey)
 			throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException,
-			InstantiationException {
+			InstantiationException, IOException {
 		HBaseRowKey key = getRowKey(rowKey);
-		return hbaseAssistant.get(key) != null;
+		return super.exists(key);
 	}
 
 	private HBaseRowKey getRowKey(XbrlTaxonomyVersion version) {

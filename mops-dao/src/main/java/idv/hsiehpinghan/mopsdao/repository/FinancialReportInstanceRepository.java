@@ -3,7 +3,7 @@ package idv.hsiehpinghan.mopsdao.repository;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseColumnQualifier;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
-import idv.hsiehpinghan.hbaseassistant.utility.HbaseAssistant;
+import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily.InfoQualifier;
@@ -12,6 +12,7 @@ import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.Key;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,13 +59,10 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 			int season) throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException,
-			InstantiationException {
+			InstantiationException, IOException {
 		HBaseRowKey rowKey = getRowKey(stockCode, reportType, year, season);
 		FinancialReportInstance entity = (FinancialReportInstance) hbaseAssistant
 				.get(rowKey);
-		
-		System.err.println(rowKey);
-		
 		NavigableMap<HBaseColumnQualifier, NavigableMap<Date, HBaseValue>> qualMap = entity
 				.getInfoFamily().getQualifierVersionValueMap();
 		ObjectNode instanceNode = objectMapper.createObjectNode();
