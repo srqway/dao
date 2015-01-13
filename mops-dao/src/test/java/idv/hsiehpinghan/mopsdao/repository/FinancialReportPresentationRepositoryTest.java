@@ -52,8 +52,8 @@ public class FinancialReportPresentationRepositoryTest {
 	}
 
 	@Test(dependsOnMethods = { "exists" })
-	public void get() throws Exception {
-		ObjectNode objNode = repository.get(version);
+	public void getAsJson() throws Exception {
+		ObjectNode objNode = repository.getAsJson(version);
 
 		// Balance sheet test
 		JsonNode balanceSheetNode = objNode.get(Presentation.Id.BalanceSheet);

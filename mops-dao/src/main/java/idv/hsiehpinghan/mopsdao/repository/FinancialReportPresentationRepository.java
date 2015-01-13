@@ -80,7 +80,7 @@ public class FinancialReportPresentationRepository extends
 	 * @throws JsonProcessingException
 	 * @throws IOException
 	 */
-	public ObjectNode get(XbrlTaxonomyVersion version)
+	public ObjectNode getAsJson(XbrlTaxonomyVersion version)
 			throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException,

@@ -27,6 +27,7 @@ public class FinancialReportInstanceRepositoryTest {
 	private ObjectMapper objectMapper;
 	private TaxonomyAssistant taxonomyAssistant;
 	private InstanceAssistant instanceAssistant;
+	private List<String> presentIds;
 	private String stockCode = "1101";
 	private ReportType reportType = ReportType.CONSOLIDATED_STATEMENT;
 	private int year = 2013;
@@ -36,6 +37,7 @@ public class FinancialReportInstanceRepositoryTest {
 	public void beforeClass() {
 		ApplicationContext applicationContext = TestngSuitSetting
 				.getApplicationContext();
+		presentIds = getPresentIds();
 		repository = applicationContext
 				.getBean(FinancialReportInstanceRepository.class);
 		objectMapper = applicationContext.getBean(ObjectMapper.class);
@@ -43,7 +45,7 @@ public class FinancialReportInstanceRepositoryTest {
 		instanceAssistant = applicationContext.getBean(InstanceAssistant.class);
 	}
 
-	@AfterClass
+//	@AfterClass
 	public void afterClass() throws Exception {
 		repository.dropTable(repository.getTargetTableName());
 	}
@@ -55,20 +57,20 @@ public class FinancialReportInstanceRepositoryTest {
 		XbrlTaxonomyVersion version = taxonomyAssistant
 				.getXbrlTaxonomyVersion(instanceFile);
 		ObjectNode instanceNode = instanceAssistant.getInstanceJson(
-				instanceFile, getPresentIds());
+				instanceFile, presentIds);
 		repository.put(stockCode, reportType, year, season, version,
-				instanceNode);
+				instanceNode, presentIds);
 		Assert.assertTrue(repository
 				.exists(stockCode, reportType, year, season));
 	}
 
-	@Test(dependsOnMethods = { "put" })
+//	@Test(dependsOnMethods = { "put" })
 	public void getAsJson() throws Exception {
-		ObjectNode objNode = repository
-				.getAsJson(stockCode, reportType, year, season);
-		
+		ObjectNode objNode = repository.getAsJson(stockCode, reportType, year,
+				season);
+
 		System.err.println(objNode.toString());
-		
+
 	}
 
 	private List<String> getPresentIds() {

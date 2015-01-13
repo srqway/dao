@@ -161,7 +161,6 @@ public class FinancialReportInstance extends HBaseTable {
 		}
 
 		public class InfoQualifier extends HBaseColumnQualifier {
-			public static final String XBRL_TAXONOMY_VERSION = "xbrl_taxonomy_version";
 			private String infoTitle;
 
 			public InfoQualifier() {
