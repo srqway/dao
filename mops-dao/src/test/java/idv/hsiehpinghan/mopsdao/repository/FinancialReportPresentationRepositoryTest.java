@@ -6,8 +6,6 @@ import idv.hsiehpinghan.xbrlassistant.assistant.TaxonomyAssistant;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Presentation;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +26,7 @@ public class FinancialReportPresentationRepositoryTest {
 	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_CI_CR_2014_03_31;
 
 	@BeforeClass
-	public void beforeClass() throws IOException, NoSuchFieldException,
-			SecurityException, IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException, InstantiationException {
+	public void beforeClass() throws Exception {
 		ApplicationContext applicationContext = TestngSuitSetting
 				.getApplicationContext();
 		repository = applicationContext
@@ -51,10 +46,15 @@ public class FinancialReportPresentationRepositoryTest {
 		Assert.assertTrue(repository.exists(version));
 	}
 
-	@Test(dependsOnMethods={"put"})
+	@Test(dependsOnMethods = { "put" })
+	public void exists() throws Exception {
+		Assert.assertTrue(repository.exists(version));
+	}
+
+	@Test(dependsOnMethods = { "exists" })
 	public void get() throws Exception {
 		ObjectNode objNode = repository.get(version);
-		
+
 		// Balance sheet test
 		JsonNode balanceSheetNode = objNode.get(Presentation.Id.BalanceSheet);
 		JsonNode blanceSheetSample = objectMapper
@@ -88,15 +88,15 @@ public class FinancialReportPresentationRepositoryTest {
 		Assert.assertEquals(equityChangeNode.toString(),
 				equityChangeSample.toString());
 	}
-	
-	private void dropTable() throws IOException {
+
+	private void dropTable() throws Exception {
 		String tableName = repository.getTargetTableName();
 		if (repository.isTableExists(tableName)) {
 			repository.dropTable(tableName);
 			repository.createTable(repository.getTargetTableClass());
 		}
 	}
-	
+
 	private List<String> generatePresentIds() {
 		List<String> presentIds = new ArrayList<String>(4);
 		presentIds.add(Presentation.Id.BalanceSheet);

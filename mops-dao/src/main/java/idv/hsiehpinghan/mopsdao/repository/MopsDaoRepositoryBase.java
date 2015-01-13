@@ -71,7 +71,9 @@ public abstract class MopsDaoRepositoryBase {
 	 * 
 	 * @return
 	 */
-	public abstract String getTargetTableName();
+	public String getTargetTableName() {
+		return getTargetTableClass().getSimpleName();
+	}
 
 	/**
 	 * Get this repository's target table class.

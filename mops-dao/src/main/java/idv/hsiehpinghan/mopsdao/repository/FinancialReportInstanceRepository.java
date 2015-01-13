@@ -33,11 +33,6 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 	private ObjectMapper objectMapper;
 
 	@Override
-	public String getTargetTableName() {
-		return getTargetTableClass().getSimpleName();
-	}
-
-	@Override
 	public Class<?> getTargetTableClass() {
 		return FinancialReportInstance.class;
 	}
@@ -47,15 +42,28 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 		return hbaseAssistant;
 	}
 
-	public void put(String stockCode, ReportType reportType, int year,
-			int season, XbrlTaxonomyVersion taxonymyVersion,
+	/**
+	 * Put financialReportInstance to hbase.
+	 * 
+	 * @param stockCode
+	 * @param reportType
+	 * @param year
+	 * @param season
+	 * @param taxonymyVersion
+	 * @param instanceNode
+	 * @return
+	 * @throws IllegalAccessException
+	 */
+	public FinancialReportInstance put(String stockCode, ReportType reportType,
+			int year, int season, XbrlTaxonomyVersion taxonymyVersion,
 			ObjectNode instanceNode) throws IllegalAccessException {
 		FinancialReportInstance entity = generateEntity(stockCode, reportType,
 				year, season, taxonymyVersion, instanceNode);
 		hbaseAssistant.put(entity);
+		return entity;
 	}
 
-	public ObjectNode get(String stockCode, ReportType reportType, int year,
+	public ObjectNode getAsJson(String stockCode, ReportType reportType, int year,
 			int season) throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException,
@@ -71,7 +79,7 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 			String infoTitle = ((InfoQualifier) qualEntry.getKey())
 					.getInfoTitle();
 			NavigableMap<Date, HBaseValue> verMap = qualEntry.getValue();
-			for (Map.Entry<Date, HBaseValue> verEntry : verMap.entrySet()) {
+			for (Map.Entry<Date, HBaseValue> verEntry : verMap.descendingMap().entrySet()) {
 				Date date = verEntry.getKey();
 				InfoValue infoVal = (InfoValue) verEntry.getValue();
 
@@ -79,6 +87,32 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 			}
 		}
 		return instanceNode;
+	}
+
+	/**
+	 * Check if row exists.
+	 * 
+	 * @param stockCode
+	 * @param reportType
+	 * @param year
+	 * @param season
+	 * @return
+	 * @throws NoSuchFieldException
+	 * @throws SecurityException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws InstantiationException
+	 * @throws IOException
+	 */
+	public boolean exists(String stockCode, ReportType reportType, int year,
+			int season) throws NoSuchFieldException, SecurityException,
+			IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, InvocationTargetException,
+			InstantiationException, IOException {
+		HBaseRowKey rowKey = getRowKey(stockCode, reportType, year, season);
+		return super.exists(rowKey);
 	}
 
 	private HBaseRowKey getRowKey(String stockCode, ReportType reportType,

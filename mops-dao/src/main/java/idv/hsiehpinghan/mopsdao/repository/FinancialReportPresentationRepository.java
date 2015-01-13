@@ -36,11 +36,6 @@ public class FinancialReportPresentationRepository extends
 	private ObjectMapper objectMapper;
 
 	@Override
-	public String getTargetTableName() {
-		return getTargetTableClass().getSimpleName();
-	}
-
-	@Override
 	public Class<?> getTargetTableClass() {
 		return FinancialReportPresentation.class;
 	}
@@ -55,14 +50,17 @@ public class FinancialReportPresentationRepository extends
 	 * 
 	 * @param version
 	 * @param presentationIds
-	 * @param presentNode
+	 * @param presentationNode
+	 * @return
 	 * @throws IllegalAccessException
 	 */
-	public void put(XbrlTaxonomyVersion version, List<String> presentationIds,
-			ObjectNode presentationNode) throws IllegalAccessException {
+	public FinancialReportPresentation put(XbrlTaxonomyVersion version,
+			List<String> presentationIds, ObjectNode presentationNode)
+			throws IllegalAccessException {
 		FinancialReportPresentation entity = generateEntity(version,
 				presentationIds, presentationNode);
 		hbaseAssistant.put(entity);
+		return entity;
 	}
 
 	/**
@@ -151,7 +149,7 @@ public class FinancialReportPresentationRepository extends
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
 	 * @throws InstantiationException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public boolean exists(XbrlTaxonomyVersion rowKey)
 			throws NoSuchFieldException, SecurityException,

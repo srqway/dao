@@ -12,7 +12,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.springframework.context.ApplicationContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -40,6 +43,11 @@ public class FinancialReportInstanceRepositoryTest {
 		instanceAssistant = applicationContext.getBean(InstanceAssistant.class);
 	}
 
+	@AfterClass
+	public void afterClass() throws Exception {
+		repository.dropTable(repository.getTargetTableName());
+	}
+
 	@Test
 	public void put() throws Exception {
 		File instanceFile = ResourceUtility
@@ -50,11 +58,17 @@ public class FinancialReportInstanceRepositoryTest {
 				instanceFile, getPresentIds());
 		repository.put(stockCode, reportType, year, season, version,
 				instanceNode);
+		Assert.assertTrue(repository
+				.exists(stockCode, reportType, year, season));
 	}
 
 	@Test(dependsOnMethods = { "put" })
-	public void get() throws Exception {
-		repository.get(stockCode, reportType, year, season);
+	public void getAsJson() throws Exception {
+		ObjectNode objNode = repository
+				.getAsJson(stockCode, reportType, year, season);
+		
+		System.err.println(objNode.toString());
+		
 	}
 
 	private List<String> getPresentIds() {

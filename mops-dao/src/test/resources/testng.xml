@@ -5,8 +5,8 @@
 		<classes>
 			<class name="idv.hsiehpinghan.mopsdao.suit.TestngSuitSetting" />
 <!-- 			<class name="idv.hsiehpinghan.mopsdao.repository.FinancialReportPresentationRepositoryTest" /> -->
-			<class name="idv.hsiehpinghan.mopsdao.repository.FinancialReportInstanceRepositoryTest" />
-<!-- 			<class name="idv.hsiehpinghan.mopsdao.entity.FinancialReportInstanceTest" /> -->
+<!-- 			<class name="idv.hsiehpinghan.mopsdao.repository.FinancialReportInstanceRepositoryTest" /> -->
+			<class name="idv.hsiehpinghan.mopsdao.entity.FinancialReportInstanceTest" />
 			
 		</classes>
 	</test>
