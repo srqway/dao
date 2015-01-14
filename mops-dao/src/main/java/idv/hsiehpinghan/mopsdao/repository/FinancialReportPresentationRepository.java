@@ -1,13 +1,9 @@
 package idv.hsiehpinghan.mopsdao.repository;
 
-import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseColumnQualifier;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
-import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily;
-import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily.IdQualifier;
-import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily.JsonValue;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.Key;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 
@@ -16,13 +12,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -70,71 +63,41 @@ public class FinancialReportPresentationRepository extends
 	 * 
 	 * @param version
 	 * @return
-	 * @throws NoSuchFieldException
-	 * @throws SecurityException
-	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
+	 * @throws SecurityException
 	 * @throws InstantiationException
-	 * @throws JsonProcessingException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
 	 * @throws IOException
 	 */
-	public ObjectNode getAsJson(XbrlTaxonomyVersion version)
-			throws NoSuchFieldException, SecurityException,
-			IllegalArgumentException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException,
-			InstantiationException, JsonProcessingException, IOException {
+	public FinancialReportPresentation get(XbrlTaxonomyVersion version)
+			throws IllegalAccessException, NoSuchMethodException,
+			SecurityException, InstantiationException,
+			IllegalArgumentException, InvocationTargetException, IOException {
 		return get(version, null);
 	}
 
 	/**
-	 * Get presentationNodes of presentationIds from hbase.
+	 * Get entity of presentationIds from hbase.
 	 * 
 	 * @param version
 	 * @param presentationIds
 	 * @return
-	 * @throws NoSuchFieldException
-	 * @throws SecurityException
-	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
+	 * @throws SecurityException
 	 * @throws InstantiationException
-	 * @throws JsonProcessingException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
 	 * @throws IOException
 	 */
-	public ObjectNode get(XbrlTaxonomyVersion version,
-			List<String> presentationIds) throws NoSuchFieldException,
-			SecurityException, IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException, InstantiationException,
-			JsonProcessingException, IOException {
+	public FinancialReportPresentation get(XbrlTaxonomyVersion version,
+			List<String> presentationIds) throws IllegalAccessException,
+			NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalArgumentException, InvocationTargetException, IOException {
 		HBaseRowKey rowKey = getRowKey(version);
-		FinancialReportPresentation entity = (FinancialReportPresentation) hbaseAssistant
-				.get(rowKey);
-		NavigableMap<HBaseColumnQualifier, NavigableMap<Date, HBaseValue>> qualMap = entity
-				.getJsonFamily().getQualifierVersionValueMap();
-		ObjectNode presentNode = objectMapper.createObjectNode();
-		for (Map.Entry<HBaseColumnQualifier, NavigableMap<Date, HBaseValue>> qualEntry : qualMap
-				.entrySet()) {
-			String presentId = ((IdQualifier) qualEntry.getKey())
-					.getPresentationId();
-			if (presentationIds != null
-					&& presentationIds.contains(presentId) == false) {
-				continue;
-			}
-			NavigableMap<Date, HBaseValue> verMap = qualEntry.getValue();
-			for (Map.Entry<Date, HBaseValue> verEntry : verMap.entrySet()) {
-				JsonValue jsonVal = (JsonValue) verEntry.getValue();
-				JsonNode subPresentNode = objectMapper.readTree(jsonVal
-						.getJson());
-				presentNode.set(presentId, subPresentNode);
-				// Get the newest record.
-				break;
-			}
-		}
-		return presentNode;
+		return (FinancialReportPresentation) hbaseAssistant.get(rowKey);
 	}
 
 	/**

@@ -8,6 +8,7 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
 import idv.hsiehpinghan.hbaseassistant.utility.ByteConvertUtility;
 
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 
 public class FinancialReportPresentation extends HBaseTable {
@@ -72,6 +73,18 @@ public class FinancialReportPresentation extends HBaseTable {
 			NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qualifier);
 			JsonValue val = new JsonValue(json);
 			verMap.put(date, val);
+		}
+
+		public String getJsonValue(String presentationId) {
+			IdQualifier qual = this.new IdQualifier(presentationId);
+			NavigableMap<Date, HBaseValue> verMap = super
+					.getVersionValueMap(qual);
+			for (Entry<Date, HBaseValue> verEnt : verMap.descendingMap()
+					.entrySet()) {
+				JsonValue val = (JsonValue) verEnt.getValue();
+				return val.getJson();
+			}
+			return null;
 		}
 
 		public class IdQualifier extends HBaseColumnQualifier {
