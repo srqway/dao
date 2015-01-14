@@ -1,11 +1,13 @@
 package idv.hsiehpinghan.mopsdao.repository;
 
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 import idv.hsiehpinghan.mopsdao.suit.TestngSuitSetting;
 import idv.hsiehpinghan.mopsdao.utility.ResourceUtility;
 import idv.hsiehpinghan.xbrlassistant.assistant.InstanceAssistant;
 import idv.hsiehpinghan.xbrlassistant.assistant.TaxonomyAssistant;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
+import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Presentation;
 
 import java.io.File;
@@ -15,7 +17,6 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.springframework.context.ApplicationContext;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -64,12 +65,13 @@ public class FinancialReportInstanceRepositoryTest {
 				.exists(stockCode, reportType, year, season));
 	}
 
-//	@Test(dependsOnMethods = { "put" })
-	public void getAsJson() throws Exception {
-		ObjectNode objNode = repository.getAsJson(stockCode, reportType, year,
+	@Test(dependsOnMethods = { "put" })
+	public void get() throws Exception {
+		FinancialReportInstance entity = repository.get(stockCode, reportType, year,
 				season);
 
-		System.err.println(objNode.toString());
+//		entity.getInfoFamily().getValue(infoTitle)
+//		System.err.println(objNode.toString());
 
 	}
 

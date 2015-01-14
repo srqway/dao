@@ -1,12 +1,12 @@
 package idv.hsiehpinghan.mopsdao.entity;
 
+import idv.hsiehpinghan.hbaseassistant.utility.HbaseEntityTestUtility;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily.InfoQualifier;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily.InfoValue;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily.InstanceQualifier;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily.InstanceValue;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.Key;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
-import idv.hsiehpinghan.testutility.utility.HbaseEntityTestUtility;
 
 import java.io.IOException;
 import java.math.BigDecimal;

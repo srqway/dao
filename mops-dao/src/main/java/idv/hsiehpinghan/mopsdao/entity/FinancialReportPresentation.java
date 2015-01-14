@@ -5,11 +5,10 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseColumnQualifier;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
+import idv.hsiehpinghan.hbaseassistant.utility.ByteConvertUtility;
 
 import java.util.Date;
 import java.util.NavigableMap;
-
-import org.apache.hadoop.hbase.util.Bytes;
 
 public class FinancialReportPresentation extends HBaseTable {
 	private JsonFamily jsonFamily;
@@ -53,12 +52,12 @@ public class FinancialReportPresentation extends HBaseTable {
 
 		@Override
 		public byte[] toBytes() {
-			return Bytes.toBytes(taxonomyVersion);
+			return ByteConvertUtility.toBytes(taxonomyVersion);
 		}
 
 		@Override
 		public void fromBytes(byte[] bytes) {
-			this.taxonomyVersion = Bytes.toString(bytes);
+			this.taxonomyVersion = ByteConvertUtility.getStringFromBytes(bytes);
 		}
 	}
 
@@ -94,12 +93,13 @@ public class FinancialReportPresentation extends HBaseTable {
 
 			@Override
 			public byte[] toBytes() {
-				return Bytes.toBytes(presentationId);
+				return ByteConvertUtility.toBytes(presentationId);
 			}
 
 			@Override
-			public void fromBytes(byte[] presentationIdBytes) {
-				this.presentationId = Bytes.toString(presentationIdBytes);
+			public void fromBytes(byte[] bytes) {
+				this.presentationId = ByteConvertUtility
+						.getStringFromBytes(bytes);
 			}
 
 			public String getPresentationId() {
@@ -138,12 +138,12 @@ public class FinancialReportPresentation extends HBaseTable {
 
 			@Override
 			public byte[] toBytes() {
-				return Bytes.toBytes(json);
+				return ByteConvertUtility.toBytes(json);
 			}
 
 			@Override
 			public void fromBytes(byte[] bytes) {
-				this.json = Bytes.toString(bytes);
+				this.json = ByteConvertUtility.getStringFromBytes(bytes);
 			}
 		}
 
