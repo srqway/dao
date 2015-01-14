@@ -17,10 +17,8 @@ import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Set;
 
-import org.apache.hadoop.hbase.util.Bytes;
-
 public class FinancialReportInstance extends HBaseTable {
-	private static final byte[] TAB = ByteUtility.SINGLE_TAB_BYTE_ARRAY;
+	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private InfoFamily infoFamily;
 	private InstanceFamily instanceFamily;
 
@@ -100,8 +98,8 @@ public class FinancialReportInstance extends HBaseTable {
 			byte[] yearBytes = ByteConvertUtility.toBytes(year, YEAR_LENGTH);
 			byte[] seasonBytes = ByteConvertUtility.toBytes(season,
 					SEASON_LENGTH);
-			return ArrayUtility.addAll(stockCodeBytes, TAB, reportTypeBytes,
-					TAB, yearBytes, TAB, seasonBytes);
+			return ArrayUtility.addAll(stockCodeBytes, SPACE, reportTypeBytes,
+					SPACE, yearBytes, SPACE, seasonBytes);
 		}
 
 		@Override
@@ -154,6 +152,10 @@ public class FinancialReportInstance extends HBaseTable {
 	public class InfoFamily extends HBaseColumnFamily {
 		private InfoFamily(FinancialReportInstance table) {
 			super(table);
+		}
+
+		public InfoValue getValue(String presentationId, String periodType) {
+			return getValue(presentationId + SPACE + periodType);
 		}
 
 		public InfoValue getValue(String infoTitle) {
@@ -275,78 +277,62 @@ public class FinancialReportInstance extends HBaseTable {
 			super(table);
 		}
 
+		public InstanceValue getValue(String elementId, String periodType,
+				Date instant) {
+			InstanceQualifier qual = this.new InstanceQualifier(elementId,
+					periodType, instant);
+			return getValue(qual);
+		}
+
+		public InstanceValue getValue(String elementId, String periodType,
+				Date startDate, Date endDate) {
+			InstanceQualifier qual = this.new InstanceQualifier(elementId,
+					periodType, startDate, endDate);
+			return getValue(qual);
+		}
+
+		private InstanceValue getValue(InstanceQualifier qual) {
+			NavigableMap<Date, HBaseValue> verMap = super
+					.getVersionValueMap(qual);
+			for (Entry<Date, HBaseValue> verEnt : verMap.descendingMap()
+					.entrySet()) {
+				return (InstanceValue) verEnt.getValue();
+			}
+			return null;
+		}
+
 		public void add(String elementId, Date date, String periodType,
 				Date instant, String unit, BigDecimal value) {
-			HBaseColumnQualifier qualifier = this.new InstanceQualifier(
-					elementId);
-			NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qualifier);
-			InstanceValue val = this.new InstanceValue(periodType, instant,
-					unit, value);
-			verMap.put(date, val);
+			HBaseColumnQualifier qual = this.new InstanceQualifier(elementId,
+					periodType, instant);
+			add(qual, date, unit, value);
 		}
 
 		public void add(String elementId, Date date, String periodType,
 				Date startDate, Date endDate, String unit, BigDecimal value) {
-			HBaseColumnQualifier qualifier = this.new InstanceQualifier(
-					elementId);
+			HBaseColumnQualifier qual = this.new InstanceQualifier(elementId,
+					periodType, startDate, endDate);
+			add(qual, date, unit, value);
+		}
+
+		private void add(HBaseColumnQualifier qualifier, Date date,
+				String unit, BigDecimal value) {
 			NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qualifier);
-			InstanceValue val = this.new InstanceValue(periodType, startDate,
-					endDate, unit, value);
+			InstanceValue val = this.new InstanceValue(unit, value);
 			verMap.put(date, val);
 		}
 
 		public class InstanceQualifier extends HBaseColumnQualifier {
-			private String elementId;
-
-			public InstanceQualifier() {
-				super();
-			}
-
-			public InstanceQualifier(String elementId) {
-				super();
-				this.elementId = elementId;
-			}
-
-			public InstanceQualifier(byte[] elementIdBytes) {
-				super();
-				fromBytes(elementIdBytes);
-			}
-
-			@Override
-			public byte[] toBytes() {
-				return Bytes.toBytes(elementId);
-			}
-
-			@Override
-			public void fromBytes(byte[] elementIdBytes) {
-				this.elementId = Bytes.toString(elementIdBytes);
-			}
-
-			public String getElementId() {
-				return elementId;
-			}
-
-			public void setElementId(String elementId) {
-				this.elementId = elementId;
-			}
-
-			@Override
-			public int compareTo(HBaseColumnQualifier o) {
-				String elementId = this.getClass().cast(o).getElementId();
-				return this.getElementId().compareTo(elementId);
-			}
-
-		}
-
-		public class InstanceValue extends HBaseValue {
+			private static final int ELEMENT_ID_LENGTH = 300;
 			private static final int PERIOD_TYPE_LENGTH = 10;
 			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
-			private static final int UNIT_LENGTH = 3;
-			private static final int VALUE_LENGTH = 20;
 
-			private static final int PERIOD_TYPE_BEGIN_INDEX = 0;
+			private static final int ELEMENT_ID_BEGIN_INDEX = 0;
+			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
+					+ ELEMENT_ID_LENGTH;
+			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
 			private static final int PERIOD_TYPE_END_INDEX = PERIOD_TYPE_BEGIN_INDEX
 					+ PERIOD_TYPE_LENGTH;
 			private static final int INSTANT_BEGIN_INDEX = PERIOD_TYPE_END_INDEX + 1;
@@ -358,49 +344,79 @@ public class FinancialReportInstance extends HBaseTable {
 			private static final int END_DATE_BEGIN_INDEX = START_DATE_END_INDEX + 1;
 			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
 					+ END_DATE_LENGTH;
-			private static final int UNIT_BEGIN_INDEX = END_DATE_END_INDEX + 1;
-			private static final int UNIT_END_INDEX = UNIT_BEGIN_INDEX
-					+ UNIT_LENGTH;
-			private static final int VALUE_BEGIN_INDEX = UNIT_END_INDEX + 1;
-			private static final int VALUE_END_INDEX = VALUE_BEGIN_INDEX
-					+ VALUE_LENGTH;
 
-			/**
-			 * duration, instant.
-			 */
+			private String elementId;
 			private String periodType;
 			private Date instant;
 			private Date startDate;
 			private Date endDate;
-			private String unit;
-			private BigDecimal value;
 
-			public InstanceValue() {
+			public InstanceQualifier() {
 				super();
 			}
 
-			public InstanceValue(String periodType, Date startDate,
-					Date endDate, String unit, BigDecimal value) {
+			public InstanceQualifier(String elementId, String periodType,
+					Date instant) {
 				super();
+				this.elementId = elementId;
+				this.periodType = periodType;
+				this.instant = instant;
+			}
+
+			public InstanceQualifier(String elementId, String periodType,
+					Date startDate, Date endDate) {
+				super();
+				this.elementId = elementId;
 				this.periodType = periodType;
 				this.startDate = startDate;
 				this.endDate = endDate;
-				this.unit = unit;
-				this.value = value;
 			}
 
-			public InstanceValue(String periodType, Date instant, String unit,
-					BigDecimal value) {
+			public InstanceQualifier(byte[] elementIdBytes) {
 				super();
-				this.periodType = periodType;
-				this.instant = instant;
-				this.unit = unit;
-				this.value = value;
+				fromBytes(elementIdBytes);
 			}
 
-			public InstanceValue(byte[] bytes) {
-				super();
-				fromBytes(bytes);
+			@Override
+			public byte[] toBytes() {
+				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
+				byte[] periodTypeBytes = ByteConvertUtility.toBytes(periodType,
+						PERIOD_TYPE_LENGTH);
+				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
+				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
+				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
+				return ArrayUtility.addAll(elementIdBytes, SPACE,
+						periodTypeBytes, SPACE, instantBytes, SPACE,
+						startDateBytes, SPACE, endDateBytes);
+			}
+
+			@Override
+			public void fromBytes(byte[] bytes) {
+				try {
+					this.elementId = ByteConvertUtility
+							.getStringFromBytes(bytes, ELEMENT_ID_BEGIN_INDEX,
+									ELEMENT_ID_END_INDEX);
+					this.periodType = ByteConvertUtility.getStringFromBytes(
+							bytes, PERIOD_TYPE_BEGIN_INDEX,
+							PERIOD_TYPE_END_INDEX);
+					this.instant = ByteConvertUtility.getDateFromBytes(bytes,
+							INSTANT_BEGIN_INDEX, INSTANT_END_INDEX);
+					this.startDate = ByteConvertUtility.getDateFromBytes(bytes,
+							START_DATE_BEGIN_INDEX, START_DATE_END_INDEX);
+					this.endDate = ByteConvertUtility.getDateFromBytes(bytes,
+							END_DATE_BEGIN_INDEX, END_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public String getElementId() {
+				return elementId;
+			}
+
+			public void setElementId(String elementId) {
+				this.elementId = elementId;
 			}
 
 			public String getPeriodType() {
@@ -435,6 +451,43 @@ public class FinancialReportInstance extends HBaseTable {
 				this.endDate = endDate;
 			}
 
+			@Override
+			public int compareTo(HBaseColumnQualifier o) {
+				String elementId = this.getClass().cast(o).getElementId();
+				return this.getElementId().compareTo(elementId);
+			}
+
+		}
+
+		public class InstanceValue extends HBaseValue {
+			private static final int UNIT_LENGTH = 10;
+			private static final int VALUE_LENGTH = 20;
+
+			private static final int UNIT_BEGIN_INDEX = 0;
+			private static final int UNIT_END_INDEX = UNIT_BEGIN_INDEX
+					+ UNIT_LENGTH;
+			private static final int VALUE_BEGIN_INDEX = UNIT_END_INDEX + 1;
+			private static final int VALUE_END_INDEX = VALUE_BEGIN_INDEX
+					+ VALUE_LENGTH;
+
+			private String unit;
+			private BigDecimal value;
+
+			public InstanceValue() {
+				super();
+			}
+
+			public InstanceValue(String unit, BigDecimal value) {
+				super();
+				this.unit = unit;
+				this.value = value;
+			}
+
+			public InstanceValue(byte[] bytes) {
+				super();
+				fromBytes(bytes);
+			}
+
 			public String getUnit() {
 				return unit;
 			}
@@ -453,34 +506,18 @@ public class FinancialReportInstance extends HBaseTable {
 
 			@Override
 			public byte[] toBytes() {
-				byte[] periodTypeBytes = ByteConvertUtility.toBytes(periodType,
-						PERIOD_TYPE_LENGTH);
-				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
-				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
-				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
 				byte[] unitBytes = ByteConvertUtility
 						.toBytes(unit, UNIT_LENGTH);
 				byte[] valueBytes = ByteConvertUtility.toBytes(value,
 						VALUE_LENGTH);
-				return ArrayUtility.addAll(periodTypeBytes, TAB, instantBytes,
-						TAB, startDateBytes, TAB, endDateBytes, TAB, unitBytes,
-						TAB, valueBytes);
+				return ArrayUtility.addAll(unitBytes, SPACE, valueBytes);
 			}
 
 			@Override
 			public void fromBytes(byte[] bytes) {
+				this.unit = ByteConvertUtility.getStringFromBytes(bytes,
+						UNIT_BEGIN_INDEX, UNIT_END_INDEX);
 				try {
-					this.periodType = ByteConvertUtility.getStringFromBytes(
-							bytes, PERIOD_TYPE_BEGIN_INDEX,
-							PERIOD_TYPE_END_INDEX);
-					this.instant = ByteConvertUtility.getDateFromBytes(bytes,
-							INSTANT_BEGIN_INDEX, INSTANT_END_INDEX);
-					this.startDate = ByteConvertUtility.getDateFromBytes(bytes,
-							START_DATE_BEGIN_INDEX, START_DATE_END_INDEX);
-					this.startDate = ByteConvertUtility.getDateFromBytes(bytes,
-							END_DATE_BEGIN_INDEX, END_DATE_END_INDEX);
-					this.unit = ByteConvertUtility.getStringFromBytes(bytes,
-							UNIT_BEGIN_INDEX, UNIT_END_INDEX);
 					this.value = ByteConvertUtility.getBigDecimalFromBytes(
 							bytes, VALUE_BEGIN_INDEX, VALUE_END_INDEX);
 				} catch (ParseException e) {

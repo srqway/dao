@@ -40,20 +40,16 @@ public class FinancialReportInstanceTest {
 				"infoContent");
 		HbaseEntityTestUtility.toBytesFromBytes(infoValue);
 		// Test instanceQualifier.
-		InstanceQualifier instanceQualifier = entity.getInstanceFamily().new InstanceQualifier(
-				"elementId");
-		HbaseEntityTestUtility.toBytesFromBytes(instanceQualifier);
+		InstanceQualifier instanceQualifier1 = entity.getInstanceFamily().new InstanceQualifier(
+				"elementId", "instant", new Date());
+		HbaseEntityTestUtility.toBytesFromBytes(instanceQualifier1);
+		InstanceQualifier instanceQualifier2 = entity.getInstanceFamily().new InstanceQualifier(
+				"elementId", "duration", new Date(), new Date());
+		HbaseEntityTestUtility.toBytesFromBytes(instanceQualifier2);
 		// Test instanceValue.
-		InstanceValue instantValue = entity.getInstanceFamily().new InstanceValue(
-				"instant", new Date(), "TWD", BigDecimal.TEN);
-		HbaseEntityTestUtility.toBytesFromBytes(instantValue);
-		InstanceValue durationValue = entity.getInstanceFamily().new InstanceValue(
-				"duration", new Date(), new Date(), "TWD", BigDecimal.TEN);
-		HbaseEntityTestUtility.toBytesFromBytes(durationValue);
+		InstanceValue instanceValue = entity.getInstanceFamily().new InstanceValue(
+				"TWD", BigDecimal.TEN);
+		HbaseEntityTestUtility.toBytesFromBytes(instanceValue);
 	}
 
-	// private Key getKey(byte[] bytes) {
-	// FinancialReportInstance entity = new FinancialReportInstance();
-	// return entity.new Key(bytes, entity);
-	// }
 }

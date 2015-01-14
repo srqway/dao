@@ -75,14 +75,13 @@ public class FinancialReportPresentation extends HBaseTable {
 			verMap.put(date, val);
 		}
 
-		public String getJsonValue(String presentationId) {
+		public JsonValue getValue(String presentationId) {
 			IdQualifier qual = this.new IdQualifier(presentationId);
 			NavigableMap<Date, HBaseValue> verMap = super
 					.getVersionValueMap(qual);
 			for (Entry<Date, HBaseValue> verEnt : verMap.descendingMap()
 					.entrySet()) {
-				JsonValue val = (JsonValue) verEnt.getValue();
-				return val.getJson();
+				return (JsonValue) verEnt.getValue();
 			}
 			return null;
 		}

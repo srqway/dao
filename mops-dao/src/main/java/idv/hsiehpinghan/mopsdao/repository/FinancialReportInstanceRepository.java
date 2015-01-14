@@ -1,10 +1,15 @@
 package idv.hsiehpinghan.mopsdao.repository;
 
+import idv.hsiehpinghan.datatypeutility.utility.ByteUtility;
+import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseColumnQualifier;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
+import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily.InstanceQualifier;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily.InstanceValue;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.Key;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 import idv.hsiehpinghan.xbrlassistant.assistant.InstanceAssistant;
@@ -20,6 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.NavigableMap;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +38,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Repository
 public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
+	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private final String DATE_PATTERN = "yyyyMMdd";
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
@@ -152,6 +159,12 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 				String unit = dataNode.get("unit").textValue();
 				BigDecimal value = new BigDecimal(dataNode.get("value")
 						.textValue());
+
+				if ("tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
+						.equals(eleId)) {
+					System.err.println("in");
+				}
+
 				if (Instance.Attribute.DURATION.equals(periodType)) {
 					Date startDate = DateUtils
 							.parseDate(dataNode.get("startDate").textValue(),
@@ -169,6 +182,27 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 					throw new RuntimeException("PeriodType(" + periodType
 							+ ") not implements !!!");
 				}
+				
+				
+				if ("tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
+						.equals(eleId)) {
+
+					for (Entry<HBaseColumnQualifier, NavigableMap<Date, HBaseValue>> qualEnt : entity
+							.getInstanceFamily().getQualifierVersionValueMap().entrySet()) {
+						InstanceQualifier qual = (InstanceQualifier)qualEnt.getKey();
+						for(Entry<Date, HBaseValue> verEnt : qualEnt.getValue().entrySet()) {
+							InstanceValue val = (InstanceValue)verEnt.getValue();
+							if(qual.getElementId().equals("tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod")) {
+								System.err.println(qual + " / " + val);
+							}
+						}
+					}
+				}
+				
+				
+				
+				
+				
 			}
 		}
 	}
@@ -192,8 +226,8 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 				for (JsonNode context : instantArrNode) {
 					sb.append(context.textValue() + ",");
 				}
-				infoFamily.add(presentId + Instance.Attribute.INSTANT, date,
-						sb.toString());
+				infoFamily.add(presentId + SPACE + Instance.Attribute.INSTANT,
+						date, sb.toString());
 			}
 			ArrayNode durationArrNode = (ArrayNode) presentIdNode
 					.get(Instance.Attribute.DURATION);
@@ -202,8 +236,8 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 				for (JsonNode context : durationArrNode) {
 					sb.append(context.textValue() + ",");
 				}
-				infoFamily.add(presentId + Instance.Attribute.DURATION, date,
-						sb.toString());
+				infoFamily.add(presentId + SPACE + Instance.Attribute.DURATION,
+						date, sb.toString());
 			}
 		}
 	}
