@@ -13,7 +13,6 @@ import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Presentation;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +49,7 @@ public class FinancialReportInstanceRepositoryTest {
 		instanceAssistant = applicationContext.getBean(InstanceAssistant.class);
 	}
 
-//	@AfterClass
+	// @AfterClass
 	public void afterClass() throws Exception {
 		repository.dropTable(repository.getTargetTableName());
 	}
@@ -59,8 +58,7 @@ public class FinancialReportInstanceRepositoryTest {
 	public void put() throws Exception {
 		File instanceFile = ResourceUtility
 				.getFileResource("xbrl-instance/2013-01-sii-01-C/tifrs-fr0-m1-ci-cr-1101-2013Q1.xml");
-		version = taxonomyAssistant
-				.getXbrlTaxonomyVersion(instanceFile);
+		version = taxonomyAssistant.getXbrlTaxonomyVersion(instanceFile);
 		ObjectNode instanceNode = instanceAssistant.getInstanceJson(
 				instanceFile, presentIds);
 		repository.put(stockCode, reportType, year, season, version,
@@ -71,8 +69,8 @@ public class FinancialReportInstanceRepositoryTest {
 
 	@Test(dependsOnMethods = { "put" })
 	public void get() throws Exception {
-		FinancialReportInstance entity = repository.get(stockCode, reportType, year,
-				season);
+		FinancialReportInstance entity = repository.get(stockCode, reportType,
+				year, season);
 		testInfoFamily(entity);
 		testInstanceFamily(entity);
 	}
@@ -83,52 +81,45 @@ public class FinancialReportInstanceRepositoryTest {
 		infoValue = entity.getInfoFamily().getValue(InstanceAssistant.VERSION);
 		Assert.assertEquals(version.name(), infoValue.getInfoContent());
 		// Test context.
-		infoValue = entity.getInfoFamily().getValue(Presentation.Id.StatementOfCashFlows, Instance.Attribute.INSTANT);
-		Assert.assertEquals("20120101,20120331,20121231,20130331,", infoValue.getInfoContent());
-		infoValue = entity.getInfoFamily().getValue(Presentation.Id.StatementOfCashFlows, Instance.Attribute.DURATION);
-		Assert.assertEquals("20120101~20120331,20130101~20130331,", infoValue.getInfoContent());
+		infoValue = entity.getInfoFamily().getValue(
+				Presentation.Id.StatementOfCashFlows,
+				Instance.Attribute.INSTANT);
+		Assert.assertEquals("20120101,20120331,20121231,20130331,",
+				infoValue.getInfoContent());
+		infoValue = entity.getInfoFamily().getValue(
+				Presentation.Id.StatementOfCashFlows,
+				Instance.Attribute.DURATION);
+		Assert.assertEquals("20120101~20120331,20130101~20130331,",
+				infoValue.getInfoContent());
 	}
-	
-	private void testInstanceFamily(FinancialReportInstance entity) throws ParseException {
+
+	private void testInstanceFamily(FinancialReportInstance entity)
+			throws ParseException {
 		testInstant(entity);
 		testDuration(entity);
 	}
-	
-	private void testDuration(FinancialReportInstance entity) throws ParseException {
+
+	private void testDuration(FinancialReportInstance entity)
+			throws ParseException {
 		String elementId = "tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod";
 		Date startDate = DateUtils.parseDate("20130101", "yyyyMMdd");
 		Date endDate = DateUtils.parseDate("20130331", "yyyyMMdd");
-		InstanceValue instanceValue = entity.getInstanceFamily().getValue(elementId, Instance.Attribute.DURATION, startDate, endDate);
+		InstanceValue instanceValue = entity.getInstanceFamily().getValue(
+				elementId, Instance.Attribute.DURATION, startDate, endDate);
 		Assert.assertEquals("TWD", instanceValue.getUnit());
-		
-		
 		Assert.assertEquals("-151905000", instanceValue.getValue().toString());
-		
-		
-//        {  
-//            "periodType":"duration",
-//            "startDate":"20130101",
-//            "endDate":"20130331",
-//            "unit":"TWD",
-//            "value":"-151905000"
-//         },
-//         {  
-//            "periodType":"duration",
-//            "startDate":"20120101",
-//            "endDate":"20120331",
-//            "unit":"TWD",
-//            "value":"-247136000"
-//         }
 	}
-	
-	private void testInstant(FinancialReportInstance entity) throws ParseException {
+
+	private void testInstant(FinancialReportInstance entity)
+			throws ParseException {
 		String elementId = "tifrs-bsci-ci_GainsLossesOnEffectivePortionOfCashFlowHedges";
 		Date instant = DateUtils.parseDate("20120101", "yyyyMMdd");
-		InstanceValue instanceValue = entity.getInstanceFamily().getValue(elementId, Instance.Attribute.INSTANT, instant);
+		InstanceValue instanceValue = entity.getInstanceFamily().getValue(
+				elementId, Instance.Attribute.INSTANT, instant);
 		Assert.assertEquals("TWD", instanceValue.getUnit());
 		Assert.assertEquals("-34373000", instanceValue.getValue().toString());
 	}
-	
+
 	private List<String> getPresentIds() {
 		List<String> ids = new ArrayList<String>(4);
 		ids.add(Presentation.Id.BalanceSheet);
