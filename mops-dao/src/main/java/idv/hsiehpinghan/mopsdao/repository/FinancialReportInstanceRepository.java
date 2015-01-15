@@ -182,27 +182,26 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 					throw new RuntimeException("PeriodType(" + periodType
 							+ ") not implements !!!");
 				}
-				
-				
+
 				if ("tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
 						.equals(eleId)) {
 
 					for (Entry<HBaseColumnQualifier, NavigableMap<Date, HBaseValue>> qualEnt : entity
-							.getInstanceFamily().getQualifierVersionValueMap().entrySet()) {
-						InstanceQualifier qual = (InstanceQualifier)qualEnt.getKey();
-						for(Entry<Date, HBaseValue> verEnt : qualEnt.getValue().entrySet()) {
-							InstanceValue val = (InstanceValue)verEnt.getValue();
-							if(qual.getElementId().equals("tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod")) {
+							.getInstanceFamily().getQualifierVersionValueSet()) {
+						InstanceQualifier qual = (InstanceQualifier) qualEnt
+								.getKey();
+						for (Entry<Date, HBaseValue> verEnt : qualEnt
+								.getValue().entrySet()) {
+							InstanceValue val = (InstanceValue) verEnt
+									.getValue();
+							if (qual.getElementId()
+									.equals("tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod")) {
 								System.err.println(qual + " / " + val);
 							}
 						}
 					}
 				}
-				
-				
-				
-				
-				
+
 			}
 		}
 	}

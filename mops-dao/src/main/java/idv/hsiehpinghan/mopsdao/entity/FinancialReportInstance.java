@@ -14,8 +14,9 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map.Entry;
-import java.util.NavigableMap;
 import java.util.Set;
+
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
 public class FinancialReportInstance extends HBaseTable {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
@@ -160,25 +161,21 @@ public class FinancialReportInstance extends HBaseTable {
 
 		public InfoValue getValue(String infoTitle) {
 			InfoQualifier qual = new InfoQualifier(infoTitle);
-			Set<Entry<Date, HBaseValue>> verMap = getVersionValueMap(qual)
-					.entrySet();
-			for (Entry<Date, HBaseValue> ent : verMap) {
+			for (Entry<Date, HBaseValue> ent : getVersionValueSet(qual)) {
 				return (InfoValue) ent.getValue();
 			}
 			return null;
 		}
 
-		public NavigableMap<Date, HBaseValue> getVersionValueMap(
-				String infoTitle) {
+		public Set<Entry<Date, HBaseValue>> getVersionValueMap(String infoTitle) {
 			InfoQualifier qual = new InfoQualifier(infoTitle);
-			return super.getVersionValueMap(qual);
+			return getVersionValueSet(qual);
 		}
 
 		public void add(String infoTitle, Date date, String infoContent) {
 			HBaseColumnQualifier qualifier = this.new InfoQualifier(infoTitle);
-			NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qualifier);
 			InfoValue val = this.new InfoValue(infoContent);
-			verMap.put(date, val);
+			add(qualifier, date, val);
 		}
 
 		public class InfoQualifier extends HBaseColumnQualifier {
@@ -215,13 +212,6 @@ public class FinancialReportInstance extends HBaseTable {
 			public void setInfoTitle(String infoTitle) {
 				this.infoTitle = infoTitle;
 			}
-
-			@Override
-			public int compareTo(HBaseColumnQualifier o) {
-				String infoTitle = this.getClass().cast(o).getInfoTitle();
-				return this.getInfoTitle().compareTo(infoTitle);
-			}
-
 		}
 
 		public class InfoValue extends HBaseValue {
@@ -291,16 +281,6 @@ public class FinancialReportInstance extends HBaseTable {
 			return getValue(qual);
 		}
 
-		private InstanceValue getValue(InstanceQualifier qual) {
-			NavigableMap<Date, HBaseValue> verMap = super
-					.getVersionValueMap(qual);
-			for (Entry<Date, HBaseValue> verEnt : verMap.descendingMap()
-					.entrySet()) {
-				return (InstanceValue) verEnt.getValue();
-			}
-			return null;
-		}
-
 		public void add(String elementId, Date date, String periodType,
 				Date instant, String unit, BigDecimal value) {
 			HBaseColumnQualifier qual = this.new InstanceQualifier(elementId,
@@ -317,9 +297,15 @@ public class FinancialReportInstance extends HBaseTable {
 
 		private void add(HBaseColumnQualifier qualifier, Date date,
 				String unit, BigDecimal value) {
-			NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qualifier);
 			InstanceValue val = this.new InstanceValue(unit, value);
-			verMap.put(date, val);
+			add(qualifier, date, val);
+		}
+
+		private InstanceValue getValue(InstanceQualifier qual) {
+			for (Entry<Date, HBaseValue> verEnt : getVersionValueSet(qual)) {
+				return (InstanceValue) verEnt.getValue();
+			}
+			return null;
 		}
 
 		public class InstanceQualifier extends HBaseColumnQualifier {
@@ -450,13 +436,6 @@ public class FinancialReportInstance extends HBaseTable {
 			public void setEndDate(Date endDate) {
 				this.endDate = endDate;
 			}
-
-			@Override
-			public int compareTo(HBaseColumnQualifier o) {
-				String elementId = this.getClass().cast(o).getElementId();
-				return this.getElementId().compareTo(elementId);
-			}
-
 		}
 
 		public class InstanceValue extends HBaseValue {

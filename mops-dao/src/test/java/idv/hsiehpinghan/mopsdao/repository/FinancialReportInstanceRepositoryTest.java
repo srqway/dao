@@ -96,8 +96,8 @@ public class FinancialReportInstanceRepositoryTest {
 	
 	private void testDuration(FinancialReportInstance entity) throws ParseException {
 		String elementId = "tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod";
-		Date startDate = DateUtils.parseDate("20120111", "yyyyMMdd");
-		Date endDate = DateUtils.parseDate("20120311", "yyyyMMdd");
+		Date startDate = DateUtils.parseDate("20130101", "yyyyMMdd");
+		Date endDate = DateUtils.parseDate("20130331", "yyyyMMdd");
 		InstanceValue instanceValue = entity.getInstanceFamily().getValue(elementId, Instance.Attribute.DURATION, startDate, endDate);
 		Assert.assertEquals("TWD", instanceValue.getUnit());
 		

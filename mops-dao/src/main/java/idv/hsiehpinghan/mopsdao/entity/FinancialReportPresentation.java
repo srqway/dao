@@ -9,7 +9,6 @@ import idv.hsiehpinghan.hbaseassistant.utility.ByteConvertUtility;
 
 import java.util.Date;
 import java.util.Map.Entry;
-import java.util.NavigableMap;
 
 public class FinancialReportPresentation extends HBaseTable {
 	private JsonFamily jsonFamily;
@@ -70,17 +69,13 @@ public class FinancialReportPresentation extends HBaseTable {
 		public void add(String presentationId, Date date, String json) {
 			HBaseColumnQualifier qualifier = this.new IdQualifier(
 					presentationId);
-			NavigableMap<Date, HBaseValue> verMap = getVersionValueMap(qualifier);
 			JsonValue val = new JsonValue(json);
-			verMap.put(date, val);
+			add(qualifier, date, val);
 		}
 
 		public JsonValue getValue(String presentationId) {
 			IdQualifier qual = this.new IdQualifier(presentationId);
-			NavigableMap<Date, HBaseValue> verMap = super
-					.getVersionValueMap(qual);
-			for (Entry<Date, HBaseValue> verEnt : verMap.descendingMap()
-					.entrySet()) {
+			for (Entry<Date, HBaseValue> verEnt : getVersionValueSet(qual)) {
 				return (JsonValue) verEnt.getValue();
 			}
 			return null;
@@ -117,14 +112,6 @@ public class FinancialReportPresentation extends HBaseTable {
 			public String getPresentationId() {
 				return presentationId;
 			}
-
-			@Override
-			public int compareTo(HBaseColumnQualifier o) {
-				String presentationId = this.getClass().cast(o)
-						.getPresentationId();
-				return this.getPresentationId().compareTo(presentationId);
-			}
-
 		}
 
 		public class JsonValue extends HBaseValue {
