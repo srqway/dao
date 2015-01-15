@@ -17,11 +17,6 @@ public class FinancialReportPresentation extends HBaseTable {
 		super();
 	}
 
-	public FinancialReportPresentation(Key rowKey, JsonFamily jsonFamily) {
-		super(rowKey);
-		this.jsonFamily = jsonFamily;
-	}
-
 	public JsonFamily getJsonFamily() {
 		if (jsonFamily == null) {
 			jsonFamily = this.new JsonFamily(this);

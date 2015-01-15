@@ -7,7 +7,6 @@ import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 import idv.hsiehpinghan.mopsdao.suit.TestngSuitSetting;
 import idv.hsiehpinghan.mopsdao.utility.ResourceUtility;
 import idv.hsiehpinghan.xbrlassistant.assistant.InstanceAssistant;
-import idv.hsiehpinghan.xbrlassistant.assistant.TaxonomyAssistant;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Presentation;
@@ -29,7 +28,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class FinancialReportInstanceRepositoryTest {
 	private FinancialReportInstanceRepository repository;
-	private TaxonomyAssistant taxonomyAssistant;
 	private InstanceAssistant instanceAssistant;
 	private XbrlTaxonomyVersion version;
 	private List<String> presentIds;
@@ -45,7 +43,6 @@ public class FinancialReportInstanceRepositoryTest {
 		presentIds = getPresentIds();
 		repository = applicationContext
 				.getBean(FinancialReportInstanceRepository.class);
-		taxonomyAssistant = applicationContext.getBean(TaxonomyAssistant.class);
 		instanceAssistant = applicationContext.getBean(InstanceAssistant.class);
 	}
 
@@ -58,11 +55,10 @@ public class FinancialReportInstanceRepositoryTest {
 	public void put() throws Exception {
 		File instanceFile = ResourceUtility
 				.getFileResource("xbrl-instance/2013-01-sii-01-C/tifrs-fr0-m1-ci-cr-1101-2013Q1.xml");
-		version = taxonomyAssistant.getXbrlTaxonomyVersion(instanceFile);
 		ObjectNode instanceNode = instanceAssistant.getInstanceJson(
 				instanceFile, presentIds);
-		repository.put(stockCode, reportType, year, season, version,
-				instanceNode, presentIds);
+		repository.put(stockCode, reportType, year, season, instanceNode,
+				presentIds);
 		Assert.assertTrue(repository
 				.exists(stockCode, reportType, year, season));
 	}

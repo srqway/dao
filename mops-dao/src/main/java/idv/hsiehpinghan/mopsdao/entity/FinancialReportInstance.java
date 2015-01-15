@@ -16,8 +16,6 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang3.builder.CompareToBuilder;
-
 public class FinancialReportInstance extends HBaseTable {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private InfoFamily infoFamily;
@@ -25,13 +23,6 @@ public class FinancialReportInstance extends HBaseTable {
 
 	public FinancialReportInstance() {
 		super();
-	}
-
-	public FinancialReportInstance(Key rowKey, InfoFamily infoFamily,
-			InstanceFamily instanceFamily) {
-		super(rowKey);
-		this.infoFamily = infoFamily;
-		this.instanceFamily = instanceFamily;
 	}
 
 	public InfoFamily getInfoFamily() {
@@ -167,7 +158,7 @@ public class FinancialReportInstance extends HBaseTable {
 			return null;
 		}
 
-		public Set<Entry<Date, HBaseValue>> getVersionValueMap(String infoTitle) {
+		public Set<Entry<Date, HBaseValue>> getVersionValueSet(String infoTitle) {
 			InfoQualifier qual = new InfoQualifier(infoTitle);
 			return getVersionValueSet(qual);
 		}

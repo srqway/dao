@@ -9,7 +9,6 @@ import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.Key;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 import idv.hsiehpinghan.xbrlassistant.assistant.InstanceAssistant;
-import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
 
 import java.io.IOException;
@@ -57,16 +56,15 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 	 * @param reportType
 	 * @param year
 	 * @param season
-	 * @param taxonymyVersion
 	 * @param instanceNode
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws ParseException
 	 */
 	public FinancialReportInstance put(String stockCode, ReportType reportType,
-			int year, int season, XbrlTaxonomyVersion taxonymyVersion,
-			ObjectNode objNode, List<String> PresentationIds)
-			throws IllegalAccessException, ParseException {
+			int year, int season, ObjectNode objNode,
+			List<String> PresentationIds) throws IllegalAccessException,
+			ParseException {
 		FinancialReportInstance entity = generateEntity(stockCode, reportType,
 				year, season, objNode, PresentationIds);
 		hbaseAssistant.put(entity);
