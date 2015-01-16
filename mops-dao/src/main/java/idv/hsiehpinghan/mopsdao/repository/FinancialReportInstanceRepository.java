@@ -2,6 +2,7 @@ package idv.hsiehpinghan.mopsdao.repository;
 
 import idv.hsiehpinghan.datatypeutility.utility.ByteUtility;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
+import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily;
@@ -40,7 +41,7 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 	private ObjectMapper objectMapper;
 
 	@Override
-	public Class<?> getTargetTableClass() {
+	public Class<? extends HBaseTable> getTargetTableClass() {
 		return FinancialReportInstance.class;
 	}
 

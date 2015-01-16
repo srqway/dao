@@ -1,6 +1,7 @@
 package idv.hsiehpinghan.mopsdao.repository;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
+import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 
 import java.io.IOException;
@@ -13,7 +14,8 @@ public abstract class MopsDaoRepositoryBase {
 	 * @param clazz
 	 * @throws IOException
 	 */
-	public void createTable(Class<?> clazz) throws IOException {
+	public void createTable(Class<? extends HBaseTable> clazz)
+			throws IOException {
 		getHbaseAssistant().createTable(clazz);
 	}
 
@@ -80,5 +82,5 @@ public abstract class MopsDaoRepositoryBase {
 	 * 
 	 * @return
 	 */
-	public abstract Class<?> getTargetTableClass();
+	public abstract Class<? extends HBaseTable> getTargetTableClass();
 }

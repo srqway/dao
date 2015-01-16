@@ -1,6 +1,7 @@
 package idv.hsiehpinghan.mopsdao.repository;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
+import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily;
@@ -29,7 +30,7 @@ public class FinancialReportPresentationRepository extends
 	private ObjectMapper objectMapper;
 
 	@Override
-	public Class<?> getTargetTableClass() {
+	public Class<? extends HBaseTable> getTargetTableClass() {
 		return FinancialReportPresentation.class;
 	}
 

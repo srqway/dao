@@ -1,6 +1,7 @@
 package idv.hsiehpinghan.mopsdao.repository;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
+import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportData;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.RowKey;
@@ -8,7 +9,9 @@ import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
+import org.apache.hadoop.hbase.filter.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +21,7 @@ public class FinancialReportDataRepository extends MopsDaoRepositoryBase {
 	private HbaseAssistant hbaseAssistant;
 
 	@Override
-	public Class<?> getTargetTableClass() {
+	public Class<? extends HBaseTable> getTargetTableClass() {
 		return FinancialReportData.class;
 	}
 
@@ -37,6 +40,12 @@ public class FinancialReportDataRepository extends MopsDaoRepositoryBase {
 			IllegalArgumentException, InvocationTargetException, IOException {
 		HBaseRowKey rowKey = getRowKey(stockCode, reportType, year, season);
 		return (FinancialReportData) hbaseAssistant.get(rowKey);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<FinancialReportData> scan(Filter filter) {
+		return (List<FinancialReportData>) (Object) hbaseAssistant.scan(
+				getTargetTableClass(), filter);
 	}
 
 	private HBaseRowKey getRowKey(String stockCode, ReportType reportType,
