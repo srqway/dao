@@ -2,8 +2,11 @@ package idv.hsiehpinghan.mopsdao.repository;
 
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportData;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.GrowthFamily;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.GrowthFamily.GrowthValue;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.ItemFamily;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.ItemFamily.ItemValue;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.RatioFamily;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.RatioFamily.RatioValue;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 import idv.hsiehpinghan.mopsdao.suit.TestngSuitSetting;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
@@ -55,9 +58,55 @@ public class FinancialReportDataRepositoryTest {
 		Assert.assertTrue(repository.exists(entity.getRowKey()));
 	}
 
-	// @Test(dependsOnMethods={"put"})
-	public void get() {
-		throw new RuntimeException("Test not implemented");
+	@Test(dependsOnMethods = { "put" })
+	public void get() throws Exception {
+		FinancialReportData entity = repository.get(stockCode, reportType,
+				year, season);
+		testItemFamily(entity);
+		testRatioFamily(entity);
+		testGrowthFamily(entity);
+	}
+
+	private void testGrowthFamily(FinancialReportData entity) {
+		GrowthFamily growthFamily = entity.getGrowthFamily();
+		// Test duration
+		GrowthValue durValue = growthFamily.getValue(durationEleId,
+				Instance.Attribute.DURATION, startDate, endDate);
+		Assert.assertEquals(durationValue.toString(), durValue.getValue()
+				.toString());
+		// Test instant.
+		GrowthValue insValue = growthFamily.getValue(instantEleId,
+				Instance.Attribute.INSTANT, instant);
+		Assert.assertEquals(instantValue.toString(), insValue.getValue()
+				.toString()); // TODO
+	}
+
+	private void testRatioFamily(FinancialReportData entity) {
+		RatioFamily ratioFamily = entity.getRatioFamily();
+		// Test duration
+		RatioValue durValue = ratioFamily.getValue(durationName,
+				Instance.Attribute.DURATION, startDate, endDate);
+		Assert.assertEquals(durationValue.toString(), durValue.getValue()
+				.toString());
+		// Test instant.
+		RatioValue insValue = ratioFamily.getValue(instantName,
+				Instance.Attribute.INSTANT, instant);
+		Assert.assertEquals(instantValue.toString(), insValue.getValue()
+				.toString());
+	}
+
+	private void testItemFamily(FinancialReportData entity) {
+		ItemFamily itemFamily = entity.getItemFamily();
+		// Test duration
+		ItemValue durValue = itemFamily.getValue(durationEleId,
+				Instance.Attribute.DURATION, startDate, endDate);
+		Assert.assertEquals(durationValue.toString(), durValue.getValue()
+				.toString());
+		// Test instant.
+		ItemValue insValue = itemFamily.getValue(instantEleId,
+				Instance.Attribute.INSTANT, instant);
+		Assert.assertEquals(instantValue.toString(), insValue.getValue()
+				.toString());
 	}
 
 	private FinancialReportData generateEntity() {
@@ -85,7 +134,7 @@ public class FinancialReportDataRepositoryTest {
 				startDate, endDate, durationValue);
 		// Test instant.
 		growthFamily.add(instantEleId, date, Instance.Attribute.INSTANT,
-				instant, instantValue);
+				instant, instantValue); // TODO
 	}
 
 	private void generateRatioFamily(FinancialReportData entity, Date date) {

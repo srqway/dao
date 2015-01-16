@@ -5,14 +5,14 @@
 		<classes>
 			<class name="idv.hsiehpinghan.mopsdao.suit.TestngSuitSetting" />
 			<!-- Test repositoty -->
-			<class
-				name="idv.hsiehpinghan.mopsdao.repository.FinancialReportPresentationRepositoryTest" />
-			<class
-				name="idv.hsiehpinghan.mopsdao.repository.FinancialReportInstanceRepositoryTest" />
+<!-- 			<class -->
+<!-- 				name="idv.hsiehpinghan.mopsdao.repository.FinancialReportPresentationRepositoryTest" /> -->
+<!-- 			<class -->
+<!-- 				name="idv.hsiehpinghan.mopsdao.repository.FinancialReportInstanceRepositoryTest" /> -->
 			<!-- Test entity -->
-			<class
-				name="idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentationTest" />
-			<class name="idv.hsiehpinghan.mopsdao.entity.FinancialReportInstanceTest" />
+<!-- 			<class -->
+<!-- 				name="idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentationTest" /> -->
+<!-- 			<class name="idv.hsiehpinghan.mopsdao.entity.FinancialReportInstanceTest" /> -->
 			<class
 				name="idv.hsiehpinghan.mopsdao.repository.FinancialReportDataRepositoryTest" />
 		</classes>

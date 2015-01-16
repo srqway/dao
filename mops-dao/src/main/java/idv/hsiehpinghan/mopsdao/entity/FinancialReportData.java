@@ -604,6 +604,13 @@ public class FinancialReportData extends HBaseTable {
 			return getValue(qual);
 		}
 
+		public GrowthValue getValue(String elementId, String periodType,
+				Date startDate, Date endDate) {
+			GrowthQualifier qual = this.new GrowthQualifier(elementId,
+					periodType, startDate, endDate);
+			return getValue(qual);
+		}
+
 		public void add(String elementId, Date date, String periodType,
 				Date instant, BigDecimal value) {
 			HBaseColumnQualifier qual = this.new GrowthQualifier(elementId,
