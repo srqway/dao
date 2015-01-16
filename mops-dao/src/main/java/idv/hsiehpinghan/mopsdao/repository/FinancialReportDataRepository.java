@@ -3,7 +3,7 @@ package idv.hsiehpinghan.mopsdao.repository;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportData;
-import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.Key;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportData.RowKey;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 
 import java.io.IOException;
@@ -48,7 +48,8 @@ public class FinancialReportDataRepository extends MopsDaoRepositoryBase {
 
 	private void generateRowKey(FinancialReportData entity, String stockCode,
 			ReportType reportType, int year, int season) {
-		Key key = entity.new Key(stockCode, reportType, year, season, entity);
+		RowKey key = entity.new RowKey(stockCode, reportType, year, season,
+				entity);
 		entity.setRowKey(key);
 	}
 }

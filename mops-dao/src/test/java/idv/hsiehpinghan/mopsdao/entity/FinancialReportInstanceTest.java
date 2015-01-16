@@ -5,7 +5,7 @@ import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily.InfoQu
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily.InfoValue;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily.InstanceQualifier;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily.InstanceValue;
-import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.Key;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.RowKey;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 
 import java.io.IOException;
@@ -29,7 +29,8 @@ public class FinancialReportInstanceTest {
 	public void toBytesFromBytes() {
 		FinancialReportInstance entity = new FinancialReportInstance();
 		// Test row key.
-		Key key = entity.new Key(stockCode, reportType, year, season, entity);
+		RowKey key = entity.new RowKey(stockCode, reportType, year, season,
+				entity);
 		HbaseEntityTestUtility.toBytesFromBytes(key);
 		// Test infoQualifier.
 		InfoQualifier infoQualifier = entity.getInfoFamily().new InfoQualifier(

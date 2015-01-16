@@ -17,12 +17,23 @@ import java.util.Map.Entry;
 
 public class FinancialReportData extends HBaseTable {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
+	private RowKey rowKey;
 	private ItemFamily itemFamily;
 	private RatioFamily ratioFamily;
 	private GrowthFamily growthFamily;
 
 	public FinancialReportData() {
 		super();
+	}
+
+	@Override
+	public HBaseRowKey getRowKey() {
+		return rowKey;
+	}
+
+	@Override
+	public void setRowKey(HBaseRowKey rowKey) {
+		this.rowKey = (RowKey) rowKey;
 	}
 
 	public ItemFamily getItemFamily() {
@@ -46,7 +57,7 @@ public class FinancialReportData extends HBaseTable {
 		return growthFamily;
 	}
 
-	public class Key extends HBaseRowKey {
+	public class RowKey extends HBaseRowKey {
 		private static final int STOCK_CODE_LENGTH = 10;
 		private static final int REPORT_TYPE_LENGTH = 30;
 		private static final int YEAR_LENGTH = 4;
@@ -70,11 +81,11 @@ public class FinancialReportData extends HBaseTable {
 		private int year;
 		private int season;
 
-		public Key(FinancialReportData entity) {
+		public RowKey(FinancialReportData entity) {
 			super(entity);
 		}
 
-		public Key(String stockCode, ReportType reportType, int year,
+		public RowKey(String stockCode, ReportType reportType, int year,
 				int season, FinancialReportData entity) {
 			super(entity);
 			this.stockCode = stockCode;
@@ -83,7 +94,7 @@ public class FinancialReportData extends HBaseTable {
 			this.season = season;
 		}
 
-		public Key(byte[] rowKey, FinancialReportData entity) {
+		public RowKey(byte[] rowKey, FinancialReportData entity) {
 			super(entity);
 			fromBytes(rowKey);
 		}

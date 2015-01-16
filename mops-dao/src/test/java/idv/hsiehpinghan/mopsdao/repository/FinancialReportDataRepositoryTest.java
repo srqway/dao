@@ -117,7 +117,7 @@ public class FinancialReportDataRepositoryTest {
 	}
 
 	private void generateRowKey(FinancialReportData entity) {
-		entity.new Key(stockCode, reportType, year, season, entity);
+		entity.new RowKey(stockCode, reportType, year, season, entity);
 	}
 
 	private void generateColumnFamily(FinancialReportData entity) {

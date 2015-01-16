@@ -3,7 +3,7 @@ package idv.hsiehpinghan.mopsdao.entity;
 import idv.hsiehpinghan.hbaseassistant.utility.HbaseEntityTestUtility;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily.IdQualifier;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily.JsonValue;
-import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.Key;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.RowKey;
 import idv.hsiehpinghan.mopsdao.utility.ResourceUtility;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Presentation;
@@ -26,7 +26,7 @@ public class FinancialReportPresentationTest {
 	public void toBytesFromBytes() throws Exception {
 		FinancialReportPresentation entity = new FinancialReportPresentation();
 		// Test row key.
-		Key key = entity.new Key(version, entity);
+		RowKey key = entity.new RowKey(version, entity);
 		HbaseEntityTestUtility.toBytesFromBytes(key);
 		// Test idQualifier.
 		IdQualifier idQualifier = entity.getJsonFamily().new IdQualifier(

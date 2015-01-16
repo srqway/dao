@@ -11,10 +11,21 @@ import java.util.Date;
 import java.util.Map.Entry;
 
 public class FinancialReportPresentation extends HBaseTable {
+	private RowKey rowKey;
 	private JsonFamily jsonFamily;
 
 	public FinancialReportPresentation() {
 		super();
+	}
+
+	@Override
+	public HBaseRowKey getRowKey() {
+		return rowKey;
+	}
+
+	@Override
+	public void setRowKey(HBaseRowKey rowKey) {
+		this.rowKey = (RowKey) rowKey;
 	}
 
 	public JsonFamily getJsonFamily() {
@@ -28,19 +39,19 @@ public class FinancialReportPresentation extends HBaseTable {
 		this.jsonFamily = jsonFamily;
 	}
 
-	public class Key extends HBaseRowKey {
+	public class RowKey extends HBaseRowKey {
 		private String taxonomyVersion;
 
-		public Key(FinancialReportPresentation table) {
+		public RowKey(FinancialReportPresentation table) {
 			super(table);
 		}
 
-		public Key(String taxonomyVersion, FinancialReportPresentation table) {
+		public RowKey(String taxonomyVersion, FinancialReportPresentation table) {
 			super(table);
 			this.taxonomyVersion = taxonomyVersion;
 		}
 
-		public Key(byte[] rowKey, FinancialReportPresentation table) {
+		public RowKey(byte[] rowKey, FinancialReportPresentation table) {
 			super(table);
 			fromBytes(rowKey);
 		}

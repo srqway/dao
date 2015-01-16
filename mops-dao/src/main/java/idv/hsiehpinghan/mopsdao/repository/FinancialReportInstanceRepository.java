@@ -6,7 +6,7 @@ import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily;
-import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.Key;
+import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.RowKey;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 import idv.hsiehpinghan.xbrlassistant.assistant.InstanceAssistant;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
@@ -124,7 +124,8 @@ public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
 
 	private void generateRowKey(FinancialReportInstance entity,
 			String stockCode, ReportType reportType, int year, int season) {
-		Key key = entity.new Key(stockCode, reportType, year, season, entity);
+		RowKey key = entity.new RowKey(stockCode, reportType, year, season,
+				entity);
 		entity.setRowKey(key);
 	}
 
