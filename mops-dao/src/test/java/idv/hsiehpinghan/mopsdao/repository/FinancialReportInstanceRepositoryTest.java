@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class FinancialReportInstanceRepositoryTest {
 	private FinancialReportInstanceRepository repository;
 	private InstanceAssistant instanceAssistant;
-	private XbrlTaxonomyVersion version;
+	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_CI_CR_2013_03_31;
 	private List<String> presentIds;
 	private String stockCode = "1101";
 	private ReportType reportType = ReportType.CONSOLIDATED_STATEMENT;
@@ -37,13 +37,22 @@ public class FinancialReportInstanceRepositoryTest {
 	private int season = 1;
 
 	@BeforeClass
-	public void beforeClass() {
+	public void beforeClass() throws Exception {
 		ApplicationContext applicationContext = TestngSuitSetting
 				.getApplicationContext();
-		presentIds = getPresentIds();
 		repository = applicationContext
 				.getBean(FinancialReportInstanceRepository.class);
+		dropAndCreateTable();
 		instanceAssistant = applicationContext.getBean(InstanceAssistant.class);
+		presentIds = getPresentIds();
+	}
+
+	private void dropAndCreateTable() throws Exception {
+		String tableName = repository.getTargetTableName();
+		if (repository.isTableExists(tableName)) {
+			repository.dropTable(tableName);
+			repository.createTable(repository.getTargetTableClass());
+		}
 	}
 
 	// @AfterClass
