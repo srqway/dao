@@ -3,6 +3,7 @@ package idv.hsiehpinghan.mopsdao.repository;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
+import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
@@ -21,8 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Repository
-public class FinancialReportPresentationRepository extends
-		MopsDaoRepositoryBase {
+public class FinancialReportPresentationRepository extends RepositoryBase {
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 	@Autowired

@@ -3,6 +3,7 @@ package idv.hsiehpinghan.mopsdao.repository;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
+import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportData;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class FinancialReportDataRepository extends MopsDaoRepositoryBase {
+public class FinancialReportDataRepository extends RepositoryBase {
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 

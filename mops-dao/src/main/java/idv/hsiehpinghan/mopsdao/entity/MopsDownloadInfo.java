@@ -17,6 +17,7 @@ import java.util.TreeSet;
 public class MopsDownloadInfo extends HBaseTable {
 	private static final String COMMA = StringUtility.COMMA_STRING;
 	private RowKey rowKey;
+	private StockCodeFamily stockCodeFamily;
 	private ReportTypeFamily reportTypeFamily;
 	private YearFamily yearFamily;
 	private SeasonFamily seasonFamily;
@@ -33,6 +34,13 @@ public class MopsDownloadInfo extends HBaseTable {
 	@Override
 	public void setRowKey(HBaseRowKey rowKey) {
 		this.rowKey = (RowKey) rowKey;
+	}
+
+	public StockCodeFamily getStockCodeFamily() {
+		if (stockCodeFamily == null) {
+			stockCodeFamily = new StockCodeFamily(this);
+		}
+		return stockCodeFamily;
 	}
 
 	public ReportTypeFamily getReportTypeFamily() {
@@ -92,6 +100,139 @@ public class MopsDownloadInfo extends HBaseTable {
 		}
 	}
 
+	public class StockCodeFamily extends HBaseColumnFamily {
+		private StockCodeFamily(MopsDownloadInfo table) {
+			super(table);
+		}
+
+		public Set<Entry<Date, HBaseValue>> getVersionValueSet(String type) {
+			StockCodeQualifier qual = new StockCodeQualifier(type);
+			return getVersionValueSet(qual);
+		}
+
+		public void add(String type, Date date, Set<String> stockCodes) {
+			HBaseColumnQualifier qualifier = this.new StockCodeQualifier(type);
+			StockCodeValue val = this.new StockCodeValue(stockCodes);
+			add(qualifier, date, val);
+		}
+
+		public void addStockCode(String type, Date date, String stockCode) {
+			HBaseColumnQualifier qualifier = this.new StockCodeQualifier(type);
+			StockCodeValue value = (StockCodeValue) this
+					.getLatestValue(qualifier);
+			if (value == null) {
+				value = this.new StockCodeValue(new TreeSet<String>());
+			}
+			value.addStockCode(stockCode);
+			add(qualifier, date, value);
+		}
+
+		public StockCodeValue getLatestValue(String type) {
+			HBaseColumnQualifier qualifier = this.new StockCodeQualifier(type);
+			return (StockCodeValue) getLatestValue(qualifier);
+		}
+
+		public class StockCodeQualifier extends HBaseColumnQualifier {
+			public static final String ALL = "ALL";
+			private String type;
+
+			public StockCodeQualifier() {
+				super();
+			}
+
+			public StockCodeQualifier(String type) {
+				super();
+				this.type = type;
+			}
+
+			public StockCodeQualifier(byte[] typeBytes) {
+				super();
+				fromBytes(typeBytes);
+			}
+
+			@Override
+			public byte[] toBytes() {
+				return ByteConvertUtility.toBytes(type);
+			}
+
+			@Override
+			public void fromBytes(byte[] bytes) {
+				this.type = ByteConvertUtility.getStringFromBytes(bytes);
+			}
+
+			public String getType() {
+				return type;
+			}
+
+			public void setType(String type) {
+				this.type = type;
+			}
+
+		}
+
+		public class StockCodeValue extends HBaseValue {
+			private Set<String> stockCodes;
+
+			public StockCodeValue() {
+				super();
+			}
+
+			public StockCodeValue(Set<String> stockCodes) {
+				super();
+				this.stockCodes = stockCodes;
+			}
+
+			public StockCodeValue(byte[] stockCodeBytes) {
+				super();
+				fromBytes(stockCodeBytes);
+			}
+
+			public Set<String> getStockCodes() {
+				return stockCodes;
+			}
+
+			public void setStockCodes(Set<String> stockCodes) {
+				this.stockCodes = stockCodes;
+			}
+
+			public void addStockCode(String stockCode) {
+				this.stockCodes.add(stockCode);
+			}
+
+			@Override
+			public byte[] toBytes() {
+				StringBuilder sb = new StringBuilder();
+				for (String stockCode : stockCodes) {
+					sb.append(stockCode);
+					sb.append(COMMA);
+				}
+				return ByteConvertUtility.toBytes(sb.toString());
+			}
+
+			@Override
+			public void fromBytes(byte[] bytes) {
+				String totalStr = ByteConvertUtility.getStringFromBytes(bytes);
+				String[] strs = totalStr.split(COMMA);
+				Set<String> stockCodes = new TreeSet<String>();
+				for (int i = 0; i < strs.length; i++) {
+					stockCodes.add(strs[i]);
+				}
+				this.stockCodes = stockCodes;
+			}
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(
+				byte[] qualifierBytes) {
+			return this.new StockCodeQualifier(qualifierBytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] valueBytes) {
+			return this.new StockCodeValue(valueBytes);
+		}
+	}
+
 	public class ReportTypeFamily extends HBaseColumnFamily {
 		private ReportTypeFamily(MopsDownloadInfo table) {
 			super(table);
@@ -107,6 +248,25 @@ public class MopsDownloadInfo extends HBaseTable {
 					stockCode);
 			ReportTypeValue val = this.new ReportTypeValue(reportTypes);
 			add(qualifier, date, val);
+		}
+
+		public void addReportType(String stockCode, Date date,
+				ReportType reportType) {
+			HBaseColumnQualifier qualifier = this.new ReportTypeQualifier(
+					stockCode);
+			ReportTypeValue value = (ReportTypeValue) this
+					.getLatestValue(qualifier);
+			if (value == null) {
+				value = this.new ReportTypeValue(new TreeSet<ReportType>());
+			}
+			value.addReportType(reportType);
+			add(qualifier, date, value);
+		}
+
+		public ReportTypeValue getLatestValue(String stockCode) {
+			HBaseColumnQualifier qualifier = this.new ReportTypeQualifier(
+					stockCode);
+			return (ReportTypeValue) getLatestValue(qualifier);
 		}
 
 		public class ReportTypeQualifier extends HBaseColumnQualifier {
@@ -171,6 +331,10 @@ public class MopsDownloadInfo extends HBaseTable {
 				this.reportTypes = reportTypes;
 			}
 
+			public void addReportType(ReportType reportType) {
+				this.reportTypes.add(reportType);
+			}
+
 			@Override
 			public byte[] toBytes() {
 				StringBuilder sb = new StringBuilder();
@@ -219,6 +383,21 @@ public class MopsDownloadInfo extends HBaseTable {
 			HBaseColumnQualifier qualifier = this.new YearQualifier(stockCode);
 			YearValue val = this.new YearValue(years);
 			add(qualifier, date, val);
+		}
+
+		public void addYear(String stockCode, Date date, int year) {
+			HBaseColumnQualifier qualifier = this.new YearQualifier(stockCode);
+			YearValue value = (YearValue) this.getLatestValue(qualifier);
+			if (value == null) {
+				value = this.new YearValue(new TreeSet<Integer>());
+			}
+			value.addYear(year);
+			add(qualifier, date, value);
+		}
+
+		public YearValue getLatestValue(String stockCode) {
+			HBaseColumnQualifier qualifier = this.new YearQualifier(stockCode);
+			return (YearValue) getLatestValue(qualifier);
 		}
 
 		public class YearQualifier extends HBaseColumnQualifier {
@@ -283,6 +462,10 @@ public class MopsDownloadInfo extends HBaseTable {
 				this.years = years;
 			}
 
+			public void addYear(int year) {
+				this.years.add(year);
+			}
+
 			@Override
 			public byte[] toBytes() {
 				StringBuilder sb = new StringBuilder();
@@ -331,6 +514,21 @@ public class MopsDownloadInfo extends HBaseTable {
 			HBaseColumnQualifier qualifier = this.new SeasonQualifier(stockCode);
 			SeasonValue val = this.new SeasonValue(years);
 			add(qualifier, date, val);
+		}
+
+		public void addSeason(String stockCode, Date date, int season) {
+			HBaseColumnQualifier qualifier = this.new SeasonQualifier(stockCode);
+			SeasonValue value = (SeasonValue) this.getLatestValue(qualifier);
+			if (value == null) {
+				value = this.new SeasonValue(new TreeSet<Integer>());
+			}
+			value.addSeason(season);
+			add(qualifier, date, value);
+		}
+
+		public SeasonValue getLatestValue(String stockCode) {
+			HBaseColumnQualifier qualifier = this.new SeasonQualifier(stockCode);
+			return (SeasonValue) getLatestValue(qualifier);
 		}
 
 		public class SeasonQualifier extends HBaseColumnQualifier {
@@ -393,6 +591,10 @@ public class MopsDownloadInfo extends HBaseTable {
 
 			public void setSeasons(Set<Integer> seasons) {
 				this.seasons = seasons;
+			}
+
+			public void addSeason(int season) {
+				this.seasons.add(season);
 			}
 
 			@Override

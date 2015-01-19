@@ -4,6 +4,7 @@ import idv.hsiehpinghan.datatypeutility.utility.ByteUtility;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
+import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily;
@@ -31,7 +32,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Repository
-public class FinancialReportInstanceRepository extends MopsDaoRepositoryBase {
+public class FinancialReportInstanceRepository extends RepositoryBase {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private final String DATE_PATTERN = "yyyyMMdd";
 	@Autowired

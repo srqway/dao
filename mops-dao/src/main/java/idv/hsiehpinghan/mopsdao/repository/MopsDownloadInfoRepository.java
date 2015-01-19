@@ -3,6 +3,7 @@ package idv.hsiehpinghan.mopsdao.repository;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
+import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MopsDownloadInfoRepository extends MopsDaoRepositoryBase {
+public class MopsDownloadInfoRepository extends RepositoryBase {
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 

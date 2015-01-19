@@ -6,6 +6,8 @@ import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo.ReportTypeFamily.ReportT
 import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo.RowKey;
 import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo.SeasonFamily.SeasonQualifier;
 import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo.SeasonFamily.SeasonValue;
+import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo.StockCodeFamily.StockCodeQualifier;
+import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo.StockCodeFamily.StockCodeValue;
 import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo.YearFamily.YearQualifier;
 import idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfo.YearFamily.YearValue;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
@@ -19,9 +21,11 @@ import org.testng.annotations.Test;
 public class MopsDownloadInfoTest {
 	private String tableName = FinancialReportInstanceRepository.class
 			.getSimpleName();
+	private String allStockCodeType = MopsDownloadInfo.StockCodeFamily.StockCodeQualifier.ALL;
 	private String allReportType = MopsDownloadInfo.ReportTypeFamily.ReportTypeQualifier.ALL;
 	private String allYear = MopsDownloadInfo.YearFamily.YearQualifier.ALL;
 	private String allSeason = MopsDownloadInfo.SeasonFamily.SeasonQualifier.ALL;
+	private Set<String> stockCodes = generateStockCodes();
 	private Set<ReportType> reportTypes = generateReportTypes();
 	private Set<Integer> years = generateYears();
 	private Set<Integer> seasons = generateSesons();
@@ -32,6 +36,14 @@ public class MopsDownloadInfoTest {
 		// Test row key.
 		RowKey key = entity.new RowKey(tableName, entity);
 		HbaseEntityTestUtility.toBytesFromBytes(key);
+		// Test stockCodeQualifier.
+		StockCodeQualifier stockCodeQualifier = entity.getStockCodeFamily().new StockCodeQualifier(
+				allStockCodeType);
+		HbaseEntityTestUtility.toBytesFromBytes(stockCodeQualifier);
+		// Test stockCodeValue.
+		StockCodeValue stockCodeValue = entity.getStockCodeFamily().new StockCodeValue(
+				stockCodes);
+		HbaseEntityTestUtility.toBytesFromBytes(stockCodeValue);
 		// Test reportTypeQualifier.
 		ReportTypeQualifier reportTypeQualifier = entity.getReportTypeFamily().new ReportTypeQualifier(
 				allReportType);
@@ -55,6 +67,13 @@ public class MopsDownloadInfoTest {
 		SeasonValue seasonValue = entity.getSeasonFamily().new SeasonValue(
 				seasons);
 		HbaseEntityTestUtility.toBytesFromBytes(seasonValue);
+	}
+
+	private Set<String> generateStockCodes() {
+		Set<String> stockCodes = new TreeSet<String>();
+		stockCodes.add("1101");
+		stockCodes.add("2330");
+		return stockCodes;
 	}
 
 	private Set<ReportType> generateReportTypes() {
