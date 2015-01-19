@@ -42,6 +42,15 @@ public class FinancialReportDataRepository extends RepositoryBase {
 		return (FinancialReportData) hbaseAssistant.get(rowKey);
 	}
 
+	public boolean exists(String stockCode, ReportType reportType, int year,
+			int season) throws NoSuchFieldException, SecurityException,
+			IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, InvocationTargetException,
+			InstantiationException, IOException {
+		HBaseRowKey rowKey = getRowKey(stockCode, reportType, year, season);
+		return exists(rowKey);
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<FinancialReportData> scan(Filter filter) {
 		return (List<FinancialReportData>) (Object) hbaseAssistant.scan(
