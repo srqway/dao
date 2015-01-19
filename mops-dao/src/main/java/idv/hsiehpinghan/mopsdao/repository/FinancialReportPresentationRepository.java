@@ -5,7 +5,6 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily;
-import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.RowKey;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 
 import java.io.IOException;
@@ -142,8 +141,7 @@ public class FinancialReportPresentationRepository extends
 
 	private void generateRowKey(FinancialReportPresentation entity,
 			XbrlTaxonomyVersion version) {
-		RowKey key = entity.new RowKey(version.toString(), entity);
-		entity.setRowKey(key);
+		entity.new RowKey(version.toString(), entity);
 	}
 
 	private void generateColumnFamily(FinancialReportPresentation entity,

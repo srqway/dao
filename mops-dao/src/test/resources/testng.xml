@@ -13,8 +13,10 @@
 <!-- 			<class -->
 <!-- 				name="idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentationTest" /> -->
 <!-- 			<class name="idv.hsiehpinghan.mopsdao.entity.FinancialReportInstanceTest" /> -->
-			<class
-				name="idv.hsiehpinghan.mopsdao.repository.FinancialReportDataRepositoryTest" />
+<!-- 			<class -->
+<!-- 				name="idv.hsiehpinghan.mopsdao.repository.FinancialReportDataRepositoryTest" /> -->
+<class
+				name="idv.hsiehpinghan.mopsdao.entity.MopsDownloadInfoTest" />
 		</classes>
 	</test>
 </suite>
