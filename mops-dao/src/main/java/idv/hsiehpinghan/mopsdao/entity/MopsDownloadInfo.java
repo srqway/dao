@@ -145,9 +145,9 @@ public class MopsDownloadInfo extends HBaseTable {
 				this.type = type;
 			}
 
-			public StockCodeQualifier(byte[] typeBytes) {
+			public StockCodeQualifier(byte[] bytes) {
 				super();
-				fromBytes(typeBytes);
+				fromBytes(bytes);
 			}
 
 			@Override
@@ -282,9 +282,9 @@ public class MopsDownloadInfo extends HBaseTable {
 				this.stockCode = stockCode;
 			}
 
-			public ReportTypeQualifier(byte[] stockCodeBytes) {
+			public ReportTypeQualifier(byte[] bytes) {
 				super();
-				fromBytes(stockCodeBytes);
+				fromBytes(bytes);
 			}
 
 			@Override
@@ -413,9 +413,9 @@ public class MopsDownloadInfo extends HBaseTable {
 				this.stockCode = stockCode;
 			}
 
-			public YearQualifier(byte[] stockCodeBytes) {
+			public YearQualifier(byte[] bytes) {
 				super();
-				fromBytes(stockCodeBytes);
+				fromBytes(bytes);
 			}
 
 			@Override
@@ -544,9 +544,9 @@ public class MopsDownloadInfo extends HBaseTable {
 				this.stockCode = stockCode;
 			}
 
-			public SeasonQualifier(byte[] stockCodeBytes) {
+			public SeasonQualifier(byte[] bytes) {
 				super();
-				fromBytes(stockCodeBytes);
+				fromBytes(bytes);
 			}
 
 			@Override

@@ -32,11 +32,14 @@ public class FinancialReportDataRepositoryTest {
 	private String instantEleId = "tifrs-bsci-ci_NoncurrentFinancialAssetsAtCost";
 	private BigDecimal durationValue = new BigDecimal("2490393000");
 	private BigDecimal instantValue = new BigDecimal("616490000");
-	private String durationName = "durationName";
-	private String instantName = "instantName";
+	private BigDecimal value = new BigDecimal("88880000");
+	// private String durationName = "durationName";
+	// private String instantName = "instantName";
+	private String name = "ratioTest";
 	private Date startDate;
 	private Date endDate;
 	private Date instant;
+	private Date date;
 
 	@BeforeClass
 	public void beforeClass() throws Exception {
@@ -48,6 +51,7 @@ public class FinancialReportDataRepositoryTest {
 		startDate = DateUtils.parseDate("20130101", "yyyyMMdd");
 		endDate = DateUtils.parseDate("20130331", "yyyyMMdd");
 		instant = DateUtils.parseDate("20130331", "yyyyMMdd");
+		date = DateUtils.parseDate("20140331", "yyyyMMdd");
 	}
 
 	@Test
@@ -70,40 +74,32 @@ public class FinancialReportDataRepositoryTest {
 	private void testGrowthFamily(FinancialReportData entity) {
 		GrowthFamily growthFamily = entity.getGrowthFamily();
 		// Test duration
-		GrowthValue durValue = growthFamily.getValue(durationEleId,
+		GrowthValue durValue = growthFamily.getLatestValue(durationEleId,
 				Instance.Attribute.DURATION, startDate, endDate);
 		Assert.assertEquals(durationValue.toString(), durValue.getValue()
 				.toString());
 		// Test instant.
-		GrowthValue insValue = growthFamily.getValue(instantEleId,
+		GrowthValue insValue = growthFamily.getLatestValue(instantEleId,
 				Instance.Attribute.INSTANT, instant);
 		Assert.assertEquals(instantValue.toString(), insValue.getValue()
-				.toString()); // TODO
+				.toString());
 	}
 
 	private void testRatioFamily(FinancialReportData entity) {
 		RatioFamily ratioFamily = entity.getRatioFamily();
-		// Test duration
-		RatioValue durValue = ratioFamily.getValue(durationName,
-				Instance.Attribute.DURATION, startDate, endDate);
-		Assert.assertEquals(durationValue.toString(), durValue.getValue()
-				.toString());
-		// Test instant.
-		RatioValue insValue = ratioFamily.getValue(instantName,
-				Instance.Attribute.INSTANT, instant);
-		Assert.assertEquals(instantValue.toString(), insValue.getValue()
-				.toString());
+		RatioValue value = ratioFamily.getLatestValue(name, date);
+		Assert.assertEquals(this.value.toString(), value.getValue().toString());
 	}
 
 	private void testItemFamily(FinancialReportData entity) {
 		ItemFamily itemFamily = entity.getItemFamily();
 		// Test duration
-		ItemValue durValue = itemFamily.getValue(durationEleId,
+		ItemValue durValue = itemFamily.getLatestValue(durationEleId,
 				Instance.Attribute.DURATION, startDate, endDate);
 		Assert.assertEquals(durationValue.toString(), durValue.getValue()
 				.toString());
 		// Test instant.
-		ItemValue insValue = itemFamily.getValue(instantEleId,
+		ItemValue insValue = itemFamily.getLatestValue(instantEleId,
 				Instance.Attribute.INSTANT, instant);
 		Assert.assertEquals(instantValue.toString(), insValue.getValue()
 				.toString());
@@ -134,17 +130,13 @@ public class FinancialReportDataRepositoryTest {
 				startDate, endDate, durationValue);
 		// Test instant.
 		growthFamily.add(instantEleId, date, Instance.Attribute.INSTANT,
-				instant, instantValue); // TODO
+				instant, instantValue);
 	}
 
-	private void generateRatioFamily(FinancialReportData entity, Date date) {
+	private void generateRatioFamily(FinancialReportData entity, Date version) {
 		RatioFamily ratioFamily = entity.getRatioFamily();
 		// Test duration.
-		ratioFamily.add(durationName, Instance.Attribute.DURATION, startDate,
-				endDate, date, durationValue);
-		// Test instant.
-		ratioFamily.add(instantName, Instance.Attribute.INSTANT, instant, date,
-				instantValue);
+		ratioFamily.add(name, date, version, value);
 	}
 
 	private void generateItemFamily(FinancialReportData entity, Date date) {

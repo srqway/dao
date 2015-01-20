@@ -99,9 +99,9 @@ public class FinancialReportPresentation extends HBaseTable {
 				this.presentationId = presentationId;
 			}
 
-			public IdQualifier(byte[] presentationIdBytes) {
+			public IdQualifier(byte[] bytes) {
 				super();
-				fromBytes(presentationIdBytes);
+				fromBytes(bytes);
 			}
 
 			@Override

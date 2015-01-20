@@ -42,7 +42,7 @@ public class FinancialReportInstanceRepositoryTest {
 				.getApplicationContext();
 		repository = applicationContext
 				.getBean(FinancialReportInstanceRepository.class);
-		dropAndCreateTable();
+		// dropAndCreateTable();
 		instanceAssistant = applicationContext.getBean(InstanceAssistant.class);
 		presentIds = getPresentIds();
 	}

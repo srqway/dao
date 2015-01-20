@@ -192,9 +192,9 @@ public class FinancialReportInstance extends HBaseTable {
 				this.infoTitle = infoTitle;
 			}
 
-			public InfoQualifier(byte[] infoTitleBytes) {
+			public InfoQualifier(byte[] bytes) {
 				super();
-				fromBytes(infoTitleBytes);
+				fromBytes(bytes);
 			}
 
 			@Override
@@ -360,9 +360,9 @@ public class FinancialReportInstance extends HBaseTable {
 				this.endDate = endDate;
 			}
 
-			public InstanceQualifier(byte[] elementIdBytes) {
+			public InstanceQualifier(byte[] bytes) {
 				super();
-				fromBytes(elementIdBytes);
+				fromBytes(bytes);
 			}
 
 			@Override
