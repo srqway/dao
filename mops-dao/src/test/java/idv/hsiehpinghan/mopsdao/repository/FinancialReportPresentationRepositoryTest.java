@@ -2,7 +2,7 @@ package idv.hsiehpinghan.mopsdao.repository;
 
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation;
 import idv.hsiehpinghan.mopsdao.suit.TestngSuitSetting;
-import idv.hsiehpinghan.mopsdao.utility.ResourceUtility;
+import idv.hsiehpinghan.testutility.utility.SystemResourceUtility;
 import idv.hsiehpinghan.xbrlassistant.assistant.TaxonomyAssistant;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Presentation;
@@ -60,7 +60,7 @@ public class FinancialReportPresentationRepositoryTest {
 				.getJsonFamily().getValue(Presentation.Id.BalanceSheet)
 				.getJson());
 		JsonNode blanceSheetSample = objectMapper
-				.readTree(ResourceUtility
+				.readTree(SystemResourceUtility
 						.getFileResource("sample/presentation/TIFRS_CI_CR_2014_03_31_BalanceSheet.json"));
 		Assert.assertEquals(balanceSheetNode.toString(),
 				blanceSheetSample.toString());
@@ -69,7 +69,7 @@ public class FinancialReportPresentationRepositoryTest {
 				.getValue(Presentation.Id.StatementOfComprehensiveIncome)
 				.getJson());
 		JsonNode incomeSample = objectMapper
-				.readTree(ResourceUtility
+				.readTree(SystemResourceUtility
 						.getFileResource("sample/presentation/TIFRS_CI_CR_2014_03_31_StatementOfComprehensiveIncome.json"));
 		Assert.assertEquals(incomeNode.toString(), incomeSample.toString());
 
@@ -77,7 +77,7 @@ public class FinancialReportPresentationRepositoryTest {
 		JsonNode cashFlowNode = objectMapper.readTree(entity.getJsonFamily()
 				.getValue(Presentation.Id.StatementOfCashFlows).getJson());
 		JsonNode cashFlowSample = objectMapper
-				.readTree(ResourceUtility
+				.readTree(SystemResourceUtility
 						.getFileResource("sample/presentation/TIFRS_CI_CR_2014_03_31_StatementOfCashFlows.json"));
 		Assert.assertEquals(cashFlowNode.toString(), cashFlowSample.toString());
 
@@ -87,7 +87,7 @@ public class FinancialReportPresentationRepositoryTest {
 						.getValue(Presentation.Id.StatementOfChangesInEquity)
 						.getJson());
 		JsonNode equityChangeSample = objectMapper
-				.readTree(ResourceUtility
+				.readTree(SystemResourceUtility
 						.getFileResource("sample/presentation/TIFRS_CI_CR_2014_03_31_StatementOfChangesInEquity.json"));
 		Assert.assertEquals(equityChangeNode.toString(),
 				equityChangeSample.toString());

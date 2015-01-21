@@ -4,7 +4,7 @@ import idv.hsiehpinghan.hbaseassistant.utility.HbaseEntityTestUtility;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily.IdQualifier;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.JsonFamily.JsonValue;
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportPresentation.RowKey;
-import idv.hsiehpinghan.mopsdao.utility.ResourceUtility;
+import idv.hsiehpinghan.testutility.utility.SystemResourceUtility;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Presentation;
 
@@ -33,7 +33,8 @@ public class FinancialReportPresentationTest {
 				Presentation.Id.BalanceSheet);
 		HbaseEntityTestUtility.toBytesFromBytes(idQualifier);
 		// Test JsonValue.
-		File file = ResourceUtility
+
+		File file = SystemResourceUtility
 				.getFileResource("sample/presentation/TIFRS_CI_CR_2014_03_31_BalanceSheet.json");
 		String json = FileUtils.readFileToString(file);
 		JsonValue jsonValue = entity.getJsonFamily().new JsonValue(json);

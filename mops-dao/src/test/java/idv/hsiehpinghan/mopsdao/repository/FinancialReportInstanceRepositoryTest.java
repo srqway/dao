@@ -5,7 +5,7 @@ import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InfoFamily.InfoVa
 import idv.hsiehpinghan.mopsdao.entity.FinancialReportInstance.InstanceFamily.InstanceValue;
 import idv.hsiehpinghan.mopsdao.enumeration.ReportType;
 import idv.hsiehpinghan.mopsdao.suit.TestngSuitSetting;
-import idv.hsiehpinghan.mopsdao.utility.ResourceUtility;
+import idv.hsiehpinghan.testutility.utility.SystemResourceUtility;
 import idv.hsiehpinghan.xbrlassistant.assistant.InstanceAssistant;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
@@ -42,27 +42,14 @@ public class FinancialReportInstanceRepositoryTest {
 				.getApplicationContext();
 		repository = applicationContext
 				.getBean(FinancialReportInstanceRepository.class);
-		// dropAndCreateTable();
+		dropAndCreateTable();
 		instanceAssistant = applicationContext.getBean(InstanceAssistant.class);
 		presentIds = getPresentIds();
 	}
 
-	private void dropAndCreateTable() throws Exception {
-		String tableName = repository.getTargetTableName();
-		if (repository.isTableExists(tableName)) {
-			repository.dropTable(tableName);
-			repository.createTable(repository.getTargetTableClass());
-		}
-	}
-
-	// @AfterClass
-	public void afterClass() throws Exception {
-		repository.dropTable(repository.getTargetTableName());
-	}
-
 	@Test
 	public void put() throws Exception {
-		File instanceFile = ResourceUtility
+		File instanceFile = SystemResourceUtility
 				.getFileResource("xbrl-instance/2013-01-sii-01-C/tifrs-fr0-m1-ci-cr-1101-2013Q1.xml");
 		ObjectNode instanceNode = instanceAssistant.getInstanceJson(
 				instanceFile, presentIds);
@@ -78,6 +65,14 @@ public class FinancialReportInstanceRepositoryTest {
 				year, season);
 		testInfoFamily(entity);
 		testInstanceFamily(entity);
+	}
+
+	private void dropAndCreateTable() throws Exception {
+		String tableName = repository.getTargetTableName();
+		if (repository.isTableExists(tableName)) {
+			repository.dropTable(tableName);
+			repository.createTable(repository.getTargetTableClass());
+		}
 	}
 
 	private void testInfoFamily(FinancialReportInstance entity) {
@@ -133,9 +128,4 @@ public class FinancialReportInstanceRepositoryTest {
 		ids.add(Presentation.Id.StatementOfChangesInEquity);
 		return ids;
 	}
-	// private JsonNode getInstanceNode() {
-	// return objectMapper
-	// .readTree(ResourceUtility
-	// .getFileResource("sample/instance/tifrs-fr0-m1-ci-cr-1101-2013Q1_Instance.json"));
-	// }
 }
