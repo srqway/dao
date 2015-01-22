@@ -157,16 +157,14 @@ public class FinancialReportInstance extends HBaseTable {
 			super(table);
 		}
 
-		public InfoValue getValue(String presentationId, String periodType) {
-			return getValue(presentationId + SPACE + periodType);
+		public InfoValue getLatestValue(String presentationId, String periodType) {
+
+			return getLatestValue(presentationId + periodType);
 		}
 
-		public InfoValue getValue(String infoTitle) {
+		public InfoValue getLatestValue(String infoTitle) {
 			InfoQualifier qual = new InfoQualifier(infoTitle);
-			for (Entry<Date, HBaseValue> ent : getVersionValueSet(qual)) {
-				return (InfoValue) ent.getValue();
-			}
-			return null;
+			return (InfoValue) super.getLatestValue(qual);
 		}
 
 		public Set<Entry<Date, HBaseValue>> getVersionValueSet(String infoTitle) {

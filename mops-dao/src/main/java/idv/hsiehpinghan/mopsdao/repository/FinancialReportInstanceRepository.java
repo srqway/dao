@@ -1,6 +1,5 @@
 package idv.hsiehpinghan.mopsdao.repository;
 
-import idv.hsiehpinghan.datatypeutility.utility.ByteUtility;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
@@ -33,7 +32,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Repository
 public class FinancialReportInstanceRepository extends RepositoryBase {
-	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private final String DATE_PATTERN = "yyyyMMdd";
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
@@ -192,8 +190,8 @@ public class FinancialReportInstanceRepository extends RepositoryBase {
 				for (JsonNode context : instantArrNode) {
 					sb.append(context.textValue() + ",");
 				}
-				infoFamily.add(presentId + SPACE + Instance.Attribute.INSTANT,
-						date, sb.toString());
+				infoFamily.add(presentId + Instance.Attribute.INSTANT, date,
+						sb.toString());
 			}
 			ArrayNode durationArrNode = (ArrayNode) presentIdNode
 					.get(Instance.Attribute.DURATION);
@@ -202,8 +200,8 @@ public class FinancialReportInstanceRepository extends RepositoryBase {
 				for (JsonNode context : durationArrNode) {
 					sb.append(context.textValue() + ",");
 				}
-				infoFamily.add(presentId + SPACE + Instance.Attribute.DURATION,
-						date, sb.toString());
+				infoFamily.add(presentId + Instance.Attribute.DURATION, date,
+						sb.toString());
 			}
 		}
 	}

@@ -78,15 +78,16 @@ public class FinancialReportInstanceRepositoryTest {
 	private void testInfoFamily(FinancialReportInstance entity) {
 		InfoValue infoValue;
 		// Test version.
-		infoValue = entity.getInfoFamily().getValue(InstanceAssistant.VERSION);
+		infoValue = entity.getInfoFamily().getLatestValue(
+				InstanceAssistant.VERSION);
 		Assert.assertEquals(version.name(), infoValue.getInfoContent());
 		// Test context.
-		infoValue = entity.getInfoFamily().getValue(
+		infoValue = entity.getInfoFamily().getLatestValue(
 				Presentation.Id.StatementOfCashFlows,
 				Instance.Attribute.INSTANT);
 		Assert.assertEquals("20120101,20120331,20121231,20130331,",
 				infoValue.getInfoContent());
-		infoValue = entity.getInfoFamily().getValue(
+		infoValue = entity.getInfoFamily().getLatestValue(
 				Presentation.Id.StatementOfCashFlows,
 				Instance.Attribute.DURATION);
 		Assert.assertEquals("20120101~20120331,20130101~20130331,",
