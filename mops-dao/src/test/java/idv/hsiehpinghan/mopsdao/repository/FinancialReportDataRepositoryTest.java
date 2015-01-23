@@ -33,8 +33,6 @@ public class FinancialReportDataRepositoryTest {
 	private BigDecimal durationValue = new BigDecimal("2490393000");
 	private BigDecimal instantValue = new BigDecimal("616490000");
 	private BigDecimal value = new BigDecimal("88880000");
-	// private String durationName = "durationName";
-	// private String instantName = "instantName";
 	private String name = "ratioTest";
 	private Date startDate;
 	private Date endDate;

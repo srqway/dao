@@ -84,11 +84,6 @@ public class FinancialReportInstanceRepositoryTest {
 		// Test context.
 		infoValue = entity.getInfoFamily().getLatestValue(
 				Presentation.Id.StatementOfCashFlows,
-				Instance.Attribute.INSTANT);
-		Assert.assertEquals("20120101,20120331,20121231,20130331,",
-				infoValue.getInfoContent());
-		infoValue = entity.getInfoFamily().getLatestValue(
-				Presentation.Id.StatementOfCashFlows,
 				Instance.Attribute.DURATION);
 		Assert.assertEquals("20120101~20120331,20130101~20130331,",
 				infoValue.getInfoContent());
@@ -105,8 +100,9 @@ public class FinancialReportInstanceRepositoryTest {
 		String elementId = "tifrs-SCF_ShareOfLossProfitOfAssociatesAndJointVenturesAccountedForUsingEquityMethod";
 		Date startDate = DateUtils.parseDate("20130101", "yyyyMMdd");
 		Date endDate = DateUtils.parseDate("20130331", "yyyyMMdd");
-		InstanceValue instanceValue = entity.getInstanceFamily().getValue(
-				elementId, Instance.Attribute.DURATION, startDate, endDate);
+		InstanceValue instanceValue = entity.getInstanceFamily()
+				.getLatestValue(elementId, Instance.Attribute.DURATION,
+						startDate, endDate);
 		Assert.assertEquals("TWD", instanceValue.getUnit());
 		Assert.assertEquals("-151905000", instanceValue.getValue().toString());
 	}
@@ -115,8 +111,8 @@ public class FinancialReportInstanceRepositoryTest {
 			throws ParseException {
 		String elementId = "tifrs-bsci-ci_GainsLossesOnEffectivePortionOfCashFlowHedges";
 		Date instant = DateUtils.parseDate("20120101", "yyyyMMdd");
-		InstanceValue instanceValue = entity.getInstanceFamily().getValue(
-				elementId, Instance.Attribute.INSTANT, instant);
+		InstanceValue instanceValue = entity.getInstanceFamily()
+				.getLatestValue(elementId, Instance.Attribute.INSTANT, instant);
 		Assert.assertEquals("TWD", instanceValue.getUnit());
 		Assert.assertEquals("-34373000", instanceValue.getValue().toString());
 	}

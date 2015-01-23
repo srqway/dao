@@ -158,7 +158,6 @@ public class FinancialReportInstance extends HBaseTable {
 		}
 
 		public InfoValue getLatestValue(String presentationId, String periodType) {
-
 			return getLatestValue(presentationId + periodType);
 		}
 
@@ -267,18 +266,18 @@ public class FinancialReportInstance extends HBaseTable {
 			super(table);
 		}
 
-		public InstanceValue getValue(String elementId, String periodType,
-				Date instant) {
+		public InstanceValue getLatestValue(String elementId,
+				String periodType, Date instant) {
 			InstanceQualifier qual = this.new InstanceQualifier(elementId,
 					periodType, instant);
-			return getValue(qual);
+			return (InstanceValue) super.getLatestValue(qual);
 		}
 
-		public InstanceValue getValue(String elementId, String periodType,
-				Date startDate, Date endDate) {
+		public InstanceValue getLatestValue(String elementId,
+				String periodType, Date startDate, Date endDate) {
 			InstanceQualifier qual = this.new InstanceQualifier(elementId,
 					periodType, startDate, endDate);
-			return getValue(qual);
+			return (InstanceValue) getLatestValue(qual);
 		}
 
 		public void add(String elementId, Date date, String periodType,
@@ -299,13 +298,6 @@ public class FinancialReportInstance extends HBaseTable {
 				String unit, BigDecimal value) {
 			InstanceValue val = this.new InstanceValue(unit, value);
 			add(qualifier, date, val);
-		}
-
-		private InstanceValue getValue(InstanceQualifier qual) {
-			for (Entry<Date, HBaseValue> verEnt : getVersionValueSet(qual)) {
-				return (InstanceValue) verEnt.getValue();
-			}
-			return null;
 		}
 
 		public class InstanceQualifier extends HBaseColumnQualifier {
