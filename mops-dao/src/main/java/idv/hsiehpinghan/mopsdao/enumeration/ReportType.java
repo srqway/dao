@@ -1,7 +1,8 @@
 package idv.hsiehpinghan.mopsdao.enumeration;
 
 public enum ReportType {
-	CONSOLIDATED_STATEMENT("cr"), INDIVIDUAL_STATEMENT("ir");
+	CONSOLIDATED_STATEMENT("cr"), INDIVIDUAL_STATEMENT("ir"), ENTERPRISE_STATEMENT(
+			"er");
 
 	private String reportTypeCode;
 
