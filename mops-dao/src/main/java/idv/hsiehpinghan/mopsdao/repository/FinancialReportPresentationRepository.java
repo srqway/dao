@@ -134,7 +134,7 @@ public class FinancialReportPresentationRepository extends RepositoryBase {
 			ObjectNode presentNode) {
 		FinancialReportPresentation entity = new FinancialReportPresentation();
 		generateRowKey(entity, version);
-		generateColumnFamily(entity, presentationIds, presentNode);
+		generateColumnFamilies(entity, presentationIds, presentNode);
 
 		return entity;
 	}
@@ -144,7 +144,7 @@ public class FinancialReportPresentationRepository extends RepositoryBase {
 		entity.new RowKey(version.toString(), entity);
 	}
 
-	private void generateColumnFamily(FinancialReportPresentation entity,
+	private void generateColumnFamilies(FinancialReportPresentation entity,
 			List<String> presentationIds, ObjectNode presentNode) {
 		JsonFamily family = entity.getJsonFamily();
 		Date date = Calendar.getInstance().getTime();

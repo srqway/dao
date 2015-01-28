@@ -117,7 +117,7 @@ public class FinancialReportInstanceRepository extends RepositoryBase {
 			List<String> PresentationIds) throws ParseException {
 		FinancialReportInstance entity = new FinancialReportInstance();
 		generateRowKey(entity, stockCode, reportType, year, season);
-		generateColumnFamily(entity, objNode, PresentationIds);
+		generateColumnFamilies(entity, objNode, PresentationIds);
 		return entity;
 	}
 
@@ -126,7 +126,7 @@ public class FinancialReportInstanceRepository extends RepositoryBase {
 		entity.new RowKey(stockCode, reportType, year, season, entity);
 	}
 
-	private void generateColumnFamily(FinancialReportInstance entity,
+	private void generateColumnFamilies(FinancialReportInstance entity,
 			ObjectNode objNode, List<String> PresentationIds)
 			throws ParseException {
 		Date date = Calendar.getInstance().getTime();

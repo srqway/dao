@@ -153,8 +153,8 @@ public class FinancialReportInstance extends HBaseTable {
 	}
 
 	public class InfoFamily extends HBaseColumnFamily {
-		private InfoFamily(FinancialReportInstance table) {
-			super(table);
+		private InfoFamily(FinancialReportInstance entity) {
+			super(entity);
 		}
 
 		public InfoValue getLatestValue(String presentationId, String periodType) {
@@ -262,8 +262,8 @@ public class FinancialReportInstance extends HBaseTable {
 	}
 
 	public class InstanceFamily extends HBaseColumnFamily {
-		private InstanceFamily(FinancialReportInstance table) {
-			super(table);
+		private InstanceFamily(FinancialReportInstance entity) {
+			super(entity);
 		}
 
 		public InstanceValue getLatestValue(String elementId,
@@ -488,12 +488,8 @@ public class FinancialReportInstance extends HBaseTable {
 			public void fromBytes(byte[] bytes) {
 				this.unit = ByteConvertUtility.getStringFromBytes(bytes,
 						UNIT_BEGIN_INDEX, UNIT_END_INDEX);
-				try {
-					this.value = ByteConvertUtility.getBigDecimalFromBytes(
-							bytes, VALUE_BEGIN_INDEX, VALUE_END_INDEX);
-				} catch (ParseException e) {
-					throw new RuntimeException(e);
-				}
+				this.value = ByteConvertUtility.getBigDecimalFromBytes(bytes,
+						VALUE_BEGIN_INDEX, VALUE_END_INDEX);
 			}
 		}
 
