@@ -8,6 +8,7 @@ import idv.hsiehpinghan.stockdao.entity.FinancialReportData.ItemFamily.ItemValue
 import idv.hsiehpinghan.stockdao.entity.FinancialReportData.RatioFamily;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportData.RatioFamily.RatioValue;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
+import idv.hsiehpinghan.stockdao.repository.hbase.FinancialReportDataRepository;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
 

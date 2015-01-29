@@ -1,4 +1,4 @@
-package idv.hsiehpinghan.stockdao.repository;
+package idv.hsiehpinghan.stockdao.repository.hbase;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
@@ -6,6 +6,7 @@ import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportPresentation;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportPresentation.JsonFamily;
+import idv.hsiehpinghan.stockdao.repository.IFinancialReportPresentationRepository;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 
 import java.io.IOException;
@@ -22,7 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Repository
-public class FinancialReportPresentationRepository extends RepositoryBase {
+public class FinancialReportPresentationRepository extends RepositoryBase
+		implements IFinancialReportPresentationRepository {
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 	@Autowired
@@ -38,15 +40,7 @@ public class FinancialReportPresentationRepository extends RepositoryBase {
 		return hbaseAssistant;
 	}
 
-	/**
-	 * Put presentationNode to hbase.
-	 * 
-	 * @param version
-	 * @param presentationIds
-	 * @param presentationNode
-	 * @return
-	 * @throws IllegalAccessException
-	 */
+	@Override
 	public FinancialReportPresentation put(XbrlTaxonomyVersion version,
 			List<String> presentationIds, ObjectNode presentationNode)
 			throws IllegalAccessException {
@@ -56,21 +50,7 @@ public class FinancialReportPresentationRepository extends RepositoryBase {
 		return entity;
 	}
 
-	/**
-	 * Get all presentationNodes from hbase.(Include BalanceSheet,
-	 * StatementOfComprehensiveIncome, StatementOfCashFlows,
-	 * StatementOfChangesInEquity)
-	 * 
-	 * @param version
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InstantiationException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws IOException
-	 */
+	@Override
 	public FinancialReportPresentation get(XbrlTaxonomyVersion version)
 			throws IllegalAccessException, NoSuchMethodException,
 			SecurityException, InstantiationException,
@@ -78,20 +58,7 @@ public class FinancialReportPresentationRepository extends RepositoryBase {
 		return get(version, null);
 	}
 
-	/**
-	 * Get entity of presentationIds from hbase.
-	 * 
-	 * @param version
-	 * @param presentationIds
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InstantiationException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws IOException
-	 */
+	@Override
 	public FinancialReportPresentation get(XbrlTaxonomyVersion version,
 			List<String> presentationIds) throws IllegalAccessException,
 			NoSuchMethodException, SecurityException, InstantiationException,
@@ -100,20 +67,7 @@ public class FinancialReportPresentationRepository extends RepositoryBase {
 		return (FinancialReportPresentation) hbaseAssistant.get(rowKey);
 	}
 
-	/**
-	 * Check if entity exists.
-	 * 
-	 * @param rowKey
-	 * @return
-	 * @throws NoSuchFieldException
-	 * @throws SecurityException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws InstantiationException
-	 * @throws IOException
-	 */
+	@Override
 	public boolean exists(XbrlTaxonomyVersion rowKey)
 			throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,

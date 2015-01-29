@@ -1,4 +1,4 @@
-package idv.hsiehpinghan.stockdao.repository;
+package idv.hsiehpinghan.stockdao.repository.hbase;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
@@ -6,6 +6,7 @@ import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportData;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
+import idv.hsiehpinghan.stockdao.repository.IFinancialReportDataRepository;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class FinancialReportDataRepository extends RepositoryBase {
+public class FinancialReportDataRepository extends RepositoryBase implements IFinancialReportDataRepository {
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 
@@ -30,10 +31,12 @@ public class FinancialReportDataRepository extends RepositoryBase {
 		return hbaseAssistant;
 	}
 
+	@Override
 	public void put(FinancialReportData entity) throws IllegalAccessException {
 		hbaseAssistant.put(entity);
 	}
 
+	@Override
 	public FinancialReportData get(String stockCode, ReportType reportType,
 			int year, int season) throws IllegalAccessException,
 			NoSuchMethodException, SecurityException, InstantiationException,
@@ -42,6 +45,7 @@ public class FinancialReportDataRepository extends RepositoryBase {
 		return (FinancialReportData) hbaseAssistant.get(rowKey);
 	}
 
+	@Override
 	public boolean exists(String stockCode, ReportType reportType, int year,
 			int season) throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,
@@ -51,6 +55,7 @@ public class FinancialReportDataRepository extends RepositoryBase {
 		return exists(rowKey);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<FinancialReportData> scan(Filter filter) {
 		return (List<FinancialReportData>) (Object) hbaseAssistant.scan(

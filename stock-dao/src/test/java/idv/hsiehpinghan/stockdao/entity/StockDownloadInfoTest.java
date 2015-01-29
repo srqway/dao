@@ -11,7 +11,7 @@ import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.StockCodeFamily.StockC
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.YearFamily.YearQualifier;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.YearFamily.YearValue;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
-import idv.hsiehpinghan.stockdao.repository.FinancialReportInstanceRepository;
+import idv.hsiehpinghan.stockdao.repository.hbase.FinancialReportInstanceRepository;
 
 import java.util.Set;
 import java.util.TreeSet;

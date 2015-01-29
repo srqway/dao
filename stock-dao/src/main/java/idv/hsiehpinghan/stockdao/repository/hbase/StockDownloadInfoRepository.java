@@ -1,10 +1,11 @@
-package idv.hsiehpinghan.stockdao.repository;
+package idv.hsiehpinghan.stockdao.repository.hbase;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo;
+import idv.hsiehpinghan.stockdao.repository.IStockDownloadInfoRepository;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class StockDownloadInfoRepository extends RepositoryBase {
+public class StockDownloadInfoRepository extends RepositoryBase implements
+		IStockDownloadInfoRepository {
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 
@@ -27,12 +29,14 @@ public class StockDownloadInfoRepository extends RepositoryBase {
 		return hbaseAssistant;
 	}
 
+	@Override
 	public StockDownloadInfo put(StockDownloadInfo entity)
 			throws IllegalAccessException {
 		hbaseAssistant.put(entity);
 		return entity;
 	}
 
+	@Override
 	public StockDownloadInfo get(String tableName)
 			throws IllegalAccessException, NoSuchMethodException,
 			SecurityException, InstantiationException,

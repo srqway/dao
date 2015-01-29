@@ -1,6 +1,7 @@
 package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.stockdao.entity.FinancialReportPresentation;
+import idv.hsiehpinghan.stockdao.repository.hbase.FinancialReportPresentationRepository;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 import idv.hsiehpinghan.testutility.utility.SystemResourceUtility;
 import idv.hsiehpinghan.xbrlassistant.assistant.TaxonomyAssistant;

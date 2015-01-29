@@ -1,4 +1,4 @@
-package idv.hsiehpinghan.stockdao.repository;
+package idv.hsiehpinghan.stockdao.repository.hbase;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
@@ -11,6 +11,7 @@ import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.PriceFamily.PriceV
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily;
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily.VolumeQualifier;
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily.VolumeValue;
+import idv.hsiehpinghan.stockdao.repository.IStockClosingConditionRepository;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -23,8 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class StockClosingConditionRepository extends RepositoryBase {
-	// private final String DATE_PATTERN = "yyyyMMdd";
+public class StockClosingConditionRepository extends RepositoryBase implements
+		IStockClosingConditionRepository {
+
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 
@@ -38,6 +40,7 @@ public class StockClosingConditionRepository extends RepositoryBase {
 		return hbaseAssistant;
 	}
 
+	@Override
 	public StockClosingCondition put(String stockCode,
 			Map<PriceQualifier, PriceValue> priceMap,
 			Map<VolumeQualifier, VolumeValue> volumeMap)
@@ -48,6 +51,7 @@ public class StockClosingConditionRepository extends RepositoryBase {
 		return entity;
 	}
 
+	@Override
 	public StockClosingCondition get(String stockCode)
 			throws IllegalAccessException, NoSuchMethodException,
 			SecurityException, InstantiationException,

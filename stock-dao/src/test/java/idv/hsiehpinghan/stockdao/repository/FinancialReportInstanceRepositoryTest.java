@@ -4,6 +4,7 @@ import idv.hsiehpinghan.stockdao.entity.FinancialReportInstance;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportInstance.InfoFamily.InfoValue;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportInstance.InstanceFamily.InstanceValue;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
+import idv.hsiehpinghan.stockdao.repository.hbase.FinancialReportInstanceRepository;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 import idv.hsiehpinghan.testutility.utility.SystemResourceUtility;
 import idv.hsiehpinghan.xbrlassistant.assistant.InstanceAssistant;

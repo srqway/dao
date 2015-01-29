@@ -1,4 +1,4 @@
-package idv.hsiehpinghan.stockdao.repository;
+package idv.hsiehpinghan.stockdao.repository.hbase;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
@@ -8,6 +8,7 @@ import idv.hsiehpinghan.stockdao.entity.FinancialReportInstance;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportInstance.InfoFamily;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportInstance.InstanceFamily;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
+import idv.hsiehpinghan.stockdao.repository.IFinancialReportInstanceRepository;
 import idv.hsiehpinghan.xbrlassistant.assistant.InstanceAssistant;
 import idv.hsiehpinghan.xbrlassistant.xbrl.Instance;
 
@@ -31,7 +32,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Repository
-public class FinancialReportInstanceRepository extends RepositoryBase {
+public class FinancialReportInstanceRepository extends RepositoryBase implements
+		IFinancialReportInstanceRepository {
 	private final String DATE_PATTERN = "yyyyMMdd";
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
@@ -48,18 +50,7 @@ public class FinancialReportInstanceRepository extends RepositoryBase {
 		return hbaseAssistant;
 	}
 
-	/**
-	 * Put financialReportInstance to hbase.
-	 * 
-	 * @param stockCode
-	 * @param reportType
-	 * @param year
-	 * @param season
-	 * @param instanceNode
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws ParseException
-	 */
+	@Override
 	public FinancialReportInstance put(String stockCode, ReportType reportType,
 			int year, int season, ObjectNode objNode,
 			List<String> PresentationIds) throws IllegalAccessException,
@@ -70,6 +61,7 @@ public class FinancialReportInstanceRepository extends RepositoryBase {
 		return entity;
 	}
 
+	@Override
 	public FinancialReportInstance get(String stockCode, ReportType reportType,
 			int year, int season) throws NoSuchFieldException,
 			SecurityException, IllegalArgumentException,
@@ -79,23 +71,7 @@ public class FinancialReportInstanceRepository extends RepositoryBase {
 		return (FinancialReportInstance) hbaseAssistant.get(rowKey);
 	}
 
-	/**
-	 * Check if row exists.
-	 * 
-	 * @param stockCode
-	 * @param reportType
-	 * @param year
-	 * @param season
-	 * @return
-	 * @throws NoSuchFieldException
-	 * @throws SecurityException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws InstantiationException
-	 * @throws IOException
-	 */
+	@Override
 	public boolean exists(String stockCode, ReportType reportType, int year,
 			int season) throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,

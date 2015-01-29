@@ -1,7 +1,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="suite" verbose="1">
-	<test name="test_1">
+	<test name="financialReport">
 		<classes>
 			<class name="idv.hsiehpinghan.stockdao.suit.TestngSuitSetting" />
 			<!-- Test repositoty -->
@@ -9,14 +9,23 @@
 				name="idv.hsiehpinghan.stockdao.repository.FinancialReportPresentationRepositoryTest" />
 			<class
 				name="idv.hsiehpinghan.stockdao.repository.FinancialReportInstanceRepositoryTest" />
+			<class
+				name="idv.hsiehpinghan.stockdao.repository.FinancialReportDataRepositoryTest" />
+
 			<!-- Test entity -->
 			<class
 				name="idv.hsiehpinghan.stockdao.entity.FinancialReportPresentationTest" />
 			<class name="idv.hsiehpinghan.stockdao.entity.FinancialReportInstanceTest" />
-			<class
-				name="idv.hsiehpinghan.stockdao.repository.FinancialReportDataRepositoryTest" />
-			<class name="idv.hsiehpinghan.stockdao.entity.StockDownloadInfoTest" />
+			<class name="idv.hsiehpinghan.stockservice.entity.ExchangeRateTest" />
+		</classes>
+	</test>
 
+	<test name="stockClosingCondition">
+		<classes>
+			<!-- Test repositoty -->
+
+			<!-- Test entity -->
+			<class name="idv.hsiehpinghan.stockdao.entity.StockDownloadInfoTest" />
 			<class name="idv.hsiehpinghan.stockdao.entity.StockClosingConditionTest" />
 		</classes>
 	</test>
