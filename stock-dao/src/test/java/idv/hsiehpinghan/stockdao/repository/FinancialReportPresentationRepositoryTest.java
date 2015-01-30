@@ -58,7 +58,7 @@ public class FinancialReportPresentationRepositoryTest {
 		FinancialReportPresentation entity = repository.get(version);
 		// Balance sheet test
 		JsonNode balanceSheetNode = objectMapper.readTree(entity
-				.getJsonFamily().getValue(Presentation.Id.BalanceSheet)
+				.getJsonFamily().getLatestValue(Presentation.Id.BalanceSheet)
 				.getJson());
 		JsonNode blanceSheetSample = objectMapper
 				.readTree(SystemResourceUtility
@@ -67,7 +67,7 @@ public class FinancialReportPresentationRepositoryTest {
 				blanceSheetSample.toString());
 		// Statement of comprehensive income test
 		JsonNode incomeNode = objectMapper.readTree(entity.getJsonFamily()
-				.getValue(Presentation.Id.StatementOfComprehensiveIncome)
+				.getLatestValue(Presentation.Id.StatementOfComprehensiveIncome)
 				.getJson());
 		JsonNode incomeSample = objectMapper
 				.readTree(SystemResourceUtility
@@ -75,18 +75,20 @@ public class FinancialReportPresentationRepositoryTest {
 		Assert.assertEquals(incomeNode.toString(), incomeSample.toString());
 
 		// Statement of cash flows test
-		JsonNode cashFlowNode = objectMapper.readTree(entity.getJsonFamily()
-				.getValue(Presentation.Id.StatementOfCashFlows).getJson());
+		JsonNode cashFlowNode = objectMapper
+				.readTree(entity.getJsonFamily()
+						.getLatestValue(Presentation.Id.StatementOfCashFlows)
+						.getJson());
 		JsonNode cashFlowSample = objectMapper
 				.readTree(SystemResourceUtility
 						.getFileResource("sample/presentation/TIFRS_CI_CR_2014_03_31_StatementOfCashFlows.json"));
 		Assert.assertEquals(cashFlowNode.toString(), cashFlowSample.toString());
 
 		// Statement of changes in equity test
-		JsonNode equityChangeNode = objectMapper
-				.readTree(entity.getJsonFamily()
-						.getValue(Presentation.Id.StatementOfChangesInEquity)
-						.getJson());
+		JsonNode equityChangeNode = objectMapper.readTree(entity
+				.getJsonFamily()
+				.getLatestValue(Presentation.Id.StatementOfChangesInEquity)
+				.getJson());
 		JsonNode equityChangeSample = objectMapper
 				.readTree(SystemResourceUtility
 						.getFileResource("sample/presentation/TIFRS_CI_CR_2014_03_31_StatementOfChangesInEquity.json"));

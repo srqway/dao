@@ -1,0 +1,24 @@
+{  
+   "FinancialReportPresentation":{  
+      "RowKey":[  
+         {  
+            "type":"String",
+            "name":"taxonomyVersion"
+         }
+      ],
+      "JsonFamily":{  
+         "IdQualifier":[  
+            {  
+               "type":"String",
+               "name":"presentationId"
+            }
+         ],
+         "JsonValue":[  
+            {  
+               "type":"String",
+               "name":"json"
+            }
+         ]
+      }
+   }
+}

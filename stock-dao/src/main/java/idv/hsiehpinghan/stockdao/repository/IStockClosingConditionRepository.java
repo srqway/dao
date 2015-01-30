@@ -9,15 +9,17 @@ import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily.Volum
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.Map;
 
 public interface IStockClosingConditionRepository extends IRepositoryBase {
-	StockClosingCondition put(String stockCode,
+	StockClosingCondition put(String stockCode, Date date,
 			Map<PriceQualifier, PriceValue> priceMap,
 			Map<VolumeQualifier, VolumeValue> volumeMap)
 			throws IllegalAccessException;
 
-	StockClosingCondition get(String stockCode) throws IllegalAccessException,
-			NoSuchMethodException, SecurityException, InstantiationException,
+	StockClosingCondition get(String stockCode, Date date)
+			throws IllegalAccessException, NoSuchMethodException,
+			SecurityException, InstantiationException,
 			IllegalArgumentException, InvocationTargetException, IOException;
 }

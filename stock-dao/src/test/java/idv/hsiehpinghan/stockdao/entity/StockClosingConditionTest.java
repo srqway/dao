@@ -18,16 +18,8 @@ import org.testng.annotations.Test;
 public class StockClosingConditionTest {
 	private String stockCode = "1101";
 	private Date date = DateUtility.getDate(2015, 2, 3);
-	private BigDecimal openingPrice = new BigDecimal("1.1");
-	private BigDecimal closingPrice = new BigDecimal("2.2");
-	private BigDecimal change = new BigDecimal("3.3");
-	private BigDecimal highestPrice = new BigDecimal("4.4");
-	private BigDecimal lowestPrice = new BigDecimal("5.5");
-	private BigDecimal finalPurchasePrice = new BigDecimal("6.6");
-	private BigDecimal finalSellingPrice = new BigDecimal("7.7");
-	private Integer stockAmount = new Integer("1");
+	private BigDecimal highestPrice = new BigDecimal("1.1");
 	private Integer moneyAmount = new Integer("2");
-	private Integer transactionAmount = new Integer("3");
 
 	@BeforeClass
 	public void beforeClass() throws IOException {
@@ -37,24 +29,23 @@ public class StockClosingConditionTest {
 	public void toBytesFromBytes() {
 		StockClosingCondition entity = new StockClosingCondition();
 		// Test row key.
-		RowKey key = entity.new RowKey(stockCode, entity);
+		RowKey key = entity.new RowKey(stockCode, date, entity);
 		HbaseEntityTestUtility.toBytesFromBytes(key);
 		// Test priceQualifier.
 		PriceQualifier priceQualifier = entity.getPriceFamily().new PriceQualifier(
-				date);
+				PriceQualifier.HIGHEST_PRICE);
 		HbaseEntityTestUtility.toBytesFromBytes(priceQualifier);
 		// Test priceValue.
 		PriceValue priceValue = entity.getPriceFamily().new PriceValue(
-				openingPrice, closingPrice, change, highestPrice, lowestPrice,
-				finalPurchasePrice, finalSellingPrice);
+				highestPrice);
 		HbaseEntityTestUtility.toBytesFromBytes(priceValue);
 		// Test volumeQualifier.
 		VolumeQualifier volumeQualifier = entity.getVolumeFamily().new VolumeQualifier(
-				date);
+				VolumeQualifier.MONEY_AMOUNT);
 		HbaseEntityTestUtility.toBytesFromBytes(volumeQualifier);
 		// Test volumeValue.
 		VolumeValue volumeValue = entity.getVolumeFamily().new VolumeValue(
-				stockAmount, moneyAmount, transactionAmount);
+				moneyAmount);
 		HbaseEntityTestUtility.toBytesFromBytes(volumeValue);
 	}
 }

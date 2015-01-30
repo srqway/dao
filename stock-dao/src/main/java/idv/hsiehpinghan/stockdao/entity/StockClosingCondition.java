@@ -44,30 +44,49 @@ public class StockClosingCondition extends HBaseTable {
 	}
 
 	public class RowKey extends HBaseRowKey {
+		private static final int STOCK_CODE_LENGTH = 15;
+		private static final int DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+		private static final int STOCK_CODE_BEGIN_INDEX = 0;
+		private static final int STOCK_CODE_END_INDEX = STOCK_CODE_BEGIN_INDEX
+				+ STOCK_CODE_LENGTH;
+		private static final int DATE_BEGIN_INDEX = STOCK_CODE_END_INDEX + 1;
+		private static final int DATE_END_INDEX = DATE_BEGIN_INDEX
+				+ DATE_LENGTH;
 		private String stockCode;
+		private Date date;
 
 		public RowKey(StockClosingCondition entity) {
 			super(entity);
 		}
 
-		public RowKey(String stockCode, StockClosingCondition entity) {
+		public RowKey(String stockCode, Date date, StockClosingCondition entity) {
 			super(entity);
 			this.stockCode = stockCode;
+			this.date = date;
 		}
 
-		public RowKey(byte[] rowKey, StockClosingCondition entity) {
+		public RowKey(byte[] bytes, StockClosingCondition entity) {
 			super(entity);
-			fromBytes(rowKey);
+			fromBytes(bytes);
 		}
 
 		@Override
 		public byte[] toBytes() {
-			return ByteConvertUtility.toBytes(stockCode);
+			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode, 15);
+			byte[] dateBytes = ByteConvertUtility.toBytes(date);
+			return ArrayUtility.addAll(stockCodeBytes, SPACE, dateBytes);
 		}
 
 		@Override
 		public void fromBytes(byte[] bytes) {
-			this.stockCode = ByteConvertUtility.getStringFromBytes(bytes);
+			this.stockCode = ByteConvertUtility.getStringFromBytes(bytes,
+					STOCK_CODE_BEGIN_INDEX, STOCK_CODE_END_INDEX);
+			try {
+				this.date = ByteConvertUtility.getDateFromBytes(bytes,
+						DATE_BEGIN_INDEX, DATE_END_INDEX);
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		public String getStockCode() {
@@ -77,6 +96,14 @@ public class StockClosingCondition extends HBaseTable {
 		public void setStockCode(String stockCode) {
 			this.stockCode = stockCode;
 		}
+
+		public Date getDate() {
+			return date;
+		}
+
+		public void setDate(Date date) {
+			this.date = date;
+		}
 	}
 
 	public class PriceFamily extends HBaseColumnFamily {
@@ -84,42 +111,28 @@ public class StockClosingCondition extends HBaseTable {
 			super(entity);
 		}
 
-		public PriceValue getLatestValue(Date date) {
-			PriceQualifier qual = this.new PriceQualifier(date);
+		public PriceValue getLatestValue(String name) {
+			PriceQualifier qual = this.new PriceQualifier(name);
 			return (PriceValue) super.getLatestValue(qual);
 		}
 
-		public void add(Date date, Date version, BigDecimal openingPrice,
-				BigDecimal closingPrice, BigDecimal change,
-				BigDecimal highestPrice, BigDecimal lowestPrice,
-				BigDecimal finalPurchasePrice, BigDecimal finalSellingPrice) {
-			HBaseColumnQualifier qual = this.new PriceQualifier(date);
-			add(qual, version, openingPrice, closingPrice, change,
-					highestPrice, lowestPrice, finalPurchasePrice,
-					finalSellingPrice);
-		}
-
-		private void add(HBaseColumnQualifier qualifier, Date date,
-				BigDecimal openingPrice, BigDecimal closingPrice,
-				BigDecimal change, BigDecimal highestPrice,
-				BigDecimal lowestPrice, BigDecimal finalPurchasePrice,
-				BigDecimal finalSellingPrice) {
-			PriceValue val = this.new PriceValue(openingPrice, closingPrice,
-					change, highestPrice, lowestPrice, finalPurchasePrice,
-					finalSellingPrice);
-			add(qualifier, date, val);
-		}
-
 		public class PriceQualifier extends HBaseColumnQualifier {
-			private Date date;
+			public static final String OPENING_PRICE = "openingPrice";
+			public static final String CLOSING_PRICE = "closingPrice";
+			public static final String CHANGE = "change";
+			public static final String HIGHEST_PRICE = "highestPrice";
+			public static final String LOWEST_PRICE = "lowestPrice";
+			public static final String FINAL_PURCHASE_PRICE = "finalPurchasePrice";
+			public static final String FINAL_SELLING_PRICE = "finalSellingPrice";
+			private String name;
 
 			public PriceQualifier() {
 				super();
 			}
 
-			public PriceQualifier(Date date) {
+			public PriceQualifier(String name) {
 				super();
-				this.date = date;
+				this.name = name;
 			}
 
 			public PriceQualifier(byte[] bytes) {
@@ -129,82 +142,34 @@ public class StockClosingCondition extends HBaseTable {
 
 			@Override
 			public byte[] toBytes() {
-				return ByteConvertUtility.toBytes(date);
+				byte[] nameBytes = ByteConvertUtility.toBytes(name);
+				return ArrayUtility.addAll(nameBytes);
 			}
 
 			@Override
 			public void fromBytes(byte[] bytes) {
-				try {
-					this.date = ByteConvertUtility.getDateFromBytes(bytes);
-				} catch (ParseException e) {
-					throw new RuntimeException(e);
-				}
+				this.name = ByteConvertUtility.getStringFromBytes(bytes);
 			}
 
-			public Date getDate() {
-				return date;
+			public String getName() {
+				return name;
 			}
 
-			public void setDate(Date date) {
-				this.date = date;
+			public void setName(String name) {
+				this.name = name;
 			}
 		}
 
 		public class PriceValue extends HBaseValue {
-			private static final int OPENING_PRICE_LENGTH = 5;
-			private static final int CLOSING_PRICE_LENGTH = 5;
-			private static final int CHANGE_LENGTH = 5;
-			private static final int HIGHEST_PRICE_LENGTH = 5;
-			private static final int LOWEST_PRICE_LENGTH = 5;
-			private static final int FINAL_PURCHASE_PRICE_LENGTH = 5;
-			private static final int FINAL_SELLING_PRICE_LENGTH = 5;
-
-			private static final int OPENING_PRICE_BEGIN_INDEX = 0;
-			private static final int OPENING_PRICE_END_INDEX = OPENING_PRICE_BEGIN_INDEX
-					+ OPENING_PRICE_LENGTH;
-			private static final int CLOSING_PRICE_BEGIN_INDEX = OPENING_PRICE_END_INDEX + 1;
-			private static final int CLOSING_PRICE_END_INDEX = CLOSING_PRICE_BEGIN_INDEX
-					+ CLOSING_PRICE_LENGTH;
-			private static final int CHANGE_BEGIN_INDEX = CLOSING_PRICE_END_INDEX + 1;
-			private static final int CHANGE_END_INDEX = CHANGE_BEGIN_INDEX
-					+ CHANGE_LENGTH;
-			private static final int HIGHEST_PRICE_BEGIN_INDEX = CHANGE_END_INDEX + 1;
-			private static final int HIGHEST_PRICE_END_INDEX = HIGHEST_PRICE_BEGIN_INDEX
-					+ HIGHEST_PRICE_LENGTH;
-			private static final int LOWEST_PRICE_BEGIN_INDEX = HIGHEST_PRICE_END_INDEX + 1;
-			private static final int LOWEST_PRICE_END_INDEX = LOWEST_PRICE_BEGIN_INDEX
-					+ LOWEST_PRICE_LENGTH;
-			private static final int FINAL_PURCHASE_PRICE_BEGIN_INDEX = LOWEST_PRICE_END_INDEX + 1;
-			private static final int FINAL_PURCHASE_PRICE_END_INDEX = FINAL_PURCHASE_PRICE_BEGIN_INDEX
-					+ FINAL_PURCHASE_PRICE_LENGTH;
-			private static final int FINAL_SELLING_PRICE_BEGIN_INDEX = FINAL_PURCHASE_PRICE_END_INDEX + 1;
-			private static final int FINAL_SELLING_PRICE_END_INDEX = FINAL_SELLING_PRICE_BEGIN_INDEX
-					+ FINAL_SELLING_PRICE_LENGTH;
-
-			private BigDecimal openingPrice;
-			private BigDecimal closingPrice;
-			private BigDecimal change;
-			private BigDecimal highestPrice;
-			private BigDecimal lowestPrice;
-			private BigDecimal finalPurchasePrice;
-			private BigDecimal finalSellingPrice;
+			private BigDecimal value;
 
 			public PriceValue() {
 				super();
 			}
 
-			public PriceValue(BigDecimal openingPrice, BigDecimal closingPrice,
-					BigDecimal change, BigDecimal highestPrice,
-					BigDecimal lowestPrice, BigDecimal finalPurchasePrice,
-					BigDecimal finalSellingPrice) {
+			public PriceValue(BigDecimal value) {
 				super();
-				this.openingPrice = openingPrice;
-				this.closingPrice = closingPrice;
-				this.change = change;
-				this.highestPrice = change;
-				this.lowestPrice = change;
-				this.finalPurchasePrice = change;
-				this.finalSellingPrice = change;
+				this.value = value;
 			}
 
 			public PriceValue(byte[] bytes) {
@@ -212,109 +177,23 @@ public class StockClosingCondition extends HBaseTable {
 				fromBytes(bytes);
 			}
 
-			public BigDecimal getOpeningPrice() {
-				return openingPrice;
-			}
-
-			public void setOpeningPrice(BigDecimal openingPrice) {
-				this.openingPrice = openingPrice;
-			}
-
-			public BigDecimal getClosingPrice() {
-				return closingPrice;
-			}
-
-			public void setClosingPrice(BigDecimal closingPrice) {
-				this.closingPrice = closingPrice;
-			}
-
-			public BigDecimal getChange() {
-				return change;
-			}
-
-			public void setChange(BigDecimal change) {
-				this.change = change;
-			}
-
-			public BigDecimal getHighestPrice() {
-				return highestPrice;
-			}
-
-			public void setHighestPrice(BigDecimal highestPrice) {
-				this.highestPrice = highestPrice;
-			}
-
-			public BigDecimal getLowestPrice() {
-				return lowestPrice;
-			}
-
-			public void setLowestPrice(BigDecimal lowestPrice) {
-				this.lowestPrice = lowestPrice;
-			}
-
-			public BigDecimal getFinalPurchasePrice() {
-				return finalPurchasePrice;
-			}
-
-			public void setFinalPurchasePrice(BigDecimal finalPurchasePrice) {
-				this.finalPurchasePrice = finalPurchasePrice;
-			}
-
-			public BigDecimal getFinalSellingPrice() {
-				return finalSellingPrice;
-			}
-
-			public void setFinalSellingPrice(BigDecimal finalSellingPrice) {
-				this.finalSellingPrice = finalSellingPrice;
-			}
-
 			@Override
 			public byte[] toBytes() {
-				byte[] openingPriceBytes = ByteConvertUtility.toBytes(
-						openingPrice, OPENING_PRICE_LENGTH);
-				byte[] closingPriceBytes = ByteConvertUtility.toBytes(
-						closingPrice, CLOSING_PRICE_LENGTH);
-				byte[] changeBytes = ByteConvertUtility.toBytes(change,
-						CHANGE_LENGTH);
-				byte[] highestPriceBytes = ByteConvertUtility.toBytes(
-						highestPrice, HIGHEST_PRICE_LENGTH);
-				byte[] lowestPriceBytes = ByteConvertUtility.toBytes(
-						lowestPrice, LOWEST_PRICE_LENGTH);
-				byte[] finalPurchasePriceBytes = ByteConvertUtility.toBytes(
-						finalPurchasePrice, FINAL_PURCHASE_PRICE_LENGTH);
-				byte[] finalSellingPriceBytes = ByteConvertUtility.toBytes(
-						finalSellingPrice, FINAL_SELLING_PRICE_LENGTH);
-				return ArrayUtility.addAll(openingPriceBytes, SPACE,
-						closingPriceBytes, SPACE, changeBytes, SPACE,
-						highestPriceBytes, SPACE, lowestPriceBytes, SPACE,
-						finalPurchasePriceBytes, SPACE, finalSellingPriceBytes);
+				byte[] valueBytes = ByteConvertUtility.toBytes(value);
+				return ArrayUtility.addAll(valueBytes);
 			}
 
 			@Override
 			public void fromBytes(byte[] bytes) {
-				this.openingPrice = ByteConvertUtility.getBigDecimalFromBytes(
-						bytes, OPENING_PRICE_BEGIN_INDEX,
-						OPENING_PRICE_END_INDEX);
-				this.closingPrice = ByteConvertUtility.getBigDecimalFromBytes(
-						bytes, CLOSING_PRICE_BEGIN_INDEX,
-						CLOSING_PRICE_END_INDEX);
-				this.change = ByteConvertUtility.getBigDecimalFromBytes(bytes,
-						CHANGE_BEGIN_INDEX, CHANGE_END_INDEX);
-				this.highestPrice = ByteConvertUtility.getBigDecimalFromBytes(
-						bytes, HIGHEST_PRICE_BEGIN_INDEX,
-						HIGHEST_PRICE_END_INDEX);
-				this.lowestPrice = ByteConvertUtility
-						.getBigDecimalFromBytes(bytes,
-								LOWEST_PRICE_BEGIN_INDEX,
-								LOWEST_PRICE_END_INDEX);
-				this.finalPurchasePrice = ByteConvertUtility
-						.getBigDecimalFromBytes(bytes,
-								FINAL_PURCHASE_PRICE_BEGIN_INDEX,
-								FINAL_PURCHASE_PRICE_END_INDEX);
-				this.finalSellingPrice = ByteConvertUtility
-						.getBigDecimalFromBytes(bytes,
-								FINAL_SELLING_PRICE_BEGIN_INDEX,
-								FINAL_SELLING_PRICE_END_INDEX);
+				this.value = ByteConvertUtility.getBigDecimalFromBytes(bytes);
+			}
+
+			public BigDecimal getValue() {
+				return value;
+			}
+
+			public void setValue(BigDecimal value) {
+				this.value = value;
 			}
 		}
 
@@ -334,35 +213,25 @@ public class StockClosingCondition extends HBaseTable {
 			super(entity);
 		}
 
-		public VolumeValue getLatestValue(Date date) {
-			VolumeQualifier qual = this.new VolumeQualifier(date);
+		public VolumeValue getLatestValue(String name) {
+			VolumeQualifier qual = this.new VolumeQualifier(name);
 			return (VolumeValue) super.getLatestValue(qual);
 		}
 
-		public void add(Date date, Date version, Integer stockAmount,
-				Integer moneyAmount, Integer transactionAmount) {
-			HBaseColumnQualifier qual = this.new VolumeQualifier(date);
-			add(qual, date, stockAmount, moneyAmount, transactionAmount);
-		}
-
-		private void add(HBaseColumnQualifier qualifier, Date date,
-				Integer stockAmount, Integer moneyAmount,
-				Integer transactionAmount) {
-			VolumeValue val = this.new VolumeValue(stockAmount, moneyAmount,
-					transactionAmount);
-			add(qualifier, date, val);
-		}
-
 		public class VolumeQualifier extends HBaseColumnQualifier {
-			private Date date;
+			public static final String STOCK_AMOUNT = "stockAmount";
+			public static final String MONEY_AMOUNT = "moneyAmount";
+			public static final String TRANSACTION_AMOUNT = "transactionAmount";
+
+			private String name;
 
 			public VolumeQualifier() {
 				super();
 			}
 
-			public VolumeQualifier(Date date) {
+			public VolumeQualifier(String name) {
 				super();
-				this.date = date;
+				this.name = name;
 			}
 
 			public VolumeQualifier(byte[] bytes) {
@@ -372,56 +241,34 @@ public class StockClosingCondition extends HBaseTable {
 
 			@Override
 			public byte[] toBytes() {
-				return ByteConvertUtility.toBytes(date);
+				byte[] nameBytes = ByteConvertUtility.toBytes(name);
+				return ArrayUtility.addAll(nameBytes);
 			}
 
 			@Override
 			public void fromBytes(byte[] bytes) {
-				try {
-					this.date = ByteConvertUtility.getDateFromBytes(bytes);
-				} catch (ParseException e) {
-					throw new RuntimeException(e);
-				}
+				this.name = ByteConvertUtility.getStringFromBytes(bytes);
 			}
 
-			public Date getDate() {
-				return date;
+			public String getName() {
+				return name;
 			}
 
-			public void setDate(Date date) {
-				this.date = date;
+			public void setName(String name) {
+				this.name = name;
 			}
 		}
 
 		public class VolumeValue extends HBaseValue {
-			private static final int STOCK_AMOUNT_LENGTH = 15;
-			private static final int MONEY_AMOUNT_LENGTH = 15;
-			private static final int TRANSACTION_AMOUNT_LENGTH = 15;
-
-			private static final int STOCK_AMOUNT_BEGIN_INDEX = 0;
-			private static final int STOCK_AMOUNT_END_INDEX = STOCK_AMOUNT_BEGIN_INDEX
-					+ STOCK_AMOUNT_LENGTH;
-			private static final int MONEY_AMOUNT_BEGIN_INDEX = STOCK_AMOUNT_END_INDEX + 1;
-			private static final int MONEY_AMOUNT_END_INDEX = MONEY_AMOUNT_BEGIN_INDEX
-					+ MONEY_AMOUNT_LENGTH;
-			private static final int TRANSACTION_AMOUNT_BEGIN_INDEX = MONEY_AMOUNT_END_INDEX + 1;
-			private static final int TRANSACTION_AMOUNT_END_INDEX = TRANSACTION_AMOUNT_BEGIN_INDEX
-					+ TRANSACTION_AMOUNT_LENGTH;
-
-			private Integer stockAmount;
-			private Integer moneyAmount;
-			private Integer transactionAmount;
+			private Integer value;
 
 			public VolumeValue() {
 				super();
 			}
 
-			public VolumeValue(Integer stockAmount, Integer moneyAmount,
-					Integer transactionAmount) {
+			public VolumeValue(Integer value) {
 				super();
-				this.stockAmount = stockAmount;
-				this.moneyAmount = moneyAmount;
-				this.transactionAmount = transactionAmount;
+				this.value = value;
 			}
 
 			public VolumeValue(byte[] bytes) {
@@ -429,54 +276,23 @@ public class StockClosingCondition extends HBaseTable {
 				fromBytes(bytes);
 			}
 
-			public Integer getStockAmount() {
-				return stockAmount;
-			}
-
-			public void setStockAmount(Integer stockAmount) {
-				this.stockAmount = stockAmount;
-			}
-
-			public Integer getMoneyAmount() {
-				return moneyAmount;
-			}
-
-			public void setMoneyAmount(Integer moneyAmount) {
-				this.moneyAmount = moneyAmount;
-			}
-
-			public Integer getTransactionAmount() {
-				return transactionAmount;
-			}
-
-			public void setTransactionAmount(Integer transactionAmount) {
-				this.transactionAmount = transactionAmount;
-			}
-
 			@Override
 			public byte[] toBytes() {
-				byte[] stockAmountBytes = ByteConvertUtility.toBytes(
-						stockAmount, STOCK_AMOUNT_LENGTH);
-				byte[] moneyAmountBytes = ByteConvertUtility.toBytes(
-						moneyAmount, MONEY_AMOUNT_LENGTH);
-				byte[] transactionAmountBytes = ByteConvertUtility.toBytes(
-						transactionAmount, TRANSACTION_AMOUNT_LENGTH);
-				return ArrayUtility.addAll(stockAmountBytes, SPACE,
-						moneyAmountBytes, SPACE, transactionAmountBytes);
+				byte[] valueBytes = ByteConvertUtility.toBytes(value);
+				return ArrayUtility.addAll(valueBytes);
 			}
 
 			@Override
 			public void fromBytes(byte[] bytes) {
-				this.stockAmount = ByteConvertUtility
-						.getIntegerFromBytes(bytes, STOCK_AMOUNT_BEGIN_INDEX,
-								STOCK_AMOUNT_END_INDEX);
-				this.moneyAmount = ByteConvertUtility
-						.getIntegerFromBytes(bytes, MONEY_AMOUNT_BEGIN_INDEX,
-								MONEY_AMOUNT_END_INDEX);
-				this.transactionAmount = ByteConvertUtility
-						.getIntegerFromBytes(bytes,
-								TRANSACTION_AMOUNT_BEGIN_INDEX,
-								TRANSACTION_AMOUNT_END_INDEX);
+				this.value = ByteConvertUtility.getIntegerFromBytes(bytes);
+			}
+
+			public Integer getValue() {
+				return value;
+			}
+
+			public void setValue(Integer value) {
+				this.value = value;
 			}
 		}
 

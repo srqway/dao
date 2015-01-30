@@ -41,42 +41,43 @@ public class StockClosingConditionRepository extends RepositoryBase implements
 	}
 
 	@Override
-	public StockClosingCondition put(String stockCode,
+	public StockClosingCondition put(String stockCode, Date date,
 			Map<PriceQualifier, PriceValue> priceMap,
 			Map<VolumeQualifier, VolumeValue> volumeMap)
 			throws IllegalAccessException {
-		StockClosingCondition entity = generateEntity(stockCode, priceMap,
-				volumeMap);
+		StockClosingCondition entity = generateEntity(stockCode, date,
+				priceMap, volumeMap);
 		hbaseAssistant.put(entity);
 		return entity;
 	}
 
 	@Override
-	public StockClosingCondition get(String stockCode)
+	public StockClosingCondition get(String stockCode, Date date)
 			throws IllegalAccessException, NoSuchMethodException,
 			SecurityException, InstantiationException,
 			IllegalArgumentException, InvocationTargetException, IOException {
-		HBaseRowKey rowKey = getRowKey(stockCode);
+		HBaseRowKey rowKey = getRowKey(stockCode, date);
 		return (StockClosingCondition) hbaseAssistant.get(rowKey);
 	}
 
-	private HBaseRowKey getRowKey(String stockCode) {
+	private HBaseRowKey getRowKey(String stockCode, Date date) {
 		StockClosingCondition entity = new StockClosingCondition();
-		generateRowKey(entity, stockCode);
+		generateRowKey(entity, stockCode, date);
 		return entity.getRowKey();
 	}
 
-	private StockClosingCondition generateEntity(String stockCode,
+	private StockClosingCondition generateEntity(String stockCode, Date date,
 			Map<PriceQualifier, PriceValue> priceMap,
 			Map<VolumeQualifier, VolumeValue> volumeMap) {
 		StockClosingCondition entity = new StockClosingCondition();
-		generateRowKey(entity, stockCode);
+		generateRowKey(entity, stockCode, date);
 		generateColumnFamilies(entity, priceMap, volumeMap);
 		return entity;
 	}
 
-	private void generateRowKey(StockClosingCondition entity, String stockCode) {
-		entity.new RowKey(stockCode, entity);
+	private void generateRowKey(StockClosingCondition entity, String stockCode,
+			Date date) {
+		entity.new RowKey(stockCode, date, entity);
 	}
 
 	private void generateColumnFamilies(StockClosingCondition entity,
