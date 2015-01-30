@@ -10,6 +10,7 @@ import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily.Volum
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import org.testng.annotations.BeforeClass;
@@ -19,7 +20,7 @@ public class StockClosingConditionTest {
 	private String stockCode = "1101";
 	private Date date = DateUtility.getDate(2015, 2, 3);
 	private BigDecimal highestPrice = new BigDecimal("1.1");
-	private Integer moneyAmount = new Integer("2");
+	private BigInteger moneyAmount = new BigInteger("2");
 
 	@BeforeClass
 	public void beforeClass() throws IOException {

@@ -34,7 +34,7 @@
          ],
          "VolumeValue":[  
             {  
-               "type":"Integer",
+               "type":"BigInteger",
                "name":"value"
             }
          ]

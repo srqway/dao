@@ -10,6 +10,7 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
 import idv.hsiehpinghan.hbaseassistant.utility.ByteConvertUtility;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -116,6 +117,12 @@ public class StockClosingCondition extends HBaseTable {
 			return (PriceValue) super.getLatestValue(qual);
 		}
 
+		public void add(String name, Date date, BigDecimal value) {
+			HBaseColumnQualifier qualifier = this.new PriceQualifier(name);
+			PriceValue val = this.new PriceValue(value);
+			add(qualifier, date, val);
+		}
+
 		public class PriceQualifier extends HBaseColumnQualifier {
 			public static final String OPENING_PRICE = "openingPrice";
 			public static final String CLOSING_PRICE = "closingPrice";
@@ -218,11 +225,16 @@ public class StockClosingCondition extends HBaseTable {
 			return (VolumeValue) super.getLatestValue(qual);
 		}
 
+		public void add(String name, Date date, BigInteger value) {
+			HBaseColumnQualifier qualifier = this.new VolumeQualifier(name);
+			VolumeValue val = this.new VolumeValue(value);
+			add(qualifier, date, val);
+		}
+
 		public class VolumeQualifier extends HBaseColumnQualifier {
 			public static final String STOCK_AMOUNT = "stockAmount";
 			public static final String MONEY_AMOUNT = "moneyAmount";
 			public static final String TRANSACTION_AMOUNT = "transactionAmount";
-
 			private String name;
 
 			public VolumeQualifier() {
@@ -260,13 +272,13 @@ public class StockClosingCondition extends HBaseTable {
 		}
 
 		public class VolumeValue extends HBaseValue {
-			private Integer value;
+			private BigInteger value;
 
 			public VolumeValue() {
 				super();
 			}
 
-			public VolumeValue(Integer value) {
+			public VolumeValue(BigInteger value) {
 				super();
 				this.value = value;
 			}
@@ -284,14 +296,14 @@ public class StockClosingCondition extends HBaseTable {
 
 			@Override
 			public void fromBytes(byte[] bytes) {
-				this.value = ByteConvertUtility.getIntegerFromBytes(bytes);
+				this.value = ByteConvertUtility.getBigIntegerFromBytes(bytes);
 			}
 
-			public Integer getValue() {
+			public BigInteger getValue() {
 				return value;
 			}
 
-			public void setValue(Integer value) {
+			public void setValue(BigInteger value) {
 				this.value = value;
 			}
 		}
