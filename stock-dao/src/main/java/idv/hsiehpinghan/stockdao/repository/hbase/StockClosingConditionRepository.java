@@ -5,20 +5,12 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition;
-import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.PriceFamily;
-import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.PriceFamily.PriceQualifier;
-import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.PriceFamily.PriceValue;
-import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily;
-import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily.VolumeQualifier;
-import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily.VolumeValue;
 import idv.hsiehpinghan.stockdao.repository.IStockClosingConditionRepository;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -41,14 +33,9 @@ public class StockClosingConditionRepository extends RepositoryBase implements
 	}
 
 	@Override
-	public StockClosingCondition put(String stockCode, Date date,
-			Map<PriceQualifier, PriceValue> priceMap,
-			Map<VolumeQualifier, VolumeValue> volumeMap)
+	public void put(List<StockClosingCondition> entities)
 			throws IllegalAccessException {
-		StockClosingCondition entity = generateEntity(stockCode, date,
-				priceMap, volumeMap);
-		hbaseAssistant.put(entity);
-		return entity;
+		hbaseAssistant.put(entities);
 	}
 
 	@Override
@@ -60,19 +47,20 @@ public class StockClosingConditionRepository extends RepositoryBase implements
 		return (StockClosingCondition) hbaseAssistant.get(rowKey);
 	}
 
+	@Override
+	public boolean exists(String stockCode, Date date)
+			throws NoSuchFieldException, SecurityException,
+			IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, InvocationTargetException,
+			InstantiationException, IOException {
+		HBaseRowKey key = getRowKey(stockCode, date);
+		return super.exists(key);
+	}
+
 	private HBaseRowKey getRowKey(String stockCode, Date date) {
 		StockClosingCondition entity = new StockClosingCondition();
 		generateRowKey(entity, stockCode, date);
 		return entity.getRowKey();
-	}
-
-	private StockClosingCondition generateEntity(String stockCode, Date date,
-			Map<PriceQualifier, PriceValue> priceMap,
-			Map<VolumeQualifier, VolumeValue> volumeMap) {
-		StockClosingCondition entity = new StockClosingCondition();
-		generateRowKey(entity, stockCode, date);
-		generateColumnFamilies(entity, priceMap, volumeMap);
-		return entity;
 	}
 
 	private void generateRowKey(StockClosingCondition entity, String stockCode,
@@ -80,29 +68,39 @@ public class StockClosingConditionRepository extends RepositoryBase implements
 		entity.new RowKey(stockCode, date, entity);
 	}
 
-	private void generateColumnFamilies(StockClosingCondition entity,
-			Map<PriceQualifier, PriceValue> priceMap,
-			Map<VolumeQualifier, VolumeValue> volumeMap) {
-		Date date = Calendar.getInstance().getTime();
-		// Generate priceFamily.
-		generatePriceFamily(entity, date, priceMap);
-		// Generate volumeFamily.
-		generateVolumeFamily(entity, date, volumeMap);
-	}
+	// private StockClosingCondition generateEntity(String stockCode, Date date,
+	// Map<PriceQualifier, PriceValue> priceMap,
+	// Map<VolumeQualifier, VolumeValue> volumeMap) {
+	// StockClosingCondition entity = new StockClosingCondition();
+	// generateRowKey(entity, stockCode, date);
+	// generateColumnFamilies(entity, priceMap, volumeMap);
+	// return entity;
+	// }
 
-	private void generatePriceFamily(StockClosingCondition entity, Date date,
-			Map<PriceQualifier, PriceValue> priceMap) {
-		PriceFamily priceFamily = entity.getPriceFamily();
-		for (Entry<PriceQualifier, PriceValue> ent : priceMap.entrySet()) {
-			priceFamily.add(ent.getKey(), date, ent.getValue());
-		}
-	}
+	// private void generateColumnFamilies(StockClosingCondition entity,
+	// Map<PriceQualifier, PriceValue> priceMap,
+	// Map<VolumeQualifier, VolumeValue> volumeMap) {
+	// Date date = Calendar.getInstance().getTime();
+	// // Generate priceFamily.
+	// generatePriceFamily(entity, date, priceMap);
+	// // Generate volumeFamily.
+	// generateVolumeFamily(entity, date, volumeMap);
+	// }
 
-	private void generateVolumeFamily(StockClosingCondition entity, Date date,
-			Map<VolumeQualifier, VolumeValue> volumeMap) {
-		VolumeFamily volumeFamily = entity.getVolumeFamily();
-		for (Entry<VolumeQualifier, VolumeValue> ent : volumeMap.entrySet()) {
-			volumeFamily.add(ent.getKey(), date, ent.getValue());
-		}
-	}
+	// private void generatePriceFamily(StockClosingCondition entity, Date date,
+	// Map<PriceQualifier, PriceValue> priceMap) {
+	// PriceFamily priceFamily = entity.getPriceFamily();
+	// for (Entry<PriceQualifier, PriceValue> ent : priceMap.entrySet()) {
+	// priceFamily.add(ent.getKey(), date, ent.getValue());
+	// }
+	// }
+	//
+	// private void generateVolumeFamily(StockClosingCondition entity, Date
+	// date,
+	// Map<VolumeQualifier, VolumeValue> volumeMap) {
+	// VolumeFamily volumeFamily = entity.getVolumeFamily();
+	// for (Entry<VolumeQualifier, VolumeValue> ent : volumeMap.entrySet()) {
+	// volumeFamily.add(ent.getKey(), date, ent.getValue());
+	// }
+	// }
 }

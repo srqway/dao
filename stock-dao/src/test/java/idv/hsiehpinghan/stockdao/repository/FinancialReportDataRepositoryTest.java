@@ -1,5 +1,6 @@
 package idv.hsiehpinghan.stockdao.repository;
 
+import idv.hsiehpinghan.hbaseassistant.utility.HbaseEntityTestUtility;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportData;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportData.GrowthFamily;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportData.GrowthFamily.GrowthValue;
@@ -149,10 +150,6 @@ public class FinancialReportDataRepositoryTest {
 	}
 
 	private void dropAndCreateTable() throws Exception {
-		String tableName = repository.getTargetTableName();
-		if (repository.isTableExists(tableName)) {
-			repository.dropTable(tableName);
-			repository.createTable(repository.getTargetTableClass());
-		}
+		HbaseEntityTestUtility.dropAndCreateTargetTable(repository);
 	}
 }

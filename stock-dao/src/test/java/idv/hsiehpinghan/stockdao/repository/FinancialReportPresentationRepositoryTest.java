@@ -1,5 +1,6 @@
 package idv.hsiehpinghan.stockdao.repository;
 
+import idv.hsiehpinghan.hbaseassistant.utility.HbaseEntityTestUtility;
 import idv.hsiehpinghan.stockdao.entity.FinancialReportPresentation;
 import idv.hsiehpinghan.stockdao.repository.hbase.FinancialReportPresentationRepository;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
@@ -39,7 +40,7 @@ public class FinancialReportPresentationRepositoryTest {
 
 	@Test
 	public void put() throws Exception {
-		dropTable();
+		dropAndCreateTable();
 		Assert.assertFalse(repository.exists(version));
 		List<String> presentIds = generatePresentIds();
 		ObjectNode presentNode = taxonomyAssistant.getPresentationJson(version,
@@ -96,12 +97,8 @@ public class FinancialReportPresentationRepositoryTest {
 				equityChangeSample.toString());
 	}
 
-	private void dropTable() throws Exception {
-		String tableName = repository.getTargetTableName();
-		if (repository.isTableExists(tableName)) {
-			repository.dropTable(tableName);
-			repository.createTable(repository.getTargetTableClass());
-		}
+	private void dropAndCreateTable() throws Exception {
+		HbaseEntityTestUtility.dropAndCreateTargetTable(repository);
 	}
 
 	private List<String> generatePresentIds() {
