@@ -21,6 +21,20 @@
             }
          ]
       },
+      "RoleFamily":{  
+         "RoleQualifier":[  
+            {  
+               "type":"String",
+               "name":"name"
+            }
+         ],
+         "RoleValue":[  
+            {  
+               "type":"String",
+               "name":"value"
+            }
+         ]
+      },
       "CommunicationFamily":{  
          "CommunicationQualifier":[  
             {  
