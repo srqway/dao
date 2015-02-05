@@ -191,6 +191,11 @@ public class StockDownloadInfo extends HBaseTable {
 				return stockCodes;
 			}
 
+			public String[] getStockCodesAsArray() {
+				String[] rslt = new String[stockCodes.size()];
+				return stockCodes.toArray(rslt);
+			}
+
 			public void setStockCodes(Set<String> stockCodes) {
 				this.stockCodes = stockCodes;
 			}

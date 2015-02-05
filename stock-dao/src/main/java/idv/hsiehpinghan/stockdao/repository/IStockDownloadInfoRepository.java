@@ -13,4 +13,9 @@ public interface IStockDownloadInfoRepository extends IRepositoryBase {
 	StockDownloadInfo get(String tableName) throws IllegalAccessException,
 			NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalArgumentException, InvocationTargetException, IOException;
+
+	StockDownloadInfo getOrCreateEntity(String tableName)
+			throws IllegalAccessException, NoSuchMethodException,
+			SecurityException, InstantiationException,
+			IllegalArgumentException, InvocationTargetException, IOException;
 }

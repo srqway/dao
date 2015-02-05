@@ -45,6 +45,19 @@ public class StockDownloadInfoRepository extends RepositoryBase implements
 		return (StockDownloadInfo) hbaseAssistant.get(rowKey);
 	}
 
+	@Override
+	public StockDownloadInfo getOrCreateEntity(String tableName)
+			throws IllegalAccessException, NoSuchMethodException,
+			SecurityException, InstantiationException,
+			IllegalArgumentException, InvocationTargetException, IOException {
+		StockDownloadInfo entity = get(tableName);
+		if (entity == null) {
+			entity = new StockDownloadInfo();
+			entity.new RowKey(tableName, entity);
+		}
+		return entity;
+	}
+
 	private HBaseRowKey getRowKey(String tableName) {
 		StockDownloadInfo entity = new StockDownloadInfo();
 		generateRowKey(entity, tableName);
