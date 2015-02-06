@@ -1,13 +1,17 @@
 package idv.hsiehpinghan.stockdao.entity;
 
 import idv.hsiehpinghan.hbaseassistant.utility.HbaseEntityTestUtility;
+import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.ReportTypeFamily;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.ReportTypeFamily.ReportTypeQualifier;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.ReportTypeFamily.ReportTypeValue;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.RowKey;
+import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.SeasonFamily;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.SeasonFamily.SeasonQualifier;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.SeasonFamily.SeasonValue;
+import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.StockCodeFamily;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.StockCodeFamily.StockCodeQualifier;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.StockCodeFamily.StockCodeValue;
+import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.YearFamily;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.YearFamily.YearQualifier;
 import idv.hsiehpinghan.stockdao.entity.StockDownloadInfo.YearFamily.YearValue;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
@@ -33,39 +37,85 @@ public class StockDownloadInfoTest {
 	@Test
 	public void toBytesFromBytes() {
 		StockDownloadInfo entity = new StockDownloadInfo();
-		// Test row key.
+		testRowKey(entity);
+		testStockCodeFamily(entity);
+		testReportTypeFamily(entity);
+		testYearFamily(entity);
+		testSeasonFamily(entity);
+	}
+
+	private void testRowKey(StockDownloadInfo entity) {
 		RowKey key = entity.new RowKey(tableName, entity);
 		HbaseEntityTestUtility.toBytesFromBytes(key);
-		// Test stockCodeQualifier.
-		StockCodeQualifier stockCodeQualifier = entity.getStockCodeFamily().new StockCodeQualifier(
+	}
+
+	private void testStockCodeFamily(StockDownloadInfo entity) {
+		StockCodeFamily stockCodeFamily = entity.getStockCodeFamily();
+		;
+		testStockCodeQualifier(stockCodeFamily);
+		testStockCodeValue(stockCodeFamily);
+	}
+
+	private void testStockCodeQualifier(StockCodeFamily stockCodeFamily) {
+		StockCodeQualifier stockCodeQualifier = stockCodeFamily.new StockCodeQualifier(
 				allStockCodeType);
 		HbaseEntityTestUtility.toBytesFromBytes(stockCodeQualifier);
-		// Test stockCodeValue.
-		StockCodeValue stockCodeValue = entity.getStockCodeFamily().new StockCodeValue(
+	}
+
+	private void testStockCodeValue(StockCodeFamily stockCodeFamily) {
+		StockCodeValue stockCodeValue = stockCodeFamily.new StockCodeValue(
 				stockCodes);
 		HbaseEntityTestUtility.toBytesFromBytes(stockCodeValue);
-		// Test reportTypeQualifier.
-		ReportTypeQualifier reportTypeQualifier = entity.getReportTypeFamily().new ReportTypeQualifier(
+	}
+
+	private void testReportTypeFamily(StockDownloadInfo entity) {
+		ReportTypeFamily reportTypeFamily = entity.getReportTypeFamily();
+		testReportTypeQualifier(reportTypeFamily);
+		testReportTypeValue(reportTypeFamily);
+	}
+
+	private void testReportTypeQualifier(ReportTypeFamily reportTypeFamily) {
+		ReportTypeQualifier reportTypeQualifier = reportTypeFamily.new ReportTypeQualifier(
 				allReportType);
 		HbaseEntityTestUtility.toBytesFromBytes(reportTypeQualifier);
-		// Test reportTypeValue.
-		ReportTypeValue reportTypeValue = entity.getReportTypeFamily().new ReportTypeValue(
+	}
+
+	private void testReportTypeValue(ReportTypeFamily reportTypeFamily) {
+		ReportTypeValue reportTypeValue = reportTypeFamily.new ReportTypeValue(
 				reportTypes);
 		HbaseEntityTestUtility.toBytesFromBytes(reportTypeValue);
-		// Test yearQualifier.
-		YearQualifier yearQualifier = entity.getYearFamily().new YearQualifier(
-				allYear);
+	}
+
+	private void testYearFamily(StockDownloadInfo entity) {
+		YearFamily yearFamily = entity.getYearFamily();
+		testYearQualifier(yearFamily);
+		testYearValue(yearFamily);
+	}
+
+	private void testYearQualifier(YearFamily yearFamily) {
+		YearQualifier yearQualifier = yearFamily.new YearQualifier(allYear);
 		HbaseEntityTestUtility.toBytesFromBytes(yearQualifier);
-		// Test yearValue.
-		YearValue yearValue = entity.getYearFamily().new YearValue(years);
+	}
+
+	private void testYearValue(YearFamily yearFamily) {
+		YearValue yearValue = yearFamily.new YearValue(years);
 		HbaseEntityTestUtility.toBytesFromBytes(yearValue);
-		// Test seasonQualifier.
-		SeasonQualifier seasonQualifier = entity.getSeasonFamily().new SeasonQualifier(
+	}
+
+	private void testSeasonFamily(StockDownloadInfo entity) {
+		SeasonFamily seasonFamily = entity.getSeasonFamily();
+		testSeasonQualifier(seasonFamily);
+		testSeasonValue(seasonFamily);
+	}
+
+	private void testSeasonQualifier(SeasonFamily seasonFamily) {
+		SeasonQualifier seasonQualifier = seasonFamily.new SeasonQualifier(
 				allSeason);
 		HbaseEntityTestUtility.toBytesFromBytes(seasonQualifier);
-		// Test seasonValue.
-		SeasonValue seasonValue = entity.getSeasonFamily().new SeasonValue(
-				seasons);
+	}
+
+	private void testSeasonValue(SeasonFamily seasonFamily) {
+		SeasonValue seasonValue = seasonFamily.new SeasonValue(seasons);
 		HbaseEntityTestUtility.toBytesFromBytes(seasonValue);
 	}
 

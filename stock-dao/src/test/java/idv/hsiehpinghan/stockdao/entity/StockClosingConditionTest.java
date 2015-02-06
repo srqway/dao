@@ -2,9 +2,11 @@ package idv.hsiehpinghan.stockdao.entity;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
 import idv.hsiehpinghan.hbaseassistant.utility.HbaseEntityTestUtility;
+import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.PriceFamily;
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.PriceFamily.PriceQualifier;
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.PriceFamily.PriceValue;
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.RowKey;
+import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily;
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily.VolumeQualifier;
 import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.VolumeFamily.VolumeValue;
 
@@ -29,24 +31,47 @@ public class StockClosingConditionTest {
 	@Test
 	public void toBytesFromBytes() {
 		StockClosingCondition entity = new StockClosingCondition();
-		// Test row key.
+		testRowKey(entity);
+		testPriceFamily(entity);
+		testVolumeFamily(entity);
+	}
+
+	private void testRowKey(StockClosingCondition entity) {
 		RowKey key = entity.new RowKey(stockCode, date, entity);
 		HbaseEntityTestUtility.toBytesFromBytes(key);
-		// Test priceQualifier.
-		PriceQualifier priceQualifier = entity.getPriceFamily().new PriceQualifier(
+	}
+
+	private void testPriceFamily(StockClosingCondition entity) {
+		PriceFamily priceFamily = entity.getPriceFamily();
+		testPriceQualifier(priceFamily);
+		testPriceValue(priceFamily);
+	}
+
+	private void testPriceQualifier(PriceFamily priceFamily) {
+		PriceQualifier priceQualifier = priceFamily.new PriceQualifier(
 				PriceQualifier.HIGHEST_PRICE);
 		HbaseEntityTestUtility.toBytesFromBytes(priceQualifier);
-		// Test priceValue.
-		PriceValue priceValue = entity.getPriceFamily().new PriceValue(
-				highestPrice);
+	}
+
+	private void testPriceValue(PriceFamily priceFamily) {
+		PriceValue priceValue = priceFamily.new PriceValue(highestPrice);
 		HbaseEntityTestUtility.toBytesFromBytes(priceValue);
-		// Test volumeQualifier.
-		VolumeQualifier volumeQualifier = entity.getVolumeFamily().new VolumeQualifier(
+	}
+
+	private void testVolumeFamily(StockClosingCondition entity) {
+		VolumeFamily volumeFamily = entity.getVolumeFamily();
+		testVolumeQualifier(volumeFamily);
+		testVolumeValue(volumeFamily);
+	}
+
+	private void testVolumeQualifier(VolumeFamily volumeFamily) {
+		VolumeQualifier volumeQualifier = volumeFamily.new VolumeQualifier(
 				VolumeQualifier.MONEY_AMOUNT);
 		HbaseEntityTestUtility.toBytesFromBytes(volumeQualifier);
-		// Test volumeValue.
-		VolumeValue volumeValue = entity.getVolumeFamily().new VolumeValue(
-				moneyAmount);
+	}
+
+	private void testVolumeValue(VolumeFamily volumeFamily) {
+		VolumeValue volumeValue = volumeFamily.new VolumeValue(moneyAmount);
 		HbaseEntityTestUtility.toBytesFromBytes(volumeValue);
 	}
 }
