@@ -1,27 +1,19 @@
 package idv.hsiehpinghan.stockdao.enumeration;
 
 public enum ReportType {
-	CONSOLIDATED_STATEMENT("cr"), INDIVIDUAL_STATEMENT("ir"), ENTERPRISE_STATEMENT(
-			"er");
+	CONSOLIDATED_STATEMENT, INDIVIDUAL_STATEMENT, ENTERPRISE_STATEMENT;
 
-	private String reportTypeCode;
-
-	private ReportType(String reportTypeCode) {
-		this.reportTypeCode = reportTypeCode;
-	}
-
-	public static ReportType getReportType(String reportTypeCode) {
-		for (ReportType type : ReportType.values()) {
-			if (type.getReportTypeCode().equals(reportTypeCode)) {
-				return type;
-			}
+	public static ReportType getMopsReportType(String code) {
+		switch (code) {
+		case "cr":
+			return CONSOLIDATED_STATEMENT;
+		case "ir":
+			return INDIVIDUAL_STATEMENT;
+		case "er":
+			return ENTERPRISE_STATEMENT;
+		default:
+			throw new RuntimeException("Report type(" + code
+					+ ") undefined !!!");
 		}
-		throw new RuntimeException("ReportTypeCode(" + reportTypeCode
-				+ ") not defined !!!");
 	}
-
-	public String getReportTypeCode() {
-		return reportTypeCode;
-	}
-
 }
