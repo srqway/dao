@@ -30,10 +30,9 @@ public class StockDownloadInfoRepository extends RepositoryBase implements
 	}
 
 	@Override
-	public StockDownloadInfo put(StockDownloadInfo entity)
+	public void put(StockDownloadInfo entity)
 			throws IllegalAccessException {
 		hbaseAssistant.put(entity);
-		return entity;
 	}
 
 	@Override

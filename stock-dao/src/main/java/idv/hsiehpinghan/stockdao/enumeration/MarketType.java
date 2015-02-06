@@ -3,16 +3,17 @@ package idv.hsiehpinghan.stockdao.enumeration;
 public enum MarketType {
 	LISTED, OTC, EMERGING, PUBLIC;
 
-	public static MarketType getMarketType(String code) {
-		if ("sii".equals(code)) {
+	public static MarketType getMopsMarketType(String code) {
+		switch (code) {
+		case "sii":
 			return LISTED;
-		} else if ("otc".equals(code)) {
+		case "otc":
 			return OTC;
-		} else if ("rotc".equals(code)) {
+		case "rotc":
 			return EMERGING;
-		} else if ("pub".equals(code)) {
+		case "pub":
 			return PUBLIC;
-		} else {
+		default:
 			throw new RuntimeException("Market type(" + code
 					+ ") undefined !!!");
 		}

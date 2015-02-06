@@ -60,11 +60,26 @@
                "type":"BigDecimal",
                "name":"cumulativeDifferentPercent",
                "length":10
+            }
+         ]
+      },
+     "CommentFamily":{  
+         "CommentQualifier":[  
+            {  
+               "type":"int",
+               "name":"year",
+               "length":4
             },
             {  
+               "type":"int",
+               "name":"month",
+               "length":2
+            }
+         ],
+         "CommentValue":[  
+            {  
                "type":"String",
-               "name":"comment",
-               "length":200
+               "name":"comment"
             }
          ]
       }

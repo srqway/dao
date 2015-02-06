@@ -1,6 +1,9 @@
 package idv.hsiehpinghan.stockdao.entity;
 
 import idv.hsiehpinghan.hbaseassistant.utility.HbaseEntityTestUtility;
+import idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncome.CommentFamily;
+import idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncome.CommentFamily.CommentQualifier;
+import idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncome.CommentFamily.CommentValue;
 import idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncome.DataFamily;
 import idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncome.DataFamily.DataQualifier;
 import idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncome.DataFamily.DataValue;
@@ -24,6 +27,7 @@ public class MonthlyOperatingIncomeTest {
 		MonthlyOperatingIncome entity = new MonthlyOperatingIncome();
 		testRowKey(entity);
 		testDataFamily(entity);
+		testCommentFamily(entity);
 	}
 
 	private void testRowKey(MonthlyOperatingIncome entity) {
@@ -36,13 +40,12 @@ public class MonthlyOperatingIncomeTest {
 		testDataQualifier(dataFamily);
 		testDataValue(dataFamily);
 	}
-	
+
 	private void testDataQualifier(DataFamily dataFamily) {
-		DataQualifier dataQualifier = dataFamily.new DataQualifier(
-				2015, 1);
+		DataQualifier dataQualifier = dataFamily.new DataQualifier(2015, 1);
 		HbaseEntityTestUtility.toBytesFromBytes(dataQualifier);
 	}
-	
+
 	private void testDataValue(DataFamily dataFamily) {
 		BigInteger currentMonth = new BigInteger("1");
 		BigInteger currentMonthOfLastYear = new BigInteger("2");
@@ -52,12 +55,28 @@ public class MonthlyOperatingIncomeTest {
 		BigInteger cumulativeAmountOfLastYear = new BigInteger("6");
 		BigInteger cumulativeDifferentAmount = new BigInteger("7");
 		BigDecimal cumulativeDifferentPercent = new BigDecimal("8.8");
-		String comment = "comment";
-		DataValue dataValue = dataFamily.new DataValue(
-				currentMonth, currentMonthOfLastYear, differentAmount,
-				differentPercent, cumulativeAmountOfThisYear,
-				cumulativeAmountOfLastYear, cumulativeDifferentAmount,
-				cumulativeDifferentPercent, comment);
+		DataValue dataValue = dataFamily.new DataValue(currentMonth,
+				currentMonthOfLastYear, differentAmount, differentPercent,
+				cumulativeAmountOfThisYear, cumulativeAmountOfLastYear,
+				cumulativeDifferentAmount, cumulativeDifferentPercent);
 		HbaseEntityTestUtility.toBytesFromBytes(dataValue);
+	}
+
+	private void testCommentFamily(MonthlyOperatingIncome entity) {
+		CommentFamily commentFamily = entity.getCommentFamily();
+		testCommentQualifier(commentFamily);
+		testCommentValue(commentFamily);
+	}
+
+	private void testCommentQualifier(CommentFamily commentFamily) {
+		CommentQualifier commentQualifier = commentFamily.new CommentQualifier(
+				2015, 1);
+		HbaseEntityTestUtility.toBytesFromBytes(commentQualifier);
+	}
+
+	private void testCommentValue(CommentFamily commentFamily) {
+		String comment = "comment";
+		CommentValue commentValue = commentFamily.new CommentValue(comment);
+		HbaseEntityTestUtility.toBytesFromBytes(commentValue);
 	}
 }

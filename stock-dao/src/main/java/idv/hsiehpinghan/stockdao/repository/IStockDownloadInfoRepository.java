@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 public interface IStockDownloadInfoRepository extends IRepositoryBase {
-	StockDownloadInfo put(StockDownloadInfo entity)
+	void put(StockDownloadInfo entity)
 			throws IllegalAccessException;
 
 	StockDownloadInfo get(String tableName) throws IllegalAccessException,

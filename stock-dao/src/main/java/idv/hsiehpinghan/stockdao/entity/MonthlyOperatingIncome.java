@@ -17,6 +17,7 @@ public class MonthlyOperatingIncome extends HBaseTable {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private RowKey rowKey;
 	private DataFamily dataFamily;
+	private CommentFamily commentFamily;
 
 	@Override
 	public HBaseRowKey getRowKey() {
@@ -33,6 +34,13 @@ public class MonthlyOperatingIncome extends HBaseTable {
 			dataFamily = this.new DataFamily(this);
 		}
 		return dataFamily;
+	}
+
+	public CommentFamily getCommentFamily() {
+		if (commentFamily == null) {
+			commentFamily = this.new CommentFamily(this);
+		}
+		return commentFamily;
 	}
 
 	public class RowKey extends HBaseRowKey {
@@ -88,13 +96,12 @@ public class MonthlyOperatingIncome extends HBaseTable {
 				BigInteger cumulativeAmountOfThisYear,
 				BigInteger cumulativeAmountOfLastYear,
 				BigInteger cumulativeDifferentAmount,
-				BigDecimal cumulativeDifferentPercent, String comment) {
+				BigDecimal cumulativeDifferentPercent) {
 			HBaseColumnQualifier qualifier = this.new DataQualifier(year, month);
 			DataValue val = this.new DataValue(currentMonth,
 					currentMonthOfLastYear, differentAmount, differentPercent,
 					cumulativeAmountOfThisYear, cumulativeAmountOfLastYear,
-					cumulativeDifferentAmount, cumulativeDifferentPercent,
-					comment);
+					cumulativeDifferentAmount, cumulativeDifferentPercent);
 			add(qualifier, date, val);
 		}
 
@@ -166,7 +173,6 @@ public class MonthlyOperatingIncome extends HBaseTable {
 			private static final int CUMULATIVE_AMOUNT_OF_LAST_YEAR_LENGTH = 15;
 			private static final int CUMULATIVE_DIFFERENT_AMOUNT_LENGTH = 15;
 			private static final int CUMULATIVE_DIFFERENT_PERCENT_LENGTH = 10;
-			private static final int COMMENT_LENGTH = 200;
 			private static final int CURRENT_MONTH_BEGIN_INDEX = 0;
 			private static final int CURRENT_MONTH_END_INDEX = CURRENT_MONTH_BEGIN_INDEX
 					+ CURRENT_MONTH_LENGTH;
@@ -191,9 +197,6 @@ public class MonthlyOperatingIncome extends HBaseTable {
 			private static final int CUMULATIVE_DIFFERENT_PERCENT_BEGIN_INDEX = CUMULATIVE_DIFFERENT_AMOUNT_END_INDEX + 1;
 			private static final int CUMULATIVE_DIFFERENT_PERCENT_END_INDEX = CUMULATIVE_DIFFERENT_PERCENT_BEGIN_INDEX
 					+ CUMULATIVE_DIFFERENT_PERCENT_LENGTH;
-			private static final int COMMENT_BEGIN_INDEX = CUMULATIVE_DIFFERENT_PERCENT_END_INDEX + 1;
-			private static final int COMMENT_END_INDEX = COMMENT_BEGIN_INDEX
-					+ COMMENT_LENGTH;
 			private BigInteger currentMonth;
 			private BigInteger currentMonthOfLastYear;
 			private BigInteger differentAmount;
@@ -202,7 +205,6 @@ public class MonthlyOperatingIncome extends HBaseTable {
 			private BigInteger cumulativeAmountOfLastYear;
 			private BigInteger cumulativeDifferentAmount;
 			private BigDecimal cumulativeDifferentPercent;
-			private String comment;
 
 			public DataValue() {
 				super();
@@ -214,7 +216,7 @@ public class MonthlyOperatingIncome extends HBaseTable {
 					BigInteger cumulativeAmountOfThisYear,
 					BigInteger cumulativeAmountOfLastYear,
 					BigInteger cumulativeDifferentAmount,
-					BigDecimal cumulativeDifferentPercent, String comment) {
+					BigDecimal cumulativeDifferentPercent) {
 				super();
 				this.currentMonth = currentMonth;
 				this.currentMonthOfLastYear = currentMonthOfLastYear;
@@ -224,7 +226,6 @@ public class MonthlyOperatingIncome extends HBaseTable {
 				this.cumulativeAmountOfLastYear = cumulativeAmountOfLastYear;
 				this.cumulativeDifferentAmount = cumulativeDifferentAmount;
 				this.cumulativeDifferentPercent = cumulativeDifferentPercent;
-				this.comment = comment;
 			}
 
 			public DataValue(byte[] bytes) {
@@ -250,14 +251,13 @@ public class MonthlyOperatingIncome extends HBaseTable {
 						.toBytes(cumulativeDifferentAmount, 15);
 				byte[] cumulativeDifferentPercentBytes = ByteConvertUtility
 						.toBytes(cumulativeDifferentPercent, 10);
-				byte[] commentBytes = ByteConvertUtility.toBytes(comment, 200);
 				return ArrayUtility.addAll(currentMonthBytes, SPACE,
 						currentMonthOfLastYearBytes, SPACE,
 						differentAmountBytes, SPACE, differentPercentBytes,
 						SPACE, cumulativeAmountOfThisYearBytes, SPACE,
 						cumulativeAmountOfLastYearBytes, SPACE,
 						cumulativeDifferentAmountBytes, SPACE,
-						cumulativeDifferentPercentBytes, SPACE, commentBytes);
+						cumulativeDifferentPercentBytes);
 			}
 
 			@Override
@@ -293,8 +293,6 @@ public class MonthlyOperatingIncome extends HBaseTable {
 						.getBigDecimalFromBytes(bytes,
 								CUMULATIVE_DIFFERENT_PERCENT_BEGIN_INDEX,
 								CUMULATIVE_DIFFERENT_PERCENT_END_INDEX);
-				this.comment = ByteConvertUtility.getStringFromBytes(bytes,
-						COMMENT_BEGIN_INDEX, COMMENT_END_INDEX);
 			}
 
 			public BigInteger getCurrentMonth() {
@@ -365,6 +363,122 @@ public class MonthlyOperatingIncome extends HBaseTable {
 					BigDecimal cumulativeDifferentPercent) {
 				this.cumulativeDifferentPercent = cumulativeDifferentPercent;
 			}
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
+			return this.new DataQualifier(bytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] bytes) {
+			return this.new DataValue(bytes);
+		}
+	}
+
+	public class CommentFamily extends HBaseColumnFamily {
+		private CommentFamily(MonthlyOperatingIncome entity) {
+			super(entity);
+		}
+
+		public CommentValue getLatestValue(int year, int month) {
+			CommentQualifier qual = this.new CommentQualifier(year, month);
+			return (CommentValue) super.getLatestValue(qual);
+		}
+
+		public void add(int year, int month, Date date, String comment) {
+			HBaseColumnQualifier qualifier = this.new CommentQualifier(year,
+					month);
+			CommentValue val = this.new CommentValue(comment);
+			add(qualifier, date, val);
+		}
+
+		public class CommentQualifier extends HBaseColumnQualifier {
+			private static final int YEAR_LENGTH = 4;
+			private static final int MONTH_LENGTH = 2;
+			private static final int YEAR_BEGIN_INDEX = 0;
+			private static final int YEAR_END_INDEX = YEAR_BEGIN_INDEX
+					+ YEAR_LENGTH;
+			private static final int MONTH_BEGIN_INDEX = YEAR_END_INDEX + 1;
+			private static final int MONTH_END_INDEX = MONTH_BEGIN_INDEX
+					+ MONTH_LENGTH;
+			private int year;
+			private int month;
+
+			public CommentQualifier() {
+				super();
+			}
+
+			public CommentQualifier(int year, int month) {
+				super();
+				this.year = year;
+				this.month = month;
+			}
+
+			public CommentQualifier(byte[] bytes) {
+				super();
+				fromBytes(bytes);
+			}
+
+			@Override
+			public byte[] toBytes() {
+				byte[] yearBytes = ByteConvertUtility.toBytes(year, 4);
+				byte[] monthBytes = ByteConvertUtility.toBytes(month, 2);
+				return ArrayUtility.addAll(yearBytes, SPACE, monthBytes);
+			}
+
+			@Override
+			public void fromBytes(byte[] bytes) {
+				this.year = ByteConvertUtility.getIntFromBytes(bytes,
+						YEAR_BEGIN_INDEX, YEAR_END_INDEX);
+				this.month = ByteConvertUtility.getIntFromBytes(bytes,
+						MONTH_BEGIN_INDEX, MONTH_END_INDEX);
+			}
+
+			public int getYear() {
+				return year;
+			}
+
+			public void setYear(int year) {
+				this.year = year;
+			}
+
+			public int getMonth() {
+				return month;
+			}
+
+			public void setMonth(int month) {
+				this.month = month;
+			}
+		}
+
+		public class CommentValue extends HBaseValue {
+			private String comment;
+
+			public CommentValue() {
+				super();
+			}
+
+			public CommentValue(String comment) {
+				super();
+				this.comment = comment;
+			}
+
+			public CommentValue(byte[] bytes) {
+				super();
+				fromBytes(bytes);
+			}
+
+			@Override
+			public byte[] toBytes() {
+				byte[] commentBytes = ByteConvertUtility.toBytes(comment);
+				return ArrayUtility.addAll(commentBytes);
+			}
+
+			@Override
+			public void fromBytes(byte[] bytes) {
+				this.comment = ByteConvertUtility.getStringFromBytes(bytes);
+			}
 
 			public String getComment() {
 				return comment;
@@ -377,12 +491,12 @@ public class MonthlyOperatingIncome extends HBaseTable {
 
 		@Override
 		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
-			return this.new DataQualifier(bytes);
+			return this.new CommentQualifier(bytes);
 		}
 
 		@Override
 		protected HBaseValue generateValue(byte[] bytes) {
-			return this.new DataValue(bytes);
+			return this.new CommentValue(bytes);
 		}
 	}
 }
