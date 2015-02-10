@@ -39,30 +39,18 @@ public class FinancialReportPresentation extends HBaseTable {
 	}
 
 	public class RowKey extends HBaseRowKey {
-		private String taxonomyVersion;
-
 		public RowKey(FinancialReportPresentation table) {
 			super(table);
 		}
 
-		public RowKey(String taxonomyVersion, FinancialReportPresentation table) {
-			super(table);
-			this.taxonomyVersion = taxonomyVersion;
+		public RowKey(String taxonomyVersion, FinancialReportPresentation entity) {
+			super(entity);
+			setBytes(ByteConvertUtility.toBytes(taxonomyVersion));
 		}
 
-		public RowKey(byte[] rowKey, FinancialReportPresentation table) {
-			super(table);
-			fromBytes(rowKey);
-		}
-
-		@Override
-		public byte[] toBytes() {
-			return ByteConvertUtility.toBytes(taxonomyVersion);
-		}
-
-		@Override
-		public void fromBytes(byte[] bytes) {
-			this.taxonomyVersion = ByteConvertUtility.getStringFromBytes(bytes);
+		public RowKey(byte[] rowKey, FinancialReportPresentation entity) {
+			super(entity);
+			setBytes(rowKey);
 		}
 	}
 
@@ -84,67 +72,42 @@ public class FinancialReportPresentation extends HBaseTable {
 		}
 
 		public class IdQualifier extends HBaseColumnQualifier {
-			private String presentationId;
-
 			public IdQualifier() {
 				super();
 			}
 
 			public IdQualifier(String presentationId) {
 				super();
-				this.presentationId = presentationId;
+				setBytes(ByteConvertUtility.toBytes(presentationId));
 			}
 
 			public IdQualifier(byte[] bytes) {
 				super();
-				fromBytes(bytes);
-			}
-
-			@Override
-			public byte[] toBytes() {
-				return ByteConvertUtility.toBytes(presentationId);
-			}
-
-			@Override
-			public void fromBytes(byte[] bytes) {
-				this.presentationId = ByteConvertUtility
-						.getStringFromBytes(bytes);
+				setBytes(bytes);
 			}
 
 			public String getPresentationId() {
-				return presentationId;
+				return ByteConvertUtility.getStringFromBytes(getBytes());
 			}
 		}
 
 		public class JsonValue extends HBaseValue {
-			private String json;
-
 			public JsonValue() {
 				super();
 			}
 
 			public JsonValue(String json) {
 				super();
-				this.json = json;
+				setBytes(ByteConvertUtility.toBytes(json));
 			}
 
 			public JsonValue(byte[] jsonBytes) {
 				super();
-				fromBytes(jsonBytes);
+				setBytes(jsonBytes);
 			}
 
 			public String getJson() {
-				return json;
-			}
-
-			@Override
-			public byte[] toBytes() {
-				return ByteConvertUtility.toBytes(json);
-			}
-
-			@Override
-			public void fromBytes(byte[] bytes) {
-				this.json = ByteConvertUtility.getStringFromBytes(bytes);
+				return ByteConvertUtility.getStringFromBytes(getBytes());
 			}
 		}
 

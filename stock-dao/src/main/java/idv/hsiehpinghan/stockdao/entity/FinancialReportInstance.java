@@ -69,10 +69,10 @@ public class FinancialReportInstance extends HBaseTable {
 		private static final int SEASON_END_INDEX = SEASON_BEGIN_INDEX
 				+ SEASON_LENGTH;
 
-		private String stockCode;
-		private ReportType reportType;
-		private int year;
-		private int season;
+//		private String stockCode;
+//		private ReportType reportType;
+//		private int year;
+//		private int season;
 
 		public RowKey(FinancialReportInstance entity) {
 			super(entity);
@@ -81,19 +81,6 @@ public class FinancialReportInstance extends HBaseTable {
 		public RowKey(String stockCode, ReportType reportType, int year,
 				int season, FinancialReportInstance entity) {
 			super(entity);
-			this.stockCode = stockCode;
-			this.reportType = reportType;
-			this.year = year;
-			this.season = season;
-		}
-
-		public RowKey(byte[] rowKey, FinancialReportInstance entity) {
-			super(entity);
-			fromBytes(rowKey);
-		}
-
-		@Override
-		public byte[] toBytes() {
 			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode,
 					STOCK_CODE_LENGTH);
 			byte[] reportTypeBytes = ByteConvertUtility.toBytes(
@@ -101,53 +88,61 @@ public class FinancialReportInstance extends HBaseTable {
 			byte[] yearBytes = ByteConvertUtility.toBytes(year, YEAR_LENGTH);
 			byte[] seasonBytes = ByteConvertUtility.toBytes(season,
 					SEASON_LENGTH);
-			return ArrayUtility.addAll(stockCodeBytes, SPACE, reportTypeBytes,
-					SPACE, yearBytes, SPACE, seasonBytes);
+			setBytes(ArrayUtility.addAll(stockCodeBytes, SPACE, reportTypeBytes,
+					SPACE, yearBytes, SPACE, seasonBytes));
 		}
 
-		@Override
-		public void fromBytes(byte[] bytes) {
-			this.stockCode = ByteConvertUtility.getStringFromBytes(bytes,
-					STOCK_CODE_BEGIN_INDEX, STOCK_CODE_END_INDEX);
-			String reportTypeStr = ByteConvertUtility.getStringFromBytes(bytes,
-					REPORT_TYPE_BEGIN_INDEX, REPORT_TYPE_END_INDEX);
-			this.reportType = ReportType.valueOf(reportTypeStr);
-			this.year = ByteConvertUtility.getIntFromBytes(bytes,
-					YEAR_BEGIN_INDEX, YEAR_END_INDEX);
-			this.season = ByteConvertUtility.getIntFromBytes(bytes,
-					SEASON_BEGIN_INDEX, SEASON_END_INDEX);
+		public RowKey(byte[] rowKey, FinancialReportInstance entity) {
+			super(entity);
+			setBytes(rowKey);
 		}
 
 		public String getStockCode() {
-			return stockCode;
+			return ByteConvertUtility.getStringFromBytes(getBytes(),
+					STOCK_CODE_BEGIN_INDEX, STOCK_CODE_END_INDEX);
 		}
 
 		public void setStockCode(String stockCode) {
-			this.stockCode = stockCode;
+			byte[] bytes = getBytes();
+			byte[] subBytes = ByteConvertUtility.toBytes(stockCode);
+			ArrayUtility.replace(bytes, subBytes, STOCK_CODE_BEGIN_INDEX,
+					STOCK_CODE_END_INDEX);
 		}
 
 		public ReportType getReportType() {
-			return reportType;
+			return ReportType.valueOf(ByteConvertUtility.getStringFromBytes(getBytes(),
+					REPORT_TYPE_BEGIN_INDEX, REPORT_TYPE_END_INDEX));
 		}
 
 		public void setReportType(ReportType reportType) {
-			this.reportType = reportType;
+			byte[] bytes = getBytes();
+			byte[] subBytes = ByteConvertUtility.toBytes(reportType.name());
+			ArrayUtility.replace(bytes, subBytes, REPORT_TYPE_BEGIN_INDEX,
+					REPORT_TYPE_END_INDEX);
 		}
 
 		public int getYear() {
-			return year;
+			return ByteConvertUtility.getIntegerFromBytes(getBytes(),
+					YEAR_BEGIN_INDEX, YEAR_END_INDEX);
 		}
 
 		public void setYear(int year) {
-			this.year = year;
+			byte[] bytes = getBytes();
+			byte[] subBytes = ByteConvertUtility.toBytes(year);
+			ArrayUtility.replace(bytes, subBytes, YEAR_BEGIN_INDEX,
+					YEAR_END_INDEX);
 		}
 
 		public int getSeason() {
-			return season;
+			return ByteConvertUtility.getIntegerFromBytes(getBytes(),
+					SEASON_BEGIN_INDEX, SEASON_END_INDEX);
 		}
 
 		public void setSeason(int season) {
-			this.season = season;
+			byte[] bytes = getBytes();
+			byte[] subBytes = ByteConvertUtility.toBytes(season);
+			ArrayUtility.replace(bytes, subBytes, SEASON_BEGIN_INDEX,
+					SEASON_END_INDEX);
 		}
 
 	}
