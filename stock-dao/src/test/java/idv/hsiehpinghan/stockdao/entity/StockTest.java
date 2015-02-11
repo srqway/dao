@@ -1,15 +1,19 @@
 package idv.hsiehpinghan.stockdao.entity;
 
+import idv.hsiehpinghan.stockdao.entity.Stock.DailyFamily;
 import idv.hsiehpinghan.stockdao.entity.Stock.FinancialReportFamily;
 import idv.hsiehpinghan.stockdao.entity.Stock.InfoFamily;
+import idv.hsiehpinghan.stockdao.entity.Stock.MonthlyFamily;
 import idv.hsiehpinghan.stockdao.entity.Stock.RowKey;
 import idv.hsiehpinghan.stockdao.entity.Stock.XbrlInstanceFamily;
 import idv.hsiehpinghan.stockdao.enumeration.ElementType;
 import idv.hsiehpinghan.stockdao.enumeration.IndustryType;
 import idv.hsiehpinghan.stockdao.enumeration.MarketType;
 import idv.hsiehpinghan.stockdao.enumeration.PeriodType;
+import idv.hsiehpinghan.stockdao.enumeration.UnitType;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -56,9 +60,38 @@ public class StockTest {
 	private Date instant;
 	private Date startDate;
 	private Date endDate;
-	private String unit = "unit";
+	private UnitType unitType = UnitType.SHARES;
 	private BigDecimal value = BigDecimal.TEN;
 	private ElementType elementType = ElementType.GROWTH;
+	private int year = 2015;
+	private int month = 1;
+	private String operatingIncomeOfComment = "operatingIncomeOfComment";
+	private BigInteger operatingIncomeOfCumulativeAmountOfLastYear = new BigInteger(
+			"1");
+	private BigInteger operatingIncomeOfCumulativeAmountOfThisYear = new BigInteger(
+			"2");
+	private BigInteger operatingIncomeOfCumulativeDifferentAmount = new BigInteger(
+			"3");
+	private BigDecimal operatingIncomeOfCumulativeDifferentPercent = new BigDecimal(
+			"4.4");
+	private BigInteger operatingIncomeOfCurrentMonth = new BigInteger("5");
+	private BigInteger operatingIncomeOfCurrentMonthOfLastYear = new BigInteger(
+			"6");
+	private BigInteger operatingIncomeOfDifferentAmount = new BigInteger("7");
+	private BigDecimal operatingIncomeOfDifferentPercent = new BigDecimal("8.8");
+	private Date date;
+	private BigDecimal closingConditionOfChange = new BigDecimal("1.11");
+	private BigDecimal closingConditionOfClosingPrice = new BigDecimal("2.22");
+	private BigDecimal closingConditionOfFinalPurchasePrice = new BigDecimal(
+			"3.33");
+	private BigDecimal closingConditionOfFinalSellingPrice = new BigDecimal(
+			"4.44");
+	private BigDecimal closingConditionOfHighestPrice = new BigDecimal("5.55");
+	private BigDecimal closingConditionOfLowestPrice = new BigDecimal("6.66");
+	private BigInteger closingConditionOfMoneyAmount = new BigInteger("7");
+	private BigDecimal closingConditionOfOpeningPrice = new BigDecimal("8");
+	private BigInteger closingConditionOfStockAmount = new BigInteger("9");
+	private BigInteger closingConditionOfTransactionAmount = new BigInteger("10");
 
 	@BeforeClass
 	public void beforeClass() throws Exception {
@@ -66,6 +99,7 @@ public class StockTest {
 		instant = DateUtils.parseDate("2015/02/02", "yyyy/MM/dd");
 		startDate = DateUtils.parseDate("2015/02/11", "yyyy/MM/dd");
 		endDate = DateUtils.parseDate("2015/02/22", "yyyy/MM/dd");
+		date = DateUtils.parseDate("2015/05/22", "yyyy/MM/dd");
 	}
 
 	@Test
@@ -75,11 +109,114 @@ public class StockTest {
 		testInfoFamily(entity);
 		testXbrlInstanceFamily(entity);
 		testFinancialReportFamily(entity);
+		testMonthlyFamily(entity);
+		testDailyFamily(entity);
 	}
 
 	private void testRowKey(Stock entity) {
 		RowKey key = entity.new RowKey(stockCode, entity);
 		Assert.assertEquals(stockCode, key.getStockCode());
+	}
+
+	private void testDailyFamily(Stock entity) {
+		generateDailyFamilyContent(entity);
+		assertDailyFamily(entity);
+	}
+
+	private void generateDailyFamilyContent(Stock entity) {
+		DailyFamily fam = entity.getDailyFamily();
+		fam.setClosingConditionOfChange(date, ver, closingConditionOfChange);
+		fam.setClosingConditionOfClosingPrice(date, ver,
+				closingConditionOfClosingPrice);
+		fam.setClosingConditionOfFinalPurchasePrice(date, ver,
+				closingConditionOfFinalPurchasePrice);
+		fam.setClosingConditionOfFinalSellingPrice(date, ver,
+				closingConditionOfFinalSellingPrice);
+		fam.setClosingConditionOfHighestPrice(date, ver,
+				closingConditionOfHighestPrice);
+		fam.setClosingConditionOfLowestPrice(date, ver,
+				closingConditionOfLowestPrice);
+		fam.setClosingConditionOfMoneyAmount(date, ver,
+				closingConditionOfMoneyAmount);
+		fam.setClosingConditionOfOpeningPrice(date, ver,
+				closingConditionOfOpeningPrice);
+		fam.setClosingConditionOfStockAmount(date, ver,
+				closingConditionOfStockAmount);
+		fam.setClosingConditionOfTransactionAmount(date, ver,
+				closingConditionOfTransactionAmount);
+	}
+
+	private void assertDailyFamily(Stock entity) {
+		DailyFamily fam = entity.getDailyFamily();
+		Assert.assertEquals(closingConditionOfChange,
+				fam.getClosingConditionOfChange(date));
+		Assert.assertEquals(closingConditionOfClosingPrice,
+				fam.getClosingConditionOfClosingPrice(date));
+		Assert.assertEquals(closingConditionOfFinalPurchasePrice,
+				fam.getClosingConditionOfFinalPurchasePrice(date));
+		Assert.assertEquals(closingConditionOfFinalSellingPrice,
+				fam.getClosingConditionOfFinalSellingPrice(date));
+		Assert.assertEquals(closingConditionOfHighestPrice,
+				fam.getClosingConditionOfHighestPrice(date));
+		Assert.assertEquals(closingConditionOfLowestPrice,
+				fam.getClosingConditionOfLowestPrice(date));
+		Assert.assertEquals(closingConditionOfMoneyAmount,
+				fam.getClosingConditionOfMoneyAmount(date));
+		Assert.assertEquals(closingConditionOfOpeningPrice,
+				fam.getClosingConditionOfOpeningPrice(date));
+		Assert.assertEquals(closingConditionOfStockAmount,
+				fam.getClosingConditionOfStockAmount(date));
+		Assert.assertEquals(closingConditionOfTransactionAmount,
+				fam.getClosingConditionOfTransactionAmount(date));
+	}
+
+	private void testMonthlyFamily(Stock entity) {
+		generateMonthlyFamilyContent(entity);
+		assertMonthlyFamily(entity);
+	}
+
+	private void generateMonthlyFamilyContent(Stock entity) {
+		MonthlyFamily fam = entity.getMonthlyFamily();
+		fam.setOperatingIncomeOfComment(year, month, ver,
+				operatingIncomeOfComment);
+		fam.setOperatingIncomeOfCumulativeAmountOfLastYear(year, month, ver,
+				operatingIncomeOfCumulativeAmountOfLastYear);
+		fam.setOperatingIncomeOfCumulativeAmountOfThisYear(year, month, ver,
+				operatingIncomeOfCumulativeAmountOfThisYear);
+		fam.setOperatingIncomeOfCumulativeDifferentAmount(year, month, ver,
+				operatingIncomeOfCumulativeDifferentAmount);
+		fam.setOperatingIncomeOfCumulativeDifferentPercent(year, month, ver,
+				operatingIncomeOfCumulativeDifferentPercent);
+		fam.setOperatingIncomeOfCurrentMonth(year, month, ver,
+				operatingIncomeOfCurrentMonth);
+		fam.setOperatingIncomeOfCurrentMonthOfLastYear(year, month, ver,
+				operatingIncomeOfCurrentMonthOfLastYear);
+		fam.setOperatingIncomeOfDifferentAmount(year, month, ver,
+				operatingIncomeOfDifferentAmount);
+		fam.setOperatingIncomeOfDifferentPercent(year, month, ver,
+				operatingIncomeOfDifferentPercent);
+	}
+
+	private void assertMonthlyFamily(Stock entity) {
+		MonthlyFamily fam = entity.getMonthlyFamily();
+		Assert.assertEquals(operatingIncomeOfComment,
+				fam.getOperatingIncomeOfComment(year, month));
+		Assert.assertEquals(operatingIncomeOfCumulativeAmountOfLastYear,
+				fam.getOperatingIncomeOfCumulativeAmountOfLastYear(year, month));
+		Assert.assertEquals(operatingIncomeOfCumulativeAmountOfThisYear,
+				fam.getOperatingIncomeOfCumulativeAmountOfThisYear(year, month));
+		Assert.assertEquals(operatingIncomeOfCumulativeDifferentAmount,
+				fam.getOperatingIncomeOfCumulativeDifferentAmount(year, month));
+		Assert.assertEquals(operatingIncomeOfCumulativeDifferentPercent,
+				fam.getOperatingIncomeOfCumulativeDifferentPercent(year, month));
+		Assert.assertEquals(operatingIncomeOfCurrentMonth,
+				fam.getOperatingIncomeOfCurrentMonth(year, month));
+		Assert.assertEquals(operatingIncomeOfCurrentMonthOfLastYear,
+				fam.getOperatingIncomeOfCurrentMonthOfLastYear(year, month));
+		Assert.assertEquals(operatingIncomeOfDifferentAmount,
+				fam.getOperatingIncomeOfDifferentAmount(year, month));
+		Assert.assertEquals(operatingIncomeOfDifferentPercent,
+				fam.getOperatingIncomeOfDifferentPercent(year, month));
 	}
 
 	private void testFinancialReportFamily(Stock entity) {
@@ -106,14 +243,14 @@ public class StockTest {
 
 	private void generateXbrlInstanceFamilyContent(Stock entity) {
 		XbrlInstanceFamily fam = entity.getXbrlInstanceFamily();
-		fam.set(elementId, periodType, instant, startDate, endDate, unit, ver,
-				value);
+		fam.set(elementId, periodType, instant, startDate, endDate, unitType,
+				ver, value);
 	}
 
 	private void assertXbrlInstanceFamily(Stock entity) {
 		XbrlInstanceFamily fam = entity.getXbrlInstanceFamily();
 		Assert.assertEquals(value, fam.getAsBigDecimal(elementId, periodType,
-				instant, startDate, endDate, unit));
+				instant, startDate, endDate, unitType));
 	}
 
 	private void testInfoFamily(Stock entity) {

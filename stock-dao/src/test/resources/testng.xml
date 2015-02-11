@@ -9,8 +9,7 @@
 	<test name="Taxonomy">
 		<classes>
 			<!-- Test repositoty -->
-			<class
-				name="idv.hsiehpinghan.stockdao.repository.hbase.TaxonomyRepositoryTest" />
+			<class name="idv.hsiehpinghan.stockdao.repository.TaxonomyRepositoryTest" />
 
 			<!-- Test entity -->
 			<class name="idv.hsiehpinghan.stockdao.entity.TaxonomyTest" />

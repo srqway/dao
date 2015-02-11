@@ -1,4 +1,4 @@
-package idv.hsiehpinghan.stockdao.repository.hbase;
+package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.stockdao.entity.Taxonomy;
 import idv.hsiehpinghan.stockdao.entity.Taxonomy.PresentationFamily;

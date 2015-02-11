@@ -1,16 +1,15 @@
-package idv.hsiehpinghan.stockdao.repository.hbase;
+package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.stockdao.entity.Stock;
-import idv.hsiehpinghan.stockdao.repository.IStockRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class StockRepository extends RepositoryBase implements IStockRepository {
+public class StockRepository extends RepositoryBase {
 
 	@Autowired
 	private HbaseAssistant hbaseAssistant;

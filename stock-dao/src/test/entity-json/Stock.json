@@ -164,8 +164,8 @@
                "name":"endDate"
             },
             {  
-               "type":"String",
-               "name":"unit",
+               "type":"UnitType",
+               "name":"unitType",
                "length":10
             }
          ],

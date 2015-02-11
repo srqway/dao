@@ -12,6 +12,7 @@ import idv.hsiehpinghan.stockdao.enumeration.ElementType;
 import idv.hsiehpinghan.stockdao.enumeration.IndustryType;
 import idv.hsiehpinghan.stockdao.enumeration.MarketType;
 import idv.hsiehpinghan.stockdao.enumeration.PeriodType;
+import idv.hsiehpinghan.stockdao.enumeration.UnitType;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -635,19 +636,19 @@ public class Stock extends HBaseTable {
 
 		public BigDecimal getAsBigDecimal(String elementId,
 				PeriodType periodType, Date instant, Date startDate,
-				Date endDate, String unit) {
+				Date endDate, UnitType unitType) {
 			XbrlInstanceQualifier qual = new XbrlInstanceQualifier(elementId,
-					periodType, instant, startDate, endDate, unit);
+					periodType, instant, startDate, endDate, unitType);
 			XbrlInstanceValue val = (XbrlInstanceValue) super
 					.getLatestValue(qual);
 			return val.getAsBigDecimal();
 		}
 
 		public void set(String elementId, PeriodType periodType, Date instant,
-				Date startDate, Date endDate, String unit, Date ver,
+				Date startDate, Date endDate, UnitType unitType, Date ver,
 				BigDecimal value) {
 			XbrlInstanceQualifier qual = new XbrlInstanceQualifier(elementId,
-					periodType, instant, startDate, endDate, unit);
+					periodType, instant, startDate, endDate, unitType);
 			XbrlInstanceValue val = new XbrlInstanceValue();
 			val.set(value);
 			add(qual, ver, val);
@@ -669,7 +670,7 @@ public class Stock extends HBaseTable {
 			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
-			private static final int UNIT_LENGTH = 10;
+			private static final int UNIT_TYPE_LENGTH = 10;
 			private static final int ELEMENT_ID_BEGIN_INDEX = 0;
 			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
 					+ ELEMENT_ID_LENGTH;
@@ -685,9 +686,9 @@ public class Stock extends HBaseTable {
 			private static final int END_DATE_BEGIN_INDEX = START_DATE_END_INDEX + 1;
 			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
 					+ END_DATE_LENGTH;
-			private static final int UNIT_BEGIN_INDEX = END_DATE_END_INDEX + 1;
-			private static final int UNIT_END_INDEX = UNIT_BEGIN_INDEX
-					+ UNIT_LENGTH;
+			private static final int UNIT_TYPE_BEGIN_INDEX = END_DATE_END_INDEX + 1;
+			private static final int UNIT_TYPE_END_INDEX = UNIT_TYPE_BEGIN_INDEX
+					+ UNIT_TYPE_LENGTH;
 
 			public XbrlInstanceQualifier() {
 				super();
@@ -700,7 +701,7 @@ public class Stock extends HBaseTable {
 
 			public XbrlInstanceQualifier(String elementId,
 					PeriodType periodType, Date instant, Date startDate,
-					Date endDate, String unit) {
+					Date endDate, UnitType unitType) {
 				super();
 				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
 						300);
@@ -709,10 +710,12 @@ public class Stock extends HBaseTable {
 				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
 				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
 				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
-				byte[] unitBytes = ByteConvertUtility.toBytes(unit, 10);
+				byte[] unitTypeBytes = ByteConvertUtility.toBytes(
+						unitType.name(), 10);
 				super.setBytes(ArrayUtility.addAll(elementIdBytes, SPACE,
 						periodTypeBytes, SPACE, instantBytes, SPACE,
-						startDateBytes, SPACE, endDateBytes, SPACE, unitBytes));
+						startDateBytes, SPACE, endDateBytes, SPACE,
+						unitTypeBytes));
 			}
 
 			public String getElementId() {
@@ -790,16 +793,19 @@ public class Stock extends HBaseTable {
 						END_DATE_END_INDEX);
 			}
 
-			public String getUnit() {
-				return ByteConvertUtility.getStringFromBytes(getBytes(),
-						UNIT_BEGIN_INDEX, UNIT_END_INDEX);
+			public UnitType getUnitType() {
+				return UnitType
+						.valueOf(ByteConvertUtility.getStringFromBytes(
+								getBytes(), UNIT_TYPE_BEGIN_INDEX,
+								UNIT_TYPE_END_INDEX));
 			}
 
-			public void setUnit(String unit) {
+			public void setUnitType(UnitType unitType) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(unit, 10);
-				ArrayUtility.replace(bytes, subBytes, UNIT_BEGIN_INDEX,
-						UNIT_END_INDEX);
+				byte[] subBytes = ByteConvertUtility.toBytes(unitType.name(),
+						10);
+				ArrayUtility.replace(bytes, subBytes, UNIT_TYPE_BEGIN_INDEX,
+						UNIT_TYPE_END_INDEX);
 			}
 		}
 

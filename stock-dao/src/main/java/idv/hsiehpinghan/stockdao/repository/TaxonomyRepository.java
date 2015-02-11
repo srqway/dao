@@ -1,11 +1,10 @@
-package idv.hsiehpinghan.stockdao.repository.hbase;
+package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.stockdao.entity.Taxonomy;
-import idv.hsiehpinghan.stockdao.repository.ITaxonomyRepository;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 
 import java.io.IOException;
@@ -15,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TaxonomyRepository extends RepositoryBase implements
-		ITaxonomyRepository {
+public class TaxonomyRepository extends RepositoryBase {
 
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
@@ -31,7 +29,6 @@ public class TaxonomyRepository extends RepositoryBase implements
 		return hbaseAssistant;
 	}
 
-	@Override
 	public boolean exists(XbrlTaxonomyVersion rowKey)
 			throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,
@@ -41,7 +38,6 @@ public class TaxonomyRepository extends RepositoryBase implements
 		return super.exists(key);
 	}
 
-	@Override
 	public Taxonomy get(XbrlTaxonomyVersion version)
 			throws IllegalAccessException, NoSuchMethodException,
 			SecurityException, InstantiationException,
@@ -50,7 +46,6 @@ public class TaxonomyRepository extends RepositoryBase implements
 		return (Taxonomy) hbaseAssistant.get(rowKey);
 	}
 
-	@Override
 	public Taxonomy generateEntity(XbrlTaxonomyVersion version) {
 		Taxonomy entity = new Taxonomy();
 		entity.new RowKey(version, entity);
