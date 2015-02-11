@@ -17,12 +17,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Set;
 
 public class Stock extends HBaseTable {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
-	private static final int DEFAULT_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 	private RowKey rowKey;
 	private InfoFamily infoFamily;
+	private XbrlInstanceFamily xbrlInstanceFamily;
 	private FinancialReportFamily financialReportFamily;
 	private MonthlyFamily monthlyFamily;
 	private DailyFamily dailyFamily;
@@ -42,6 +43,13 @@ public class Stock extends HBaseTable {
 			infoFamily = this.new InfoFamily(this);
 		}
 		return infoFamily;
+	}
+
+	public XbrlInstanceFamily getXbrlInstanceFamily() {
+		if (xbrlInstanceFamily == null) {
+			xbrlInstanceFamily = this.new XbrlInstanceFamily(this);
+		}
+		return xbrlInstanceFamily;
 	}
 
 	public FinancialReportFamily getFinancialReportFamily() {
@@ -66,8 +74,8 @@ public class Stock extends HBaseTable {
 	}
 
 	public class RowKey extends HBaseRowKey {
-		public RowKey(HBaseTable table) {
-			super(table);
+		public RowKey(Stock entity) {
+			super(entity);
 		}
 
 		public RowKey(byte[] bytes, Stock entity) {
@@ -77,15 +85,16 @@ public class Stock extends HBaseTable {
 
 		public RowKey(String stockCode, Stock entity) {
 			super(entity);
-			setBytes(ByteConvertUtility.toBytes(stockCode));
+			setStockCode(stockCode);
 		}
-		
+
 		public String getStockCode() {
 			return ByteConvertUtility.getStringFromBytes(getBytes());
 		}
 
 		public void setStockCode(String stockCode) {
-			setBytes(ByteConvertUtility.toBytes(stockCode));
+			byte[] bytes = ByteConvertUtility.toBytes(stockCode);
+			setBytes(bytes);
 		}
 	}
 
@@ -118,24 +127,30 @@ public class Stock extends HBaseTable {
 		public static final String PRIVATE_PLACEMENT_AMOUNT_OF_ORDINARY_SHARES = "privatePlacementAmountOfOrdinaryShares";
 		public static final String AMOUNT_OF_PREFERRED_SHARES = "amountOfPreferredShares";
 		public static final String ACCOUNTING_FIRM = "accountingFirm";
-		public static final String ACCOUNTANT_1 = "accountant_1";
-		public static final String ACCOUNTANT_2 = "accountant_2";
+		public static final String ACCOUNTANT1 = "accountant1";
+		public static final String ACCOUNTANT2 = "accountant2";
 
 		private InfoFamily(Stock entity) {
 			super(entity);
 		}
 
-		public MarketType getLatestMarketType() {
+		@SuppressWarnings("unchecked")
+		public Set<InfoQualifier> getQualifiers() {
+			return (Set<InfoQualifier>) (Object) super
+					.getQualifierVersionValueMap().keySet();
+		}
+
+		public MarketType getMarketType() {
 			HBaseColumnQualifier qual = new InfoQualifier(MARKET_TYPE);
 			InfoValue val = (InfoValue) super.getLatestValue(qual);
 			return val.getAsMarketType();
 		}
 
-		public void addMarketType(Date date, MarketType marketType) {
+		public void setMarketType(Date ver, MarketType marketType) {
 			InfoQualifier qual = new InfoQualifier(MARKET_TYPE);
 			InfoValue val = new InfoValue();
 			val.set(marketType);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public IndustryType getIndustryType() {
@@ -144,11 +159,11 @@ public class Stock extends HBaseTable {
 			return val.getAsIndustryType();
 		}
 
-		public void addIndustryType(Date date, IndustryType industryType) {
+		public void setIndustryType(Date ver, IndustryType industryType) {
 			InfoQualifier qual = new InfoQualifier(INDUSTRY_TYPE);
 			InfoValue val = new InfoValue();
 			val.set(industryType);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getChineseName() {
@@ -157,11 +172,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addChineseName(Date date, String chineseName) {
+		public void setChineseName(Date ver, String chineseName) {
 			InfoQualifier qual = new InfoQualifier(CHINESE_NAME);
 			InfoValue val = new InfoValue();
 			val.set(chineseName);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getEnglishBriefName() {
@@ -170,11 +185,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addEnglishBriefName(Date date, String englishBriefName) {
+		public void setEnglishBriefName(Date ver, String englishBriefName) {
 			InfoQualifier qual = new InfoQualifier(ENGLISH_BRIEF_NAME);
 			InfoValue val = new InfoValue();
 			val.set(englishBriefName);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getUnifiedBusinessNumber() {
@@ -184,12 +199,12 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addUnifiedBusinessNumber(Date date,
+		public void setUnifiedBusinessNumber(Date ver,
 				String unifiedBusinessNumber) {
 			InfoQualifier qual = new InfoQualifier(UNIFIED_BUSINESS_NUMBER);
 			InfoValue val = new InfoValue();
 			val.set(unifiedBusinessNumber);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getEstablishmentDate() {
@@ -198,11 +213,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addEstablishmentDate(Date date, String establishmentDate) {
+		public void setEstablishmentDate(Date ver, String establishmentDate) {
 			InfoQualifier qual = new InfoQualifier(ESTABLISHMENT_DATE);
 			InfoValue val = new InfoValue();
 			val.set(establishmentDate);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getListingDate() {
@@ -211,11 +226,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addListingDate(Date date, String listingDate) {
+		public void setListingDate(Date ver, String listingDate) {
 			InfoQualifier qual = new InfoQualifier(LISTING_DATE);
 			InfoValue val = new InfoValue();
 			val.set(listingDate);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getChairman() {
@@ -224,11 +239,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addChairman(Date date, String chairman) {
+		public void setChairman(Date ver, String chairman) {
 			InfoQualifier qual = new InfoQualifier(CHAIRMAN);
 			InfoValue val = new InfoValue();
 			val.set(chairman);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getGeneralManager() {
@@ -237,11 +252,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addGeneralManager(Date date, String generalManager) {
+		public void setGeneralManager(Date ver, String generalManager) {
 			InfoQualifier qual = new InfoQualifier(GENERAL_MANAGER);
 			InfoValue val = new InfoValue();
 			val.set(generalManager);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getSpokesperson() {
@@ -250,11 +265,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addSpokesperson(Date date, String spokesperson) {
+		public void setSpokesperson(Date ver, String spokesperson) {
 			InfoQualifier qual = new InfoQualifier(SPOKESPERSON);
 			InfoValue val = new InfoValue();
 			val.set(spokesperson);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getJobTitleOfSpokesperson() {
@@ -264,12 +279,12 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addJobTitleOfSpokesperson(Date date,
+		public void setJobTitleOfSpokesperson(Date ver,
 				String jobTitleOfSpokesperson) {
 			InfoQualifier qual = new InfoQualifier(JOB_TITLE_OF_SPOKESPERSON);
 			InfoValue val = new InfoValue();
 			val.set(jobTitleOfSpokesperson);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getActingSpokesman() {
@@ -278,11 +293,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addActingSpokesman(Date date, String actingSpokesman) {
+		public void setActingSpokesman(Date ver, String actingSpokesman) {
 			InfoQualifier qual = new InfoQualifier(ACTING_SPOKESMAN);
 			InfoValue val = new InfoValue();
 			val.set(actingSpokesman);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getChineseAddress() {
@@ -291,11 +306,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addChineseAddress(Date date, String chineseAddress) {
+		public void setChineseAddress(Date ver, String chineseAddress) {
 			InfoQualifier qual = new InfoQualifier(CHINESE_ADDRESS);
 			InfoValue val = new InfoValue();
 			val.set(chineseAddress);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getTelephone() {
@@ -304,11 +319,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addTelephone(Date date, String telephone) {
+		public void setTelephone(Date ver, String telephone) {
 			InfoQualifier qual = new InfoQualifier(TELEPHONE);
 			InfoValue val = new InfoValue();
 			val.set(telephone);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getStockTransferAgency() {
@@ -317,11 +332,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addStockTransferAgency(Date date, String stockTransferAgency) {
+		public void setStockTransferAgency(Date ver, String stockTransferAgency) {
 			InfoQualifier qual = new InfoQualifier(STOCK_TRANSFER_AGENCY);
 			InfoValue val = new InfoValue();
 			val.set(stockTransferAgency);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getTelephoneOfStockTransferAgency() {
@@ -331,13 +346,13 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addTelephoneOfStockTransferAgency(Date date,
+		public void setTelephoneOfStockTransferAgency(Date ver,
 				String telephoneOfStockTransferAgency) {
 			InfoQualifier qual = new InfoQualifier(
 					TELEPHONE_OF_STOCK_TRANSFER_AGENCY);
 			InfoValue val = new InfoValue();
 			val.set(telephoneOfStockTransferAgency);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getAddressOfStockTransferAgency() {
@@ -347,13 +362,13 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addAddressOfStockTransferAgency(Date date,
+		public void setAddressOfStockTransferAgency(Date ver,
 				String addressOfStockTransferAgency) {
 			InfoQualifier qual = new InfoQualifier(
 					ADDRESS_OF_STOCK_TRANSFER_AGENCY);
 			InfoValue val = new InfoValue();
 			val.set(addressOfStockTransferAgency);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getEnglishAddress() {
@@ -362,11 +377,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addEnglishAddress(Date date, String englishAddress) {
+		public void setEnglishAddress(Date ver, String englishAddress) {
 			InfoQualifier qual = new InfoQualifier(ENGLISH_ADDRESS);
 			InfoValue val = new InfoValue();
 			val.set(englishAddress);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getFaxNumber() {
@@ -375,11 +390,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addFaxNumber(Date date, String faxNumber) {
+		public void setFaxNumber(Date ver, String faxNumber) {
 			InfoQualifier qual = new InfoQualifier(FAX_NUMBER);
 			InfoValue val = new InfoValue();
 			val.set(faxNumber);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getEmail() {
@@ -388,11 +403,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void setEmail(Date date, String email) {
+		public void setEmail(Date ver, String email) {
 			InfoQualifier qual = new InfoQualifier(EMAIL);
 			InfoValue val = new InfoValue();
 			val.set(email);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getWebSite() {
@@ -401,11 +416,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addWebSite(Date date, String webSite) {
+		public void setWebSite(Date ver, String webSite) {
 			InfoQualifier qual = new InfoQualifier(WEB_SITE);
 			InfoValue val = new InfoValue();
 			val.set(webSite);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getFinancialReportType() {
@@ -414,11 +429,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addFinancialReportType(Date date, String financialReportType) {
+		public void setFinancialReportType(Date ver, String financialReportType) {
 			InfoQualifier qual = new InfoQualifier(FINANCIAL_REPORT_TYPE);
 			InfoValue val = new InfoValue();
 			val.set(financialReportType);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getParValueOfOrdinaryShares() {
@@ -428,12 +443,12 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addParValueOfOrdinaryShares(Date date,
+		public void setParValueOfOrdinaryShares(Date ver,
 				String parValueOfOrdinaryShares) {
 			InfoQualifier qual = new InfoQualifier(PAR_VALUE_OF_ORDINARY_SHARES);
 			InfoValue val = new InfoValue();
 			val.set(parValueOfOrdinaryShares);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getPaidInCapital() {
@@ -442,11 +457,11 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addPaidInCapital(Date date, String paidInCapital) {
+		public void setPaidInCapital(Date ver, String paidInCapital) {
 			InfoQualifier qual = new InfoQualifier(PAID_IN_CAPITAL);
 			InfoValue val = new InfoValue();
 			val.set(paidInCapital);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getAmountOfOrdinaryShares() {
@@ -456,12 +471,12 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addAmountOfOrdinaryShares(Date date,
+		public void setAmountOfOrdinaryShares(Date ver,
 				String amountOfOrdinaryShares) {
 			InfoQualifier qual = new InfoQualifier(AMOUNT_OF_ORDINARY_SHARES);
 			InfoValue val = new InfoValue();
 			val.set(amountOfOrdinaryShares);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getPrivatePlacementAmountOfOrdinaryShares() {
@@ -471,13 +486,13 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addPrivatePlacementAmountOfOrdinaryShares(Date date,
+		public void setPrivatePlacementAmountOfOrdinaryShares(Date ver,
 				String privatePlacementAmountOfOrdinaryShares) {
 			InfoQualifier qual = new InfoQualifier(
 					PRIVATE_PLACEMENT_AMOUNT_OF_ORDINARY_SHARES);
 			InfoValue val = new InfoValue();
 			val.set(privatePlacementAmountOfOrdinaryShares);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getAmountOfPreferredShares() {
@@ -487,12 +502,12 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addAmountOfPreferredShares(Date date,
+		public void setAmountOfPreferredShares(Date ver,
 				String amountOfPreferredShares) {
 			InfoQualifier qual = new InfoQualifier(AMOUNT_OF_PREFERRED_SHARES);
 			InfoValue val = new InfoValue();
 			val.set(amountOfPreferredShares);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getAccountingFirm() {
@@ -501,37 +516,47 @@ public class Stock extends HBaseTable {
 			return val.getAsString();
 		}
 
-		public void addAccountingFirm(Date date, String accountingFirm) {
+		public void setAccountingFirm(Date ver, String accountingFirm) {
 			InfoQualifier qual = new InfoQualifier(ACCOUNTING_FIRM);
 			InfoValue val = new InfoValue();
 			val.set(accountingFirm);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getAccountant1() {
-			HBaseColumnQualifier qual = new InfoQualifier(ACCOUNTANT_1);
+			HBaseColumnQualifier qual = new InfoQualifier(ACCOUNTANT1);
 			InfoValue val = (InfoValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
-		public void addAccountant1(Date date, String accountant1) {
-			InfoQualifier qual = new InfoQualifier(ACCOUNTANT_1);
+		public void setAccountant1(Date ver, String accountant1) {
+			InfoQualifier qual = new InfoQualifier(ACCOUNTANT1);
 			InfoValue val = new InfoValue();
 			val.set(accountant1);
-			add(qual, date, val);
+			add(qual, ver, val);
 		}
 
 		public String getAccountant2() {
-			HBaseColumnQualifier qual = new InfoQualifier(ACCOUNTANT_2);
+			HBaseColumnQualifier qual = new InfoQualifier(ACCOUNTANT2);
 			InfoValue val = (InfoValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
-		public void addAccountant2(Date date, String accountant2) {
-			InfoQualifier qual = new InfoQualifier(ACCOUNTANT_1);
+		public void setAccountant2(Date ver, String accountant2) {
+			InfoQualifier qual = new InfoQualifier(ACCOUNTANT2);
 			InfoValue val = new InfoValue();
 			val.set(accountant2);
-			add(qual, date, val);
+			add(qual, ver, val);
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
+			return this.new InfoQualifier(bytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] bytes) {
+			return this.new InfoValue(bytes);
 		}
 
 		public class InfoQualifier extends HBaseColumnQualifier {
@@ -539,22 +564,23 @@ public class Stock extends HBaseTable {
 				super();
 			}
 
-			public InfoQualifier(String name) {
-				super();
-				setBytes(ByteConvertUtility.toBytes(name));
-			}
-
 			public InfoQualifier(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}
 
-			public String getName() {
+			public InfoQualifier(String columnName) {
+				super();
+				setColumnName(columnName);
+			}
+
+			public String getColumnName() {
 				return ByteConvertUtility.getStringFromBytes(getBytes());
 			}
 
-			public void setName(String name) {
-				setBytes(ByteConvertUtility.toBytes(name));
+			public void setColumnName(String columnName) {
+				byte[] bytes = ByteConvertUtility.toBytes(columnName);
+				setBytes(bytes);
 			}
 		}
 
@@ -568,13 +594,21 @@ public class Stock extends HBaseTable {
 				setBytes(bytes);
 			}
 
-			private MarketType getAsMarketType() {
+			public MarketType getAsMarketType() {
 				return MarketType.valueOf(ByteConvertUtility
 						.getStringFromBytes(getBytes()));
 			}
 
-			public void set(MarketType marketType) {
-				setBytes(ByteConvertUtility.toBytes(marketType.name()));
+			public void set(MarketType value) {
+				setBytes(ByteConvertUtility.toBytes(value.name()));
+			}
+
+			public String getAsString() {
+				return ByteConvertUtility.getStringFromBytes(getBytes());
+			}
+
+			public void set(String value) {
+				setBytes(ByteConvertUtility.toBytes(value));
 			}
 
 			public IndustryType getAsIndustryType() {
@@ -582,62 +616,64 @@ public class Stock extends HBaseTable {
 						.getStringFromBytes(getBytes()));
 			}
 
-			public void set(IndustryType industryType) {
-				setBytes(ByteConvertUtility.toBytes(industryType.name()));
-			}
-
-			public String getAsString() {
-				return ByteConvertUtility.getStringFromBytes(getBytes());
-			}
-
-			public void set(String chineseName) {
-				setBytes(ByteConvertUtility.toBytes(chineseName));
+			public void set(IndustryType value) {
+				setBytes(ByteConvertUtility.toBytes(value.name()));
 			}
 		}
-
-		@Override
-		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
-			return this.new InfoQualifier(bytes);
-		}
-
-		@Override
-		protected HBaseValue generateValue(byte[] bytes) {
-			return this.new InfoValue(bytes);
-		}
-
 	}
 
-	public class FinancialReportFamily extends HBaseColumnFamily {
-		protected FinancialReportFamily(Stock entity) {
+	public class XbrlInstanceFamily extends HBaseColumnFamily {
+		private XbrlInstanceFamily(Stock entity) {
 			super(entity);
 		}
 
-		public BigDecimal getValueAsBigDecimal(String elementId,
-				ElementType elementType, PeriodType periodType, Date instant,
-				Date startDate, Date endDate) {
-			FinancialReportQualifier qual = new FinancialReportQualifier(
-					elementId, elementType, periodType, instant, startDate,
-					endDate);
-			FinancialReportValue val = (FinancialReportValue) super
+		@SuppressWarnings("unchecked")
+		public Set<XbrlInstanceQualifier> getQualifiers() {
+			return (Set<XbrlInstanceQualifier>) (Object) super
+					.getQualifierVersionValueMap().keySet();
+		}
+
+		public BigDecimal getAsBigDecimal(String elementId,
+				PeriodType periodType, Date instant, Date startDate,
+				Date endDate, String unit) {
+			XbrlInstanceQualifier qual = new XbrlInstanceQualifier(elementId,
+					periodType, instant, startDate, endDate, unit);
+			XbrlInstanceValue val = (XbrlInstanceValue) super
 					.getLatestValue(qual);
 			return val.getAsBigDecimal();
 		}
 
-		public class FinancialReportQualifier extends HBaseColumnQualifier {
+		public void set(String elementId, PeriodType periodType, Date instant,
+				Date startDate, Date endDate, String unit, Date ver,
+				BigDecimal value) {
+			XbrlInstanceQualifier qual = new XbrlInstanceQualifier(elementId,
+					periodType, instant, startDate, endDate, unit);
+			XbrlInstanceValue val = new XbrlInstanceValue();
+			val.set(value);
+			add(qual, ver, val);
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
+			return this.new XbrlInstanceQualifier(bytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] bytes) {
+			return this.new XbrlInstanceValue(bytes);
+		}
+
+		public class XbrlInstanceQualifier extends HBaseColumnQualifier {
 			private static final int ELEMENT_ID_LENGTH = 300;
-			private static final int ELEMENT_TYPE_LENGTH = 10;
 			private static final int PERIOD_TYPE_LENGTH = 10;
 			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
-
+			private static final int UNIT_LENGTH = 10;
 			private static final int ELEMENT_ID_BEGIN_INDEX = 0;
 			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
 					+ ELEMENT_ID_LENGTH;
-			private static final int ELEMENT_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
-			private static final int ELEMENT_TYPE_END_INDEX = ELEMENT_TYPE_BEGIN_INDEX
-					+ PERIOD_TYPE_LENGTH;
-			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_TYPE_END_INDEX + 1;
+			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
 			private static final int PERIOD_TYPE_END_INDEX = PERIOD_TYPE_BEGIN_INDEX
 					+ PERIOD_TYPE_LENGTH;
 			private static final int INSTANT_BEGIN_INDEX = PERIOD_TYPE_END_INDEX + 1;
@@ -649,33 +685,34 @@ public class Stock extends HBaseTable {
 			private static final int END_DATE_BEGIN_INDEX = START_DATE_END_INDEX + 1;
 			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
 					+ END_DATE_LENGTH;
+			private static final int UNIT_BEGIN_INDEX = END_DATE_END_INDEX + 1;
+			private static final int UNIT_END_INDEX = UNIT_BEGIN_INDEX
+					+ UNIT_LENGTH;
 
-			public FinancialReportQualifier() {
+			public XbrlInstanceQualifier() {
 				super();
 			}
 
-			public FinancialReportQualifier(String elementId,
-					ElementType elementType, PeriodType periodType,
-					Date instant, Date startDate, Date endDate) {
+			public XbrlInstanceQualifier(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public XbrlInstanceQualifier(String elementId,
+					PeriodType periodType, Date instant, Date startDate,
+					Date endDate, String unit) {
 				super();
 				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
-						ELEMENT_ID_LENGTH);
-				byte[] elementTypeBytes = ByteConvertUtility.toBytes(
-						elementType.name(), ELEMENT_TYPE_LENGTH);
+						300);
 				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
-						periodType.name(), PERIOD_TYPE_LENGTH);
+						periodType.name(), 10);
 				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
 				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
 				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
+				byte[] unitBytes = ByteConvertUtility.toBytes(unit, 10);
 				super.setBytes(ArrayUtility.addAll(elementIdBytes, SPACE,
-						elementTypeBytes, SPACE, periodTypeBytes, SPACE,
-						instantBytes, SPACE, startDateBytes, SPACE,
-						endDateBytes));
-			}
-
-			public FinancialReportQualifier(byte[] bytes) {
-				super();
-				setBytes(bytes);
+						periodTypeBytes, SPACE, instantBytes, SPACE,
+						startDateBytes, SPACE, endDateBytes, SPACE, unitBytes));
 			}
 
 			public String getElementId() {
@@ -685,23 +722,9 @@ public class Stock extends HBaseTable {
 
 			public void setElementId(String elementId) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(elementId);
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId, 300);
 				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
 						ELEMENT_ID_END_INDEX);
-			}
-
-			public ElementType getElementType() {
-				return ElementType.valueOf(ByteConvertUtility
-						.getStringFromBytes(getBytes(), ELEMENT_ID_BEGIN_INDEX,
-								ELEMENT_ID_END_INDEX));
-			}
-
-			public void setElementType(ElementType elementType) {
-				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(elementType
-						.toString());
-				ArrayUtility.replace(bytes, subBytes, ELEMENT_TYPE_BEGIN_INDEX,
-						ELEMENT_TYPE_END_INDEX);
 			}
 
 			public PeriodType getPeriodType() {
@@ -713,8 +736,8 @@ public class Stock extends HBaseTable {
 
 			public void setPeriodType(PeriodType periodType) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(periodType
-						.toString());
+				byte[] subBytes = ByteConvertUtility.toBytes(periodType.name(),
+						10);
 				ArrayUtility.replace(bytes, subBytes, PERIOD_TYPE_BEGIN_INDEX,
 						PERIOD_TYPE_END_INDEX);
 			}
@@ -754,7 +777,227 @@ public class Stock extends HBaseTable {
 			public Date getEndDate() {
 				try {
 					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							END_DATE_BEGIN_INDEX, END_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setEndDate(Date endDate) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(endDate);
+				ArrayUtility.replace(bytes, subBytes, END_DATE_BEGIN_INDEX,
+						END_DATE_END_INDEX);
+			}
+
+			public String getUnit() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						UNIT_BEGIN_INDEX, UNIT_END_INDEX);
+			}
+
+			public void setUnit(String unit) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(unit, 10);
+				ArrayUtility.replace(bytes, subBytes, UNIT_BEGIN_INDEX,
+						UNIT_END_INDEX);
+			}
+		}
+
+		public class XbrlInstanceValue extends HBaseValue {
+			public XbrlInstanceValue() {
+				super();
+			}
+
+			public XbrlInstanceValue(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public BigDecimal getAsBigDecimal() {
+				return ByteConvertUtility.getBigDecimalFromBytes(getBytes());
+			}
+
+			public void set(BigDecimal value) {
+				setBytes(ByteConvertUtility.toBytes(value));
+			}
+		}
+	}
+
+	public class FinancialReportFamily extends HBaseColumnFamily {
+		private FinancialReportFamily(Stock entity) {
+			super(entity);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Set<FinancialReportQualifier> getQualifiers() {
+			return (Set<FinancialReportQualifier>) (Object) super
+					.getQualifierVersionValueMap().keySet();
+		}
+
+		public BigDecimal getAsBigDecimal(String elementId,
+				ElementType elementType, PeriodType periodType, Date instant,
+				Date startDate, Date endDate) {
+			FinancialReportQualifier qual = new FinancialReportQualifier(
+					elementId, elementType, periodType, instant, startDate,
+					endDate);
+			FinancialReportValue val = (FinancialReportValue) super
+					.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void set(String elementId, ElementType elementType,
+				PeriodType periodType, Date instant, Date startDate,
+				Date endDate, Date ver, BigDecimal value) {
+			FinancialReportQualifier qual = new FinancialReportQualifier(
+					elementId, elementType, periodType, instant, startDate,
+					endDate);
+			FinancialReportValue val = new FinancialReportValue();
+			val.set(value);
+			add(qual, ver, val);
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
+			return this.new FinancialReportQualifier(bytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] bytes) {
+			return this.new FinancialReportValue(bytes);
+		}
+
+		public class FinancialReportQualifier extends HBaseColumnQualifier {
+			private static final int ELEMENT_ID_LENGTH = 300;
+			private static final int ELEMENT_TYPE_LENGTH = 10;
+			private static final int PERIOD_TYPE_LENGTH = 10;
+			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int ELEMENT_ID_BEGIN_INDEX = 0;
+			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
+					+ ELEMENT_ID_LENGTH;
+			private static final int ELEMENT_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
+			private static final int ELEMENT_TYPE_END_INDEX = ELEMENT_TYPE_BEGIN_INDEX
+					+ ELEMENT_TYPE_LENGTH;
+			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_TYPE_END_INDEX + 1;
+			private static final int PERIOD_TYPE_END_INDEX = PERIOD_TYPE_BEGIN_INDEX
+					+ PERIOD_TYPE_LENGTH;
+			private static final int INSTANT_BEGIN_INDEX = PERIOD_TYPE_END_INDEX + 1;
+			private static final int INSTANT_END_INDEX = INSTANT_BEGIN_INDEX
+					+ INSTANT_LENGTH;
+			private static final int START_DATE_BEGIN_INDEX = INSTANT_END_INDEX + 1;
+			private static final int START_DATE_END_INDEX = START_DATE_BEGIN_INDEX
+					+ START_DATE_LENGTH;
+			private static final int END_DATE_BEGIN_INDEX = START_DATE_END_INDEX + 1;
+			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
+					+ END_DATE_LENGTH;
+
+			public FinancialReportQualifier() {
+				super();
+			}
+
+			public FinancialReportQualifier(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public FinancialReportQualifier(String elementId,
+					ElementType elementType, PeriodType periodType,
+					Date instant, Date startDate, Date endDate) {
+				super();
+				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
+						300);
+				byte[] elementTypeBytes = ByteConvertUtility.toBytes(
+						elementType.name(), 10);
+				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
+						periodType.name(), 10);
+				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
+				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
+				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
+				super.setBytes(ArrayUtility.addAll(elementIdBytes, SPACE,
+						elementTypeBytes, SPACE, periodTypeBytes, SPACE,
+						instantBytes, SPACE, startDateBytes, SPACE,
+						endDateBytes));
+			}
+
+			public String getElementId() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						ELEMENT_ID_BEGIN_INDEX, ELEMENT_ID_END_INDEX);
+			}
+
+			public void setElementId(String elementId) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId, 300);
+				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
+						ELEMENT_ID_END_INDEX);
+			}
+
+			public ElementType getElementType() {
+				return ElementType.valueOf(ByteConvertUtility
+						.getStringFromBytes(getBytes(),
+								ELEMENT_TYPE_BEGIN_INDEX,
+								ELEMENT_TYPE_END_INDEX));
+			}
+
+			public void setElementType(ElementType elementType) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(
+						elementType.name(), 10);
+				ArrayUtility.replace(bytes, subBytes, ELEMENT_TYPE_BEGIN_INDEX,
+						ELEMENT_TYPE_END_INDEX);
+			}
+
+			public PeriodType getPeriodType() {
+				return PeriodType
+						.valueOf(ByteConvertUtility.getStringFromBytes(
+								getBytes(), PERIOD_TYPE_BEGIN_INDEX,
+								PERIOD_TYPE_END_INDEX));
+			}
+
+			public void setPeriodType(PeriodType periodType) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(periodType.name(),
+						10);
+				ArrayUtility.replace(bytes, subBytes, PERIOD_TYPE_BEGIN_INDEX,
+						PERIOD_TYPE_END_INDEX);
+			}
+
+			public Date getInstant() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							INSTANT_BEGIN_INDEX, INSTANT_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setInstant(Date instant) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(instant);
+				ArrayUtility.replace(bytes, subBytes, INSTANT_BEGIN_INDEX,
+						INSTANT_END_INDEX);
+			}
+
+			public Date getStartDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
 							START_DATE_BEGIN_INDEX, START_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setStartDate(Date startDate) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(startDate);
+				ArrayUtility.replace(bytes, subBytes, START_DATE_BEGIN_INDEX,
+						START_DATE_END_INDEX);
+			}
+
+			public Date getEndDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							END_DATE_BEGIN_INDEX, END_DATE_END_INDEX);
 				} catch (ParseException e) {
 					throw new RuntimeException(e);
 				}
@@ -786,16 +1029,6 @@ public class Stock extends HBaseTable {
 				setBytes(ByteConvertUtility.toBytes(value));
 			}
 		}
-
-		@Override
-		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
-			return this.new FinancialReportQualifier(bytes);
-		}
-
-		@Override
-		protected HBaseValue generateValue(byte[] valueBytes) {
-			return this.new FinancialReportValue();
-		}
 	}
 
 	public class MonthlyFamily extends HBaseColumnFamily {
@@ -813,185 +1046,202 @@ public class Stock extends HBaseTable {
 			super(entity);
 		}
 
+		@SuppressWarnings("unchecked")
+		public Set<MonthlyQualifier> getQualifiers() {
+			return (Set<MonthlyQualifier>) (Object) super
+					.getQualifierVersionValueMap().keySet();
+		}
+
 		public BigInteger getOperatingIncomeOfCurrentMonth(int year, int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CURRENT_MONTH);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CURRENT_MONTH, year, month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsBigInteger();
 		}
 
-		public void addOperatingIncomeOfCurrentMonth(int year, int month,
-				Date date, BigInteger value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CURRENT_MONTH);
+		public void setOperatingIncomeOfCurrentMonth(int year, int month,
+				Date ver, BigInteger operatingIncomeOfCurrentMonth) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CURRENT_MONTH, year, month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfCurrentMonth);
+			add(qual, ver, val);
 		}
 
 		public BigInteger getOperatingIncomeOfCurrentMonthOfLastYear(int year,
 				int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CURRENT_MONTH_OF_LAST_YEAR);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CURRENT_MONTH_OF_LAST_YEAR, year, month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsBigInteger();
 		}
 
-		public void addOperatingIncomeOfCurrentMonthOfLastYear(int year,
-				int month, Date date, BigInteger value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CURRENT_MONTH_OF_LAST_YEAR);
+		public void setOperatingIncomeOfCurrentMonthOfLastYear(int year,
+				int month, Date ver,
+				BigInteger operatingIncomeOfCurrentMonthOfLastYear) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CURRENT_MONTH_OF_LAST_YEAR, year, month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfCurrentMonthOfLastYear);
+			add(qual, ver, val);
 		}
 
 		public BigInteger getOperatingIncomeOfDifferentAmount(int year,
 				int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_DIFFERENT_AMOUNT);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_DIFFERENT_AMOUNT, year, month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsBigInteger();
 		}
 
-		public void addOperatingIncomeOfDifferentAmount(int year, int month,
-				Date date, BigInteger value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_DIFFERENT_AMOUNT);
+		public void setOperatingIncomeOfDifferentAmount(int year, int month,
+				Date ver, BigInteger operatingIncomeOfDifferentAmount) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_DIFFERENT_AMOUNT, year, month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfDifferentAmount);
+			add(qual, ver, val);
 		}
 
 		public BigDecimal getOperatingIncomeOfDifferentPercent(int year,
 				int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_DIFFERENT_PERCENT);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_DIFFERENT_PERCENT, year, month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsBigDecimal();
 		}
 
-		public void addOperatingIncomeOfDifferentPercent(int year, int month,
-				Date date, BigDecimal value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_DIFFERENT_PERCENT);
+		public void setOperatingIncomeOfDifferentPercent(int year, int month,
+				Date ver, BigDecimal operatingIncomeOfDifferentPercent) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_DIFFERENT_PERCENT, year, month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfDifferentPercent);
+			add(qual, ver, val);
 		}
 
 		public BigInteger getOperatingIncomeOfCumulativeAmountOfThisYear(
 				int year, int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CUMULATIVE_AMOUNT_OF_THIS_YEAR);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CUMULATIVE_AMOUNT_OF_THIS_YEAR, year,
+					month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsBigInteger();
 		}
 
-		public void addOperatingIncomeOfCumulativeAmountOfThisYear(int year,
-				int month, Date date, BigInteger value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CUMULATIVE_AMOUNT_OF_THIS_YEAR);
+		public void setOperatingIncomeOfCumulativeAmountOfThisYear(int year,
+				int month, Date ver,
+				BigInteger operatingIncomeOfCumulativeAmountOfThisYear) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CUMULATIVE_AMOUNT_OF_THIS_YEAR, year,
+					month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfCumulativeAmountOfThisYear);
+			add(qual, ver, val);
 		}
 
 		public BigInteger getOperatingIncomeOfCumulativeAmountOfLastYear(
 				int year, int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CUMULATIVE_AMOUNT_OF_LAST_YEAR);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CUMULATIVE_AMOUNT_OF_LAST_YEAR, year,
+					month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsBigInteger();
 		}
 
-		public void addOperatingIncomeOfCumulativeAmountOfLastYear(int year,
-				int month, Date date, BigInteger value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CUMULATIVE_AMOUNT_OF_LAST_YEAR);
+		public void setOperatingIncomeOfCumulativeAmountOfLastYear(int year,
+				int month, Date ver,
+				BigInteger operatingIncomeOfCumulativeAmountOfLastYear) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CUMULATIVE_AMOUNT_OF_LAST_YEAR, year,
+					month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfCumulativeAmountOfLastYear);
+			add(qual, ver, val);
 		}
 
 		public BigInteger getOperatingIncomeOfCumulativeDifferentAmount(
 				int year, int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CUMULATIVE_DIFFERENT_AMOUNT);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CUMULATIVE_DIFFERENT_AMOUNT, year,
+					month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsBigInteger();
 		}
 
-		public void addOperatingIncomeOfCumulativeDifferentAmount(int year,
-				int month, Date date, BigInteger value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CUMULATIVE_DIFFERENT_AMOUNT);
+		public void setOperatingIncomeOfCumulativeDifferentAmount(int year,
+				int month, Date ver,
+				BigInteger operatingIncomeOfCumulativeDifferentAmount) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CUMULATIVE_DIFFERENT_AMOUNT, year,
+					month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfCumulativeDifferentAmount);
+			add(qual, ver, val);
 		}
 
 		public BigDecimal getOperatingIncomeOfCumulativeDifferentPercent(
 				int year, int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CUMULATIVE_DIFFERENT_PERCENT);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CUMULATIVE_DIFFERENT_PERCENT, year,
+					month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsBigDecimal();
 		}
 
-		public void addOperatingIncomeOfCumulativeDifferentPercent(int year,
-				int month, Date date, BigDecimal value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_CUMULATIVE_DIFFERENT_PERCENT);
+		public void setOperatingIncomeOfCumulativeDifferentPercent(int year,
+				int month, Date ver,
+				BigDecimal operatingIncomeOfCumulativeDifferentPercent) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_CUMULATIVE_DIFFERENT_PERCENT, year,
+					month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfCumulativeDifferentPercent);
+			add(qual, ver, val);
 		}
 
 		public String getOperatingIncomeOfComment(int year, int month) {
-			HBaseColumnQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_COMMENT);
+			HBaseColumnQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_COMMENT, year, month);
 			MonthlyValue val = (MonthlyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
-		public void addOperatingIncomeOfComment(int year, int month, Date date,
-				String value) {
-			MonthlyQualifier qual = new MonthlyQualifier(year, month,
-					OPERATING_INCOME_OF_COMMENT);
+		public void setOperatingIncomeOfComment(int year, int month, Date ver,
+				String operatingIncomeOfComment) {
+			MonthlyQualifier qual = new MonthlyQualifier(
+					OPERATING_INCOME_OF_COMMENT, year, month);
 			MonthlyValue val = new MonthlyValue();
-			val.set(value);
-			add(qual, date, val);
+			val.set(operatingIncomeOfComment);
+			add(qual, ver, val);
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
+			return this.new MonthlyQualifier(bytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] bytes) {
+			return this.new MonthlyValue(bytes);
 		}
 
 		public class MonthlyQualifier extends HBaseColumnQualifier {
+			private static final int COLUMN_NAME_LENGTH = 100;
 			private static final int YEAR_LENGTH = 4;
 			private static final int MONTH_LENGTH = 2;
-			private static final int NAME_LENGTH = 50;
-			private static final int YEAR_BEGIN_INDEX = 0;
+			private static final int COLUMN_NAME_BEGIN_INDEX = 0;
+			private static final int COLUMN_NAME_END_INDEX = COLUMN_NAME_BEGIN_INDEX
+					+ COLUMN_NAME_LENGTH;
+			private static final int YEAR_BEGIN_INDEX = COLUMN_NAME_END_INDEX + 1;
 			private static final int YEAR_END_INDEX = YEAR_BEGIN_INDEX
 					+ YEAR_LENGTH;
 			private static final int MONTH_BEGIN_INDEX = YEAR_END_INDEX + 1;
 			private static final int MONTH_END_INDEX = MONTH_BEGIN_INDEX
 					+ MONTH_LENGTH;
-			private static final int NAME_BEGIN_INDEX = MONTH_END_INDEX + 1;
-			private static final int NAME_END_INDEX = NAME_BEGIN_INDEX
-					+ NAME_LENGTH;
 
 			public MonthlyQualifier() {
 				super();
-			}
-
-			public MonthlyQualifier(int year, int month, String name) {
-				super();
-				byte[] yearBytes = ByteConvertUtility
-						.toBytes(year, YEAR_LENGTH);
-				byte[] monthBytes = ByteConvertUtility.toBytes(month,
-						MONTH_LENGTH);
-				byte[] nameBytes = ByteConvertUtility
-						.toBytes(name, NAME_LENGTH);
-				super.setBytes(ArrayUtility.addAll(yearBytes, SPACE,
-						monthBytes, SPACE, nameBytes));
 			}
 
 			public MonthlyQualifier(byte[] bytes) {
@@ -999,40 +1249,50 @@ public class Stock extends HBaseTable {
 				setBytes(bytes);
 			}
 
-			public Integer getYear() {
-				return ByteConvertUtility.getIntegerFromBytes(getBytes(),
+			public MonthlyQualifier(String columnName, int year, int month) {
+				super();
+				byte[] columnNameBytes = ByteConvertUtility.toBytes(columnName,
+						100);
+				byte[] yearBytes = ByteConvertUtility.toBytes(year, 4);
+				byte[] monthBytes = ByteConvertUtility.toBytes(month, 2);
+				super.setBytes(ArrayUtility.addAll(columnNameBytes, SPACE,
+						yearBytes, SPACE, monthBytes));
+			}
+
+			public String getColumnName() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						COLUMN_NAME_BEGIN_INDEX, COLUMN_NAME_END_INDEX);
+			}
+
+			public void setColumnName(String columnName) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(columnName, 100);
+				ArrayUtility.replace(bytes, subBytes, COLUMN_NAME_BEGIN_INDEX,
+						COLUMN_NAME_END_INDEX);
+			}
+
+			public int getYear() {
+				return ByteConvertUtility.getIntFromBytes(getBytes(),
 						YEAR_BEGIN_INDEX, YEAR_END_INDEX);
 			}
 
 			public void setYear(int year) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(year);
+				byte[] subBytes = ByteConvertUtility.toBytes(year, 4);
 				ArrayUtility.replace(bytes, subBytes, YEAR_BEGIN_INDEX,
 						YEAR_END_INDEX);
 			}
 
-			public Integer getMonth() {
-				return ByteConvertUtility.getIntegerFromBytes(getBytes(),
+			public int getMonth() {
+				return ByteConvertUtility.getIntFromBytes(getBytes(),
 						MONTH_BEGIN_INDEX, MONTH_END_INDEX);
 			}
 
 			public void setMonth(int month) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(month);
+				byte[] subBytes = ByteConvertUtility.toBytes(month, 2);
 				ArrayUtility.replace(bytes, subBytes, MONTH_BEGIN_INDEX,
 						MONTH_END_INDEX);
-			}
-
-			public String getName() {
-				return ByteConvertUtility.getStringFromBytes(getBytes(),
-						NAME_BEGIN_INDEX, NAME_END_INDEX);
-			}
-
-			public void setName(String name) {
-				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(name);
-				ArrayUtility.replace(bytes, subBytes, NAME_BEGIN_INDEX,
-						NAME_END_INDEX);
 			}
 		}
 
@@ -1046,15 +1306,11 @@ public class Stock extends HBaseTable {
 				setBytes(bytes);
 			}
 
-			public void set(BigInteger value) {
-				setBytes(ByteConvertUtility.toBytes(value));
+			public String getAsString() {
+				return ByteConvertUtility.getStringFromBytes(getBytes());
 			}
 
-			public BigInteger getAsBigInteger() {
-				return ByteConvertUtility.getBigIntegerFromBytes(getBytes());
-			}
-
-			public void set(BigDecimal value) {
+			public void set(String value) {
 				setBytes(ByteConvertUtility.toBytes(value));
 			}
 
@@ -1062,23 +1318,17 @@ public class Stock extends HBaseTable {
 				return ByteConvertUtility.getBigDecimalFromBytes(getBytes());
 			}
 
-			public void set(String value) {
+			public void set(BigDecimal value) {
 				setBytes(ByteConvertUtility.toBytes(value));
 			}
 
-			public String getAsString() {
-				return ByteConvertUtility.getStringFromBytes(getBytes());
+			public BigInteger getAsBigInteger() {
+				return ByteConvertUtility.getBigIntegerFromBytes(getBytes());
 			}
-		}
 
-		@Override
-		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
-			return this.new MonthlyQualifier(bytes);
-		}
-
-		@Override
-		protected HBaseValue generateValue(byte[] bytes) {
-			return this.new MonthlyValue(bytes);
+			public void set(BigInteger value) {
+				setBytes(ByteConvertUtility.toBytes(value));
+			}
 		}
 	}
 
@@ -1094,8 +1344,174 @@ public class Stock extends HBaseTable {
 		public static final String CLOSING_CONDITION_OF_MONEY_AMOUNT = "closingConditionOfMoneyAmount";
 		public static final String CLOSING_CONDITION_OF_TRANSACTION_AMOUNT = "closingConditionOfTransactionAmount";
 
-		public DailyFamily(Stock entity) {
+		private DailyFamily(Stock entity) {
 			super(entity);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Set<DailyQualifier> getQualifiers() {
+			return (Set<DailyQualifier>) (Object) super
+					.getQualifierVersionValueMap().keySet();
+		}
+
+		public BigDecimal getClosingConditionOfOpeningPrice(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_OPENING_PRICE, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setClosingConditionOfOpeningPrice(Date date, Date ver,
+				BigDecimal closingConditionOfOpeningPrice) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_OPENING_PRICE, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfOpeningPrice);
+			add(qual, ver, val);
+		}
+
+		public BigDecimal getClosingConditionOfClosingPrice(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_CLOSING_PRICE, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setClosingConditionOfClosingPrice(Date date, Date ver,
+				BigDecimal closingConditionOfClosingPrice) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_CLOSING_PRICE, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfClosingPrice);
+			add(qual, ver, val);
+		}
+
+		public BigDecimal getClosingConditionOfChange(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_CHANGE, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setClosingConditionOfChange(Date date, Date ver,
+				BigDecimal closingConditionOfChange) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_CHANGE, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfChange);
+			add(qual, ver, val);
+		}
+
+		public BigDecimal getClosingConditionOfHighestPrice(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_HIGHEST_PRICE, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setClosingConditionOfHighestPrice(Date date, Date ver,
+				BigDecimal closingConditionOfHighestPrice) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_HIGHEST_PRICE, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfHighestPrice);
+			add(qual, ver, val);
+		}
+
+		public BigDecimal getClosingConditionOfLowestPrice(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_LOWEST_PRICE, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setClosingConditionOfLowestPrice(Date date, Date ver,
+				BigDecimal closingConditionOfLowestPrice) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_LOWEST_PRICE, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfLowestPrice);
+			add(qual, ver, val);
+		}
+
+		public BigDecimal getClosingConditionOfFinalPurchasePrice(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_FINAL_PURCHASE_PRICE, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setClosingConditionOfFinalPurchasePrice(Date date,
+				Date ver, BigDecimal closingConditionOfFinalPurchasePrice) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_FINAL_PURCHASE_PRICE, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfFinalPurchasePrice);
+			add(qual, ver, val);
+		}
+
+		public BigDecimal getClosingConditionOfFinalSellingPrice(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_FINAL_SELLING_PRICE, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setClosingConditionOfFinalSellingPrice(Date date, Date ver,
+				BigDecimal closingConditionOfFinalSellingPrice) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_FINAL_SELLING_PRICE, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfFinalSellingPrice);
+			add(qual, ver, val);
+		}
+
+		public BigInteger getClosingConditionOfStockAmount(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_STOCK_AMOUNT, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigInteger();
+		}
+
+		public void setClosingConditionOfStockAmount(Date date, Date ver,
+				BigInteger closingConditionOfStockAmount) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_STOCK_AMOUNT, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfStockAmount);
+			add(qual, ver, val);
+		}
+
+		public BigInteger getClosingConditionOfMoneyAmount(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_MONEY_AMOUNT, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigInteger();
+		}
+
+		public void setClosingConditionOfMoneyAmount(Date date, Date ver,
+				BigInteger closingConditionOfMoneyAmount) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_MONEY_AMOUNT, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfMoneyAmount);
+			add(qual, ver, val);
+		}
+
+		public BigInteger getClosingConditionOfTransactionAmount(Date date) {
+			HBaseColumnQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_TRANSACTION_AMOUNT, date);
+			DailyValue val = (DailyValue) super.getLatestValue(qual);
+			return val.getAsBigInteger();
+		}
+
+		public void setClosingConditionOfTransactionAmount(Date date, Date ver,
+				BigInteger closingConditionOfTransactionAmount) {
+			DailyQualifier qual = new DailyQualifier(
+					CLOSING_CONDITION_OF_TRANSACTION_AMOUNT, date);
+			DailyValue val = new DailyValue();
+			val.set(closingConditionOfTransactionAmount);
+			add(qual, ver, val);
 		}
 
 		@Override
@@ -1109,13 +1525,12 @@ public class Stock extends HBaseTable {
 		}
 
 		public class DailyQualifier extends HBaseColumnQualifier {
-			private static final int NAME_LENGTH = 100;
-			private static final int DATE_LENGTH = DEFAULT_DATE_LENGTH;
-
-			private static final int NAME_BEGIN_INDEX = 0;
-			private static final int NAME_END_INDEX = NAME_BEGIN_INDEX
-					+ NAME_LENGTH;
-			private static final int DATE_BEGIN_INDEX = NAME_END_INDEX + 1;
+			private static final int COLUMN_NAME_LENGTH = 100;
+			private static final int DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int COLUMN_NAME_BEGIN_INDEX = 0;
+			private static final int COLUMN_NAME_END_INDEX = COLUMN_NAME_BEGIN_INDEX
+					+ COLUMN_NAME_LENGTH;
+			private static final int DATE_BEGIN_INDEX = COLUMN_NAME_END_INDEX + 1;
 			private static final int DATE_END_INDEX = DATE_BEGIN_INDEX
 					+ DATE_LENGTH;
 
@@ -1123,29 +1538,39 @@ public class Stock extends HBaseTable {
 				super();
 			}
 
-			public DailyQualifier(String name, Date date) {
-				super();
-				byte[] nameBytes = ByteConvertUtility
-						.toBytes(name, NAME_LENGTH);
-				byte[] dateBytes = ByteConvertUtility.toBytes(date);
-				super.setBytes(ArrayUtility.addAll(nameBytes, SPACE, dateBytes));
-			}
-
 			public DailyQualifier(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}
 
-			public String getName() {
-				return ByteConvertUtility.getStringFromBytes(getBytes(),
-						NAME_BEGIN_INDEX, NAME_END_INDEX);
+			public DailyQualifier(String columnName, Date date) {
+				super();
+				byte[] columnNameBytes = ByteConvertUtility.toBytes(columnName,
+						100);
+				byte[] dateBytes = ByteConvertUtility.toBytes(date);
+				super.setBytes(ArrayUtility.addAll(columnNameBytes, SPACE,
+						dateBytes));
 			}
 
-			public void setName(String name) {
+			public String getColumnName() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						COLUMN_NAME_BEGIN_INDEX, COLUMN_NAME_END_INDEX);
+			}
+
+			public void setColumnName(String columnName) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(name);
-				ArrayUtility.replace(bytes, subBytes, NAME_BEGIN_INDEX,
-						NAME_END_INDEX);
+				byte[] subBytes = ByteConvertUtility.toBytes(columnName, 100);
+				ArrayUtility.replace(bytes, subBytes, COLUMN_NAME_BEGIN_INDEX,
+						COLUMN_NAME_END_INDEX);
+			}
+
+			public Date getDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							DATE_BEGIN_INDEX, DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
 			}
 
 			public void setDate(Date date) {
@@ -1166,26 +1591,21 @@ public class Stock extends HBaseTable {
 				setBytes(bytes);
 			}
 
-			public String getAsString() {
-				return ByteConvertUtility.getStringFromBytes(getBytes());
+			public BigDecimal getAsBigDecimal() {
+				return ByteConvertUtility.getBigDecimalFromBytes(getBytes());
 			}
 
-			public void set(String value) {
+			public void set(BigDecimal value) {
 				setBytes(ByteConvertUtility.toBytes(value));
 			}
 
-			public Date getAsDate() {
-				try {
-					return ByteConvertUtility.getDateFromBytes(getBytes());
-				} catch (ParseException e) {
-					throw new RuntimeException(e);
-				}
+			public BigInteger getAsBigInteger() {
+				return ByteConvertUtility.getBigIntegerFromBytes(getBytes());
 			}
 
-			public void set(Date value) {
+			public void set(BigInteger value) {
 				setBytes(ByteConvertUtility.toBytes(value));
 			}
 		}
 	}
-
 }

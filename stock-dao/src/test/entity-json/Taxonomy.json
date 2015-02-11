@@ -1,0 +1,39 @@
+{  
+   "Taxonomy":{  
+      "RowKey":[  
+         {  
+            "type":"XbrlTaxonomyVersion",
+            "name":"taxonomyVersion"
+         }
+      ],
+      "PresentationFamily":{  
+         "Columns":[  
+            {  
+               "type":"String",
+               "name":"balanceSheet"
+            },
+            {  
+               "type":"String",
+               "name":"statementOfComprehensiveIncome"
+            },
+            {  
+               "type":"String",
+               "name":"statementOfCashFlows"
+            },
+            {  
+               "type":"String",
+               "name":"statementOfChangesInEquity"
+            }
+         ],
+         "PresentationQualifier":[  
+            {  
+               "type":"String",
+               "name":"columnName"
+            }
+         ],
+         "PresentationValue":[  
+
+         ]
+      }
+   }
+}

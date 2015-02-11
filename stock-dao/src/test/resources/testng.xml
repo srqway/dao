@@ -6,38 +6,22 @@
 			<class name="idv.hsiehpinghan.stockdao.suit.TestngSuitSetting" />
 		</classes>
 	</test>
-	<test name="financialReport">
+	<test name="Taxonomy">
 		<classes>
 			<!-- Test repositoty -->
 			<class
-				name="idv.hsiehpinghan.stockdao.repository.FinancialReportPresentationRepositoryTest" />
-			<class
-				name="idv.hsiehpinghan.stockdao.repository.FinancialReportInstanceRepositoryTest" />
-			<class
-				name="idv.hsiehpinghan.stockdao.repository.FinancialReportDataRepositoryTest" />
+				name="idv.hsiehpinghan.stockdao.repository.hbase.TaxonomyRepositoryTest" />
 
 			<!-- Test entity -->
-			<class
-				name="idv.hsiehpinghan.stockdao.entity.FinancialReportPresentationTest" />
-			<class name="idv.hsiehpinghan.stockdao.entity.FinancialReportInstanceTest" />
-<!-- 			<class name="idv.hsiehpinghan.stockservice.entity.ExchangeRateTest" /> -->
+			<class name="idv.hsiehpinghan.stockdao.entity.TaxonomyTest" />
 		</classes>
 	</test>
-	<test name="stockClosingCondition">
+	<test name="Stock">
 		<classes>
 			<!-- Test repositoty -->
 
 			<!-- Test entity -->
-			<class name="idv.hsiehpinghan.stockdao.entity.StockDownloadInfoTest" />
-			<class name="idv.hsiehpinghan.stockdao.entity.StockClosingConditionTest" />
-		</classes>
-	</test>
-	<test name="MonthlyOperatingIncome">
-		<classes>
-			<!-- Test repositoty -->
-
-			<!-- Test entity -->
-			<class name="idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncomeTest" />
+			<class name="idv.hsiehpinghan.stockdao.entity.StockTest" />
 		</classes>
 	</test>
 </suite>

@@ -1,5 +1,5 @@
 {  
-   "Test":{  
+   "Stock":{  
       "RowKey":[  
          {  
             "type":"String",
@@ -139,6 +139,40 @@
 
          ]
       },
+      "XbrlInstanceFamily":{  
+         "XbrlInstanceQualifier":[  
+            {  
+               "type":"String",
+               "name":"elementId",
+               "length":300
+            },
+            {  
+               "type":"PeriodType",
+               "name":"periodType",
+               "length":10
+            },
+            {  
+               "type":"Date",
+               "name":"instant"
+            },
+            {  
+               "type":"Date",
+               "name":"startDate"
+            },
+            {  
+               "type":"Date",
+               "name":"endDate"
+            },
+            {  
+               "type":"String",
+               "name":"unit",
+               "length":10
+            }
+         ],
+         "XbrlInstanceValue":[  
+
+         ]
+      },
       "FinancialReportFamily":{  
          "FinancialReportQualifier":[  
             {  
@@ -219,12 +253,12 @@
                "length":100
             },
             {  
-               "type":"String",
+               "type":"int",
                "name":"year",
                "length":4
             },
             {  
-               "type":"String",
+               "type":"int",
                "name":"month",
                "length":2
             }
