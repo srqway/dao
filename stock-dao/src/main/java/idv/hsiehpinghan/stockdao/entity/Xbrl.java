@@ -24,6 +24,7 @@ public class Xbrl extends HBaseTable {
 	private InfoFamily infoFamily;
 	private InstanceFamily instanceFamily;
 	private ItemFamily itemFamily;
+	private GrowthFamily growthFamily;
 
 	@Override
 	public HBaseRowKey getRowKey() {
@@ -54,6 +55,13 @@ public class Xbrl extends HBaseTable {
 			itemFamily = this.new ItemFamily(this);
 		}
 		return itemFamily;
+	}
+
+	public GrowthFamily getGrowthFamily() {
+		if (growthFamily == null) {
+			growthFamily = this.new GrowthFamily(this);
+		}
+		return growthFamily;
 	}
 
 	public class RowKey extends HBaseRowKey {
@@ -540,10 +548,13 @@ public class Xbrl extends HBaseTable {
 		}
 
 		public ItemValue getItemValue(String elementId, PeriodType periodType,
-				Date instant, Date startDate, Date endDate) {
-			HBaseColumnQualifier qual = new ItemQualifier(elementId,
-					periodType, instant, startDate, endDate);
-			return (ItemValue) super.getLatestValue(qual);
+				Date startDate, Date endDate) {
+			return getItemValue(elementId, periodType, null, startDate, endDate);
+		}
+
+		public ItemValue getItemValue(String elementId, PeriodType periodType,
+				Date instant) {
+			return getItemValue(elementId, periodType, instant, null, null);
 		}
 
 		public void setItemValue(String elementId, PeriodType periodType,
@@ -563,6 +574,13 @@ public class Xbrl extends HBaseTable {
 		@Override
 		protected HBaseValue generateValue(byte[] bytes) {
 			return this.new ItemValue(bytes);
+		}
+
+		private ItemValue getItemValue(String elementId, PeriodType periodType,
+				Date instant, Date startDate, Date endDate) {
+			HBaseColumnQualifier qual = new ItemQualifier(elementId,
+					periodType, instant, startDate, endDate);
+			return (ItemValue) super.getLatestValue(qual);
 		}
 
 		public class ItemQualifier extends HBaseColumnQualifier {
@@ -698,6 +716,203 @@ public class Xbrl extends HBaseTable {
 			}
 
 			public ItemValue(BigDecimal value) {
+				super();
+				setValue(value);
+			}
+
+			public BigDecimal getValue() {
+				return ByteConvertUtility.getBigDecimalFromBytes(getBytes());
+			}
+
+			public void setValue(BigDecimal value) {
+				byte[] bytes = ByteConvertUtility.toBytes(value, 20);
+				setBytes(bytes);
+			}
+		}
+	}
+
+	public class GrowthFamily extends HBaseColumnFamily {
+		private GrowthFamily(Xbrl entity) {
+			super(entity);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Set<GrowthQualifier> getQualifiers() {
+			return (Set<GrowthQualifier>) (Object) super
+					.getQualifierVersionValueMap().keySet();
+		}
+
+		public GrowthValue getGrowthValue(String elementId,
+				PeriodType periodType, Date startDate, Date endDate) {
+			return getGrowthValue(elementId, periodType, null, startDate,
+					endDate);
+		}
+
+		public GrowthValue getGrowthValue(String elementId,
+				PeriodType periodType, Date instant) {
+			return getGrowthValue(elementId, periodType, instant, null, null);
+		}
+
+		public void setGrowthValue(String elementId, PeriodType periodType,
+				Date instant, Date startDate, Date endDate, Date ver,
+				BigDecimal value) {
+			HBaseColumnQualifier qual = new GrowthQualifier(elementId,
+					periodType, instant, startDate, endDate);
+			GrowthValue val = new GrowthValue(value);
+			add(qual, ver, val);
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
+			return this.new GrowthQualifier(bytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] bytes) {
+			return this.new GrowthValue(bytes);
+		}
+
+		private GrowthValue getGrowthValue(String elementId,
+				PeriodType periodType, Date instant, Date startDate,
+				Date endDate) {
+			HBaseColumnQualifier qual = new GrowthQualifier(elementId,
+					periodType, instant, startDate, endDate);
+			return (GrowthValue) super.getLatestValue(qual);
+		}
+
+		public class GrowthQualifier extends HBaseColumnQualifier {
+			private static final int ELEMENT_ID_LENGTH = 300;
+			private static final int PERIOD_TYPE_LENGTH = 10;
+			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int ELEMENT_ID_BEGIN_INDEX = 0;
+			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
+					+ ELEMENT_ID_LENGTH;
+			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
+			private static final int PERIOD_TYPE_END_INDEX = PERIOD_TYPE_BEGIN_INDEX
+					+ PERIOD_TYPE_LENGTH;
+			private static final int INSTANT_BEGIN_INDEX = PERIOD_TYPE_END_INDEX + 1;
+			private static final int INSTANT_END_INDEX = INSTANT_BEGIN_INDEX
+					+ INSTANT_LENGTH;
+			private static final int START_DATE_BEGIN_INDEX = INSTANT_END_INDEX + 1;
+			private static final int START_DATE_END_INDEX = START_DATE_BEGIN_INDEX
+					+ START_DATE_LENGTH;
+			private static final int END_DATE_BEGIN_INDEX = START_DATE_END_INDEX + 1;
+			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
+					+ END_DATE_LENGTH;
+
+			public GrowthQualifier() {
+				super();
+			}
+
+			public GrowthQualifier(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public GrowthQualifier(String elementId, PeriodType periodType,
+					Date instant, Date startDate, Date endDate) {
+				super();
+				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
+						300);
+				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
+						periodType.name(), 10);
+				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
+				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
+				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
+				super.setBytes(ArrayUtility.addAll(elementIdBytes, SPACE,
+						periodTypeBytes, SPACE, instantBytes, SPACE,
+						startDateBytes, SPACE, endDateBytes));
+			}
+
+			public String getElementId() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						ELEMENT_ID_BEGIN_INDEX, ELEMENT_ID_END_INDEX);
+			}
+
+			public void setElementId(String elementId) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId, 300);
+				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
+						ELEMENT_ID_END_INDEX);
+			}
+
+			public PeriodType getPeriodType() {
+				return PeriodType
+						.valueOf(ByteConvertUtility.getStringFromBytes(
+								getBytes(), PERIOD_TYPE_BEGIN_INDEX,
+								PERIOD_TYPE_END_INDEX));
+			}
+
+			public void setPeriodType(PeriodType periodType) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(periodType.name(),
+						10);
+				ArrayUtility.replace(bytes, subBytes, PERIOD_TYPE_BEGIN_INDEX,
+						PERIOD_TYPE_END_INDEX);
+			}
+
+			public Date getInstant() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							INSTANT_BEGIN_INDEX, INSTANT_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setInstant(Date instant) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(instant);
+				ArrayUtility.replace(bytes, subBytes, INSTANT_BEGIN_INDEX,
+						INSTANT_END_INDEX);
+			}
+
+			public Date getStartDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							START_DATE_BEGIN_INDEX, START_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setStartDate(Date startDate) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(startDate);
+				ArrayUtility.replace(bytes, subBytes, START_DATE_BEGIN_INDEX,
+						START_DATE_END_INDEX);
+			}
+
+			public Date getEndDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							END_DATE_BEGIN_INDEX, END_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setEndDate(Date endDate) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(endDate);
+				ArrayUtility.replace(bytes, subBytes, END_DATE_BEGIN_INDEX,
+						END_DATE_END_INDEX);
+			}
+		}
+
+		public class GrowthValue extends HBaseValue {
+			public GrowthValue() {
+				super();
+			}
+
+			public GrowthValue(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public GrowthValue(BigDecimal value) {
 				super();
 				setValue(value);
 			}

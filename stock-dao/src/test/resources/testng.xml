@@ -18,7 +18,7 @@
 	<test name="StockInfo">
 		<classes>
 			<!-- Test entity -->
-			<class name="idv.hsiehpinghan.stockdao.entity.StockInfoTest" />
+<!-- 			<class name="idv.hsiehpinghan.stockdao.entity.StockInfoTest" /> -->
 
 			<!-- Test repositoty -->
 		</classes>
@@ -26,7 +26,7 @@
 	<test name="Xbrl">
 		<classes>
 			<!-- Test entity -->
-<!-- 			<class name="idv.hsiehpinghan.stockdao.entity.XbrlTest" /> -->
+			<class name="idv.hsiehpinghan.stockdao.entity.XbrlTest" />
 			
 			<!-- Test repositoty -->
 		</classes>

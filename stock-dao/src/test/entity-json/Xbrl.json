@@ -124,6 +124,39 @@
                "length":20
             }
          ]
+      },
+      "GrowthFamily":{
+         "GrowthQualifier":[  
+            {  
+               "type":"String",
+               "name":"elementId",
+               "length":300
+            },
+            {  
+               "type":"PeriodType",
+               "name":"periodType",
+               "length":10
+            },
+            {  
+               "type":"Date",
+               "name":"instant"
+            },
+            {  
+               "type":"Date",
+               "name":"startDate"
+            },
+            {  
+               "type":"Date",
+               "name":"endDate"
+            }
+         ],
+         "GrowthValue":[  
+            {  
+               "type":"BigDecimal",
+               "name":"value",
+               "length":20
+            }
+         ]
       }
    }
 }

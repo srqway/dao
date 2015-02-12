@@ -1,5 +1,7 @@
 package idv.hsiehpinghan.stockdao.entity;
 
+import idv.hsiehpinghan.stockdao.entity.Xbrl.GrowthFamily;
+import idv.hsiehpinghan.stockdao.entity.Xbrl.GrowthFamily.GrowthValue;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InfoFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily.InstanceValue;
@@ -33,7 +35,7 @@ public class XbrlTest {
 	private Date endDate;
 	private UnitType unitType = UnitType.SHARES;
 	private BigDecimal value = new BigDecimal("1.1");
-	private XbrlTaxonomyVersion version;
+	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_BASI_CR_2013_03_31;
 	private String balanceSheetContext = "balanceSheetContext";
 	private String statementOfCashFlowsContext = "statementOfCashFlowsContext";
 	private String statementOfChangesInEquityContext = "statementOfChangesInEquityContext";
@@ -70,6 +72,30 @@ public class XbrlTest {
 		testInfoFamily(entity);
 		testInstanceFamily(entity);
 		testItemFamily(entity);
+		testGrowthFamily(entity);
+	}
+
+	private void testGrowthFamily(Xbrl entity) {
+		generateGrowthFamilyContent(entity);
+		assertGrowthFamily(entity);
+	}
+
+	private void generateGrowthFamilyContent(Xbrl entity) {
+		GrowthFamily fam = entity.getGrowthFamily();
+		fam.setGrowthValue(elementId, periodType, instant, startDate, endDate,
+				ver, value);
+	}
+
+	private void assertGrowthFamily(Xbrl entity) {
+		GrowthFamily fam = entity.getGrowthFamily();
+		GrowthValue growthValue = null;
+		if (instant == null) {
+			growthValue = fam.getGrowthValue(elementId, periodType, startDate,
+					endDate);
+		} else {
+			growthValue = fam.getGrowthValue(elementId, periodType, instant);
+		}
+		Assert.assertEquals(value, growthValue.getValue());
 	}
 
 	private void testItemFamily(Xbrl entity) {
@@ -85,8 +111,13 @@ public class XbrlTest {
 
 	private void assertItemFamily(Xbrl entity) {
 		ItemFamily fam = entity.getItemFamily();
-		ItemValue itemValue = fam.getItemValue(elementId, periodType, instant,
-				startDate, endDate);
+		ItemValue itemValue = null;
+		if (instant == null) {
+			itemValue = fam.getItemValue(elementId, periodType, startDate,
+					endDate);
+		} else {
+			itemValue = fam.getItemValue(elementId, periodType, instant);
+		}
 		Assert.assertEquals(value, itemValue.getValue());
 	}
 
