@@ -24,4 +24,9 @@ public class StockRepository extends RepositoryBase {
 		return hbaseAssistant;
 	}
 
+	public Stock generateEntity(String stockCode) {
+		Stock entity = new Stock();
+		entity.new RowKey(stockCode, entity);
+		return entity;
+	}
 }

@@ -1,5 +1,5 @@
 {  
-   "FinancialReportInstance":{  
+   "Xbrl":{  
       "RowKey":[  
          {  
             "type":"String",
@@ -42,11 +42,13 @@
          "InstanceQualifier":[  
             {  
                "type":"String",
-               "name":"elementId"
+               "name":"elementId",
+               "length":300
             },
             {  
-               "type":"String",
-               "name":"periodType"
+               "type":"PeriodType",
+               "name":"periodType",
+               "length":10
             },
             {  
                "type":"Date",
@@ -63,12 +65,14 @@
          ],
          "InstanceValue":[  
             {  
-               "type":"String",
-               "name":"unit"
+               "type":"UnitType",
+               "name":"unitType",
+               "length":10
             },
             {  
                "type":"BigDecimal",
-               "name":"value"
+               "name":"value",
+               "length":20
             }
          ]
       }
