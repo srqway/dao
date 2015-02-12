@@ -25,8 +25,24 @@
       "InfoFamily":{  
         "Columns":[  
             {  
+               "type":"XbrlTaxonomyVersion",
+               "name":"version"
+            },
+            {  
                "type":"String",
-               "name":"name"
+               "name":"balanceSheetContext"
+            },
+            {  
+               "type":"String",
+               "name":"statementOfComprehensiveIncomeContext"
+            },
+            {  
+               "type":"String",
+               "name":"statementOfCashFlowsContext"
+            },
+            {  
+               "type":"String",
+               "name":"statementOfChangesInEquityContext"
             }
          ],
          "InfoQualifier":[  
@@ -69,6 +85,39 @@
                "name":"unitType",
                "length":10
             },
+            {  
+               "type":"BigDecimal",
+               "name":"value",
+               "length":20
+            }
+         ]
+      },
+      "ItemFamily":{
+         "ItemQualifier":[  
+            {  
+               "type":"String",
+               "name":"elementId",
+               "length":300
+            },
+            {  
+               "type":"PeriodType",
+               "name":"periodType",
+               "length":10
+            },
+            {  
+               "type":"Date",
+               "name":"instant"
+            },
+            {  
+               "type":"Date",
+               "name":"startDate"
+            },
+            {  
+               "type":"Date",
+               "name":"endDate"
+            }
+         ],
+         "ItemValue":[  
             {  
                "type":"BigDecimal",
                "name":"value",
