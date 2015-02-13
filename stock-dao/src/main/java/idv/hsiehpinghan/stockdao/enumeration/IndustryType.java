@@ -13,6 +13,7 @@ public enum IndustryType {
 	STEEL, // 鋼鐵工業
 	RUBBER, // 橡膠工業
 	CAR, // 汽車工業
+	ELECTRONICS, // 電子工業
 	BUILDING, // 建材營造
 	SHIPPING, // 航運業
 	TOURISM, // 觀光事業
@@ -61,6 +62,8 @@ public enum IndustryType {
 			return RUBBER;
 		case "12":
 			return CAR;
+		case "13":
+			return ELECTRONICS;
 		case "14":
 			return BUILDING;
 		case "15":

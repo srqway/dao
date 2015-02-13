@@ -16,16 +16,16 @@ public class DailyDataTest {
 	private Date ver;
 	private String stockCode = "2330";
 	private Date date;
-	private BigDecimal Change = new BigDecimal("1.11");
-	private BigDecimal ClosingPrice = new BigDecimal("2.22");
-	private BigDecimal FinalPurchasePrice = new BigDecimal("3.33");
-	private BigDecimal FinalSellingPrice = new BigDecimal("4.44");
-	private BigDecimal HighestPrice = new BigDecimal("5.55");
-	private BigDecimal LowestPrice = new BigDecimal("6.66");
-	private BigInteger MoneyAmount = new BigInteger("7");
-	private BigDecimal OpeningPrice = new BigDecimal("8");
-	private BigInteger StockAmount = new BigInteger("9");
-	private BigInteger TransactionAmount = new BigInteger("10");
+	private BigDecimal change = new BigDecimal("1.11");
+	private BigDecimal closingPrice = new BigDecimal("2.22");
+	private BigDecimal finalPurchasePrice = new BigDecimal("3.33");
+	private BigDecimal finalSellingPrice = new BigDecimal("4.44");
+	private BigDecimal highestPrice = new BigDecimal("5.55");
+	private BigDecimal lowestPrice = new BigDecimal("6.66");
+	private BigInteger moneyAmount = new BigInteger("7");
+	private BigDecimal openingPrice = new BigDecimal("8");
+	private BigInteger stockAmount = new BigInteger("9");
+	private BigInteger transactionAmount = new BigInteger("10");
 
 	@BeforeClass
 	public void beforeClass() throws Exception {
@@ -48,31 +48,31 @@ public class DailyDataTest {
 	private void generateClosingConditionFamilyContent(DailyData entity) {
 		entity.getClosingConditionFamily();
 		ClosingConditionFamily fam = entity.getClosingConditionFamily();
-		fam.setChange(ver, Change);
-		fam.setClosingPrice(ver, ClosingPrice);
-		fam.setFinalPurchasePrice(ver, FinalPurchasePrice);
-		fam.setFinalSellingPrice(ver, FinalSellingPrice);
-		fam.setHighestPrice(ver, HighestPrice);
-		fam.setLowestPrice(ver, LowestPrice);
-		fam.setMoneyAmount(ver, MoneyAmount);
-		fam.setOpeningPrice(ver, OpeningPrice);
-		fam.setStockAmount(ver, StockAmount);
-		fam.setTransactionAmount(ver, TransactionAmount);
+		fam.setChange(ver, change);
+		fam.setClosingPrice(ver, closingPrice);
+		fam.setFinalPurchasePrice(ver, finalPurchasePrice);
+		fam.setFinalSellingPrice(ver, finalSellingPrice);
+		fam.setHighestPrice(ver, highestPrice);
+		fam.setLowestPrice(ver, lowestPrice);
+		fam.setMoneyAmount(ver, moneyAmount);
+		fam.setOpeningPrice(ver, openingPrice);
+		fam.setStockAmount(ver, stockAmount);
+		fam.setTransactionAmount(ver, transactionAmount);
 
 	}
 
 	private void assertClosingConditionFamily(DailyData entity) {
 		ClosingConditionFamily fam = entity.getClosingConditionFamily();
-		Assert.assertEquals(Change, fam.getChange());
-		Assert.assertEquals(ClosingPrice, fam.getClosingPrice());
-		Assert.assertEquals(FinalPurchasePrice, fam.getFinalPurchasePrice());
-		Assert.assertEquals(FinalSellingPrice, fam.getFinalSellingPrice());
-		Assert.assertEquals(HighestPrice, fam.getHighestPrice());
-		Assert.assertEquals(LowestPrice, fam.getLowestPrice());
-		Assert.assertEquals(MoneyAmount, fam.getMoneyAmount());
-		Assert.assertEquals(OpeningPrice, fam.getOpeningPrice());
-		Assert.assertEquals(StockAmount, fam.getStockAmount());
-		Assert.assertEquals(TransactionAmount, fam.getTransactionAmount());
+		Assert.assertEquals(change, fam.getChange());
+		Assert.assertEquals(closingPrice, fam.getClosingPrice());
+		Assert.assertEquals(finalPurchasePrice, fam.getFinalPurchasePrice());
+		Assert.assertEquals(finalSellingPrice, fam.getFinalSellingPrice());
+		Assert.assertEquals(highestPrice, fam.getHighestPrice());
+		Assert.assertEquals(lowestPrice, fam.getLowestPrice());
+		Assert.assertEquals(moneyAmount, fam.getMoneyAmount());
+		Assert.assertEquals(openingPrice, fam.getOpeningPrice());
+		Assert.assertEquals(stockAmount, fam.getStockAmount());
+		Assert.assertEquals(transactionAmount, fam.getTransactionAmount());
 
 	}
 
