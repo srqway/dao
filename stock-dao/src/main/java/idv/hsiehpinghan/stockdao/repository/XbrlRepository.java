@@ -19,6 +19,11 @@ public class XbrlRepository extends RepositoryBase {
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 
+	@Override
+	public Class<? extends HBaseTable> getTargetTableClass() {
+		return Xbrl.class;
+	}
+
 	/**
 	 * Generate entity.
 	 * 
@@ -31,7 +36,7 @@ public class XbrlRepository extends RepositoryBase {
 	public Xbrl generateEntity(String stockCode, ReportType reportType,
 			int year, int season) {
 		Xbrl entity = new Xbrl();
-		entity.new RowKey(stockCode, reportType, year, season, entity);
+		generateRowKey(stockCode, reportType, year, season, entity);
 		return entity;
 	}
 
@@ -59,9 +64,12 @@ public class XbrlRepository extends RepositoryBase {
 		return (Xbrl) hbaseAssistant.get(rowKey);
 	}
 
-	@Override
-	public Class<? extends HBaseTable> getTargetTableClass() {
-		return Xbrl.class;
+	public boolean exists(String stockCode, ReportType reportType, int year,
+			int season) throws NoSuchFieldException, SecurityException,
+			IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, InvocationTargetException,
+			InstantiationException, IOException {
+		return super.exists(getRowKey(stockCode, reportType, year, season));
 	}
 
 	@Override

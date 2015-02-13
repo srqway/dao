@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class StockInfo extends HBaseTable {
 	private RowKey rowKey;
-	private BasicDataFamily basicDataFamily;
+	private CompanyFamily companyFamily;
 
 	@Override
 	public HBaseRowKey getRowKey() {
@@ -26,11 +26,11 @@ public class StockInfo extends HBaseTable {
 		this.rowKey = (RowKey) rowKey;
 	}
 
-	public BasicDataFamily getBasicDataFamily() {
-		if (basicDataFamily == null) {
-			basicDataFamily = this.new BasicDataFamily(this);
+	public CompanyFamily getCompanyFamily() {
+		if (companyFamily == null) {
+			companyFamily = this.new CompanyFamily(this);
 		}
-		return basicDataFamily;
+		return companyFamily;
 	}
 
 	public class RowKey extends HBaseRowKey {
@@ -58,7 +58,7 @@ public class StockInfo extends HBaseTable {
 		}
 	}
 
-	public class BasicDataFamily extends HBaseColumnFamily {
+	public class CompanyFamily extends HBaseColumnFamily {
 		public static final String MARKET_TYPE = "marketType";
 		public static final String INDUSTRY_TYPE = "industryType";
 		public static final String CHINESE_NAME = "chineseName";
@@ -90,457 +90,453 @@ public class StockInfo extends HBaseTable {
 		public static final String ACCOUNTANT1 = "accountant1";
 		public static final String ACCOUNTANT2 = "accountant2";
 
-		private BasicDataFamily(StockInfo entity) {
+		private CompanyFamily(StockInfo entity) {
 			super(entity);
 		}
 
 		@SuppressWarnings("unchecked")
-		public Set<BasicDataQualifier> getQualifiers() {
-			return (Set<BasicDataQualifier>) (Object) super
+		public Set<CompanyQualifier> getQualifiers() {
+			return (Set<CompanyQualifier>) (Object) super
 					.getQualifierVersionValueMap().keySet();
 		}
 
 		public MarketType getMarketType() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(MARKET_TYPE);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(MARKET_TYPE);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsMarketType();
 		}
 
 		public void setMarketType(Date ver, MarketType marketType) {
-			BasicDataQualifier qual = new BasicDataQualifier(MARKET_TYPE);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(MARKET_TYPE);
+			CompanyValue val = new CompanyValue();
 			val.set(marketType);
 			add(qual, ver, val);
 		}
 
 		public IndustryType getIndustryType() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(INDUSTRY_TYPE);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(INDUSTRY_TYPE);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsIndustryType();
 		}
 
 		public void setIndustryType(Date ver, IndustryType industryType) {
-			BasicDataQualifier qual = new BasicDataQualifier(INDUSTRY_TYPE);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(INDUSTRY_TYPE);
+			CompanyValue val = new CompanyValue();
 			val.set(industryType);
 			add(qual, ver, val);
 		}
 
 		public String getChineseName() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(CHINESE_NAME);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(CHINESE_NAME);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setChineseName(Date ver, String chineseName) {
-			BasicDataQualifier qual = new BasicDataQualifier(CHINESE_NAME);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(CHINESE_NAME);
+			CompanyValue val = new CompanyValue();
 			val.set(chineseName);
 			add(qual, ver, val);
 		}
 
 		public String getEnglishBriefName() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
-					ENGLISH_BRIEF_NAME);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(ENGLISH_BRIEF_NAME);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setEnglishBriefName(Date ver, String englishBriefName) {
-			BasicDataQualifier qual = new BasicDataQualifier(ENGLISH_BRIEF_NAME);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(ENGLISH_BRIEF_NAME);
+			CompanyValue val = new CompanyValue();
 			val.set(englishBriefName);
 			add(qual, ver, val);
 		}
 
 		public String getUnifiedBusinessNumber() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					UNIFIED_BUSINESS_NUMBER);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setUnifiedBusinessNumber(Date ver,
 				String unifiedBusinessNumber) {
-			BasicDataQualifier qual = new BasicDataQualifier(
+			CompanyQualifier qual = new CompanyQualifier(
 					UNIFIED_BUSINESS_NUMBER);
-			BasicDataValue val = new BasicDataValue();
+			CompanyValue val = new CompanyValue();
 			val.set(unifiedBusinessNumber);
 			add(qual, ver, val);
 		}
 
 		public String getEstablishmentDate() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
-					ESTABLISHMENT_DATE);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(ESTABLISHMENT_DATE);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setEstablishmentDate(Date ver, String establishmentDate) {
-			BasicDataQualifier qual = new BasicDataQualifier(ESTABLISHMENT_DATE);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(ESTABLISHMENT_DATE);
+			CompanyValue val = new CompanyValue();
 			val.set(establishmentDate);
 			add(qual, ver, val);
 		}
 
 		public String getListingDate() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(LISTING_DATE);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(LISTING_DATE);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setListingDate(Date ver, String listingDate) {
-			BasicDataQualifier qual = new BasicDataQualifier(LISTING_DATE);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(LISTING_DATE);
+			CompanyValue val = new CompanyValue();
 			val.set(listingDate);
 			add(qual, ver, val);
 		}
 
 		public String getChairman() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(CHAIRMAN);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(CHAIRMAN);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setChairman(Date ver, String chairman) {
-			BasicDataQualifier qual = new BasicDataQualifier(CHAIRMAN);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(CHAIRMAN);
+			CompanyValue val = new CompanyValue();
 			val.set(chairman);
 			add(qual, ver, val);
 		}
 
 		public String getGeneralManager() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(GENERAL_MANAGER);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(GENERAL_MANAGER);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setGeneralManager(Date ver, String generalManager) {
-			BasicDataQualifier qual = new BasicDataQualifier(GENERAL_MANAGER);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(GENERAL_MANAGER);
+			CompanyValue val = new CompanyValue();
 			val.set(generalManager);
 			add(qual, ver, val);
 		}
 
 		public String getSpokesperson() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(SPOKESPERSON);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(SPOKESPERSON);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setSpokesperson(Date ver, String spokesperson) {
-			BasicDataQualifier qual = new BasicDataQualifier(SPOKESPERSON);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(SPOKESPERSON);
+			CompanyValue val = new CompanyValue();
 			val.set(spokesperson);
 			add(qual, ver, val);
 		}
 
 		public String getJobTitleOfSpokesperson() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					JOB_TITLE_OF_SPOKESPERSON);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setJobTitleOfSpokesperson(Date ver,
 				String jobTitleOfSpokesperson) {
-			BasicDataQualifier qual = new BasicDataQualifier(
+			CompanyQualifier qual = new CompanyQualifier(
 					JOB_TITLE_OF_SPOKESPERSON);
-			BasicDataValue val = new BasicDataValue();
+			CompanyValue val = new CompanyValue();
 			val.set(jobTitleOfSpokesperson);
 			add(qual, ver, val);
 		}
 
 		public String getActingSpokesman() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(ACTING_SPOKESMAN);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(ACTING_SPOKESMAN);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setActingSpokesman(Date ver, String actingSpokesman) {
-			BasicDataQualifier qual = new BasicDataQualifier(ACTING_SPOKESMAN);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(ACTING_SPOKESMAN);
+			CompanyValue val = new CompanyValue();
 			val.set(actingSpokesman);
 			add(qual, ver, val);
 		}
 
 		public String getChineseAddress() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(CHINESE_ADDRESS);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(CHINESE_ADDRESS);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setChineseAddress(Date ver, String chineseAddress) {
-			BasicDataQualifier qual = new BasicDataQualifier(CHINESE_ADDRESS);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(CHINESE_ADDRESS);
+			CompanyValue val = new CompanyValue();
 			val.set(chineseAddress);
 			add(qual, ver, val);
 		}
 
 		public String getTelephone() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(TELEPHONE);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(TELEPHONE);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setTelephone(Date ver, String telephone) {
-			BasicDataQualifier qual = new BasicDataQualifier(TELEPHONE);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(TELEPHONE);
+			CompanyValue val = new CompanyValue();
 			val.set(telephone);
 			add(qual, ver, val);
 		}
 
 		public String getStockTransferAgency() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					STOCK_TRANSFER_AGENCY);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setStockTransferAgency(Date ver, String stockTransferAgency) {
-			BasicDataQualifier qual = new BasicDataQualifier(
-					STOCK_TRANSFER_AGENCY);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(STOCK_TRANSFER_AGENCY);
+			CompanyValue val = new CompanyValue();
 			val.set(stockTransferAgency);
 			add(qual, ver, val);
 		}
 
 		public String getTelephoneOfStockTransferAgency() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					TELEPHONE_OF_STOCK_TRANSFER_AGENCY);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setTelephoneOfStockTransferAgency(Date ver,
 				String telephoneOfStockTransferAgency) {
-			BasicDataQualifier qual = new BasicDataQualifier(
+			CompanyQualifier qual = new CompanyQualifier(
 					TELEPHONE_OF_STOCK_TRANSFER_AGENCY);
-			BasicDataValue val = new BasicDataValue();
+			CompanyValue val = new CompanyValue();
 			val.set(telephoneOfStockTransferAgency);
 			add(qual, ver, val);
 		}
 
 		public String getAddressOfStockTransferAgency() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					ADDRESS_OF_STOCK_TRANSFER_AGENCY);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setAddressOfStockTransferAgency(Date ver,
 				String addressOfStockTransferAgency) {
-			BasicDataQualifier qual = new BasicDataQualifier(
+			CompanyQualifier qual = new CompanyQualifier(
 					ADDRESS_OF_STOCK_TRANSFER_AGENCY);
-			BasicDataValue val = new BasicDataValue();
+			CompanyValue val = new CompanyValue();
 			val.set(addressOfStockTransferAgency);
 			add(qual, ver, val);
 		}
 
 		public String getEnglishAddress() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(ENGLISH_ADDRESS);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(ENGLISH_ADDRESS);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setEnglishAddress(Date ver, String englishAddress) {
-			BasicDataQualifier qual = new BasicDataQualifier(ENGLISH_ADDRESS);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(ENGLISH_ADDRESS);
+			CompanyValue val = new CompanyValue();
 			val.set(englishAddress);
 			add(qual, ver, val);
 		}
 
 		public String getFaxNumber() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(FAX_NUMBER);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(FAX_NUMBER);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setFaxNumber(Date ver, String faxNumber) {
-			BasicDataQualifier qual = new BasicDataQualifier(FAX_NUMBER);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(FAX_NUMBER);
+			CompanyValue val = new CompanyValue();
 			val.set(faxNumber);
 			add(qual, ver, val);
 		}
 
 		public String getEmail() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(EMAIL);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(EMAIL);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setEmail(Date ver, String email) {
-			BasicDataQualifier qual = new BasicDataQualifier(EMAIL);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(EMAIL);
+			CompanyValue val = new CompanyValue();
 			val.set(email);
 			add(qual, ver, val);
 		}
 
 		public String getWebSite() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(WEB_SITE);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(WEB_SITE);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setWebSite(Date ver, String webSite) {
-			BasicDataQualifier qual = new BasicDataQualifier(WEB_SITE);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(WEB_SITE);
+			CompanyValue val = new CompanyValue();
 			val.set(webSite);
 			add(qual, ver, val);
 		}
 
 		public String getFinancialReportType() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					FINANCIAL_REPORT_TYPE);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setFinancialReportType(Date ver, String financialReportType) {
-			BasicDataQualifier qual = new BasicDataQualifier(
-					FINANCIAL_REPORT_TYPE);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(FINANCIAL_REPORT_TYPE);
+			CompanyValue val = new CompanyValue();
 			val.set(financialReportType);
 			add(qual, ver, val);
 		}
 
 		public String getParValueOfOrdinaryShares() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					PAR_VALUE_OF_ORDINARY_SHARES);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setParValueOfOrdinaryShares(Date ver,
 				String parValueOfOrdinaryShares) {
-			BasicDataQualifier qual = new BasicDataQualifier(
+			CompanyQualifier qual = new CompanyQualifier(
 					PAR_VALUE_OF_ORDINARY_SHARES);
-			BasicDataValue val = new BasicDataValue();
+			CompanyValue val = new CompanyValue();
 			val.set(parValueOfOrdinaryShares);
 			add(qual, ver, val);
 		}
 
 		public String getPaidInCapital() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(PAID_IN_CAPITAL);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(PAID_IN_CAPITAL);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setPaidInCapital(Date ver, String paidInCapital) {
-			BasicDataQualifier qual = new BasicDataQualifier(PAID_IN_CAPITAL);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(PAID_IN_CAPITAL);
+			CompanyValue val = new CompanyValue();
 			val.set(paidInCapital);
 			add(qual, ver, val);
 		}
 
 		public String getAmountOfOrdinaryShares() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					AMOUNT_OF_ORDINARY_SHARES);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setAmountOfOrdinaryShares(Date ver,
 				String amountOfOrdinaryShares) {
-			BasicDataQualifier qual = new BasicDataQualifier(
+			CompanyQualifier qual = new CompanyQualifier(
 					AMOUNT_OF_ORDINARY_SHARES);
-			BasicDataValue val = new BasicDataValue();
+			CompanyValue val = new CompanyValue();
 			val.set(amountOfOrdinaryShares);
 			add(qual, ver, val);
 		}
 
 		public String getPrivatePlacementAmountOfOrdinaryShares() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					PRIVATE_PLACEMENT_AMOUNT_OF_ORDINARY_SHARES);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setPrivatePlacementAmountOfOrdinaryShares(Date ver,
 				String privatePlacementAmountOfOrdinaryShares) {
-			BasicDataQualifier qual = new BasicDataQualifier(
+			CompanyQualifier qual = new CompanyQualifier(
 					PRIVATE_PLACEMENT_AMOUNT_OF_ORDINARY_SHARES);
-			BasicDataValue val = new BasicDataValue();
+			CompanyValue val = new CompanyValue();
 			val.set(privatePlacementAmountOfOrdinaryShares);
 			add(qual, ver, val);
 		}
 
 		public String getAmountOfPreferredShares() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(
+			HBaseColumnQualifier qual = new CompanyQualifier(
 					AMOUNT_OF_PREFERRED_SHARES);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setAmountOfPreferredShares(Date ver,
 				String amountOfPreferredShares) {
-			BasicDataQualifier qual = new BasicDataQualifier(
+			CompanyQualifier qual = new CompanyQualifier(
 					AMOUNT_OF_PREFERRED_SHARES);
-			BasicDataValue val = new BasicDataValue();
+			CompanyValue val = new CompanyValue();
 			val.set(amountOfPreferredShares);
 			add(qual, ver, val);
 		}
 
 		public String getAccountingFirm() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(ACCOUNTING_FIRM);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(ACCOUNTING_FIRM);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setAccountingFirm(Date ver, String accountingFirm) {
-			BasicDataQualifier qual = new BasicDataQualifier(ACCOUNTING_FIRM);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(ACCOUNTING_FIRM);
+			CompanyValue val = new CompanyValue();
 			val.set(accountingFirm);
 			add(qual, ver, val);
 		}
 
 		public String getAccountant1() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(ACCOUNTANT1);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(ACCOUNTANT1);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setAccountant1(Date ver, String accountant1) {
-			BasicDataQualifier qual = new BasicDataQualifier(ACCOUNTANT1);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(ACCOUNTANT1);
+			CompanyValue val = new CompanyValue();
 			val.set(accountant1);
 			add(qual, ver, val);
 		}
 
 		public String getAccountant2() {
-			HBaseColumnQualifier qual = new BasicDataQualifier(ACCOUNTANT2);
-			BasicDataValue val = (BasicDataValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new CompanyQualifier(ACCOUNTANT2);
+			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
 			return val.getAsString();
 		}
 
 		public void setAccountant2(Date ver, String accountant2) {
-			BasicDataQualifier qual = new BasicDataQualifier(ACCOUNTANT2);
-			BasicDataValue val = new BasicDataValue();
+			CompanyQualifier qual = new CompanyQualifier(ACCOUNTANT2);
+			CompanyValue val = new CompanyValue();
 			val.set(accountant2);
 			add(qual, ver, val);
 		}
 
 		@Override
 		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
-			return this.new BasicDataQualifier(bytes);
+			return this.new CompanyQualifier(bytes);
 		}
 
 		@Override
 		protected HBaseValue generateValue(byte[] bytes) {
-			return this.new BasicDataValue(bytes);
+			return this.new CompanyValue(bytes);
 		}
 
-		public class BasicDataQualifier extends HBaseColumnQualifier {
-			public BasicDataQualifier() {
+		public class CompanyQualifier extends HBaseColumnQualifier {
+			public CompanyQualifier() {
 				super();
 			}
 
-			public BasicDataQualifier(byte[] bytes) {
+			public CompanyQualifier(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}
 
-			public BasicDataQualifier(String columnName) {
+			public CompanyQualifier(String columnName) {
 				super();
 				setColumnName(columnName);
 			}
@@ -555,12 +551,12 @@ public class StockInfo extends HBaseTable {
 			}
 		}
 
-		public class BasicDataValue extends HBaseValue {
-			public BasicDataValue() {
+		public class CompanyValue extends HBaseValue {
+			public CompanyValue() {
 				super();
 			}
 
-			public BasicDataValue(byte[] bytes) {
+			public CompanyValue(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}

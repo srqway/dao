@@ -48,7 +48,7 @@ public class TaxonomyRepository extends RepositoryBase {
 
 	public Taxonomy generateEntity(XbrlTaxonomyVersion version) {
 		Taxonomy entity = new Taxonomy();
-		entity.new RowKey(version, entity);
+		generateRowKey(entity, version);
 		return entity;
 	}
 

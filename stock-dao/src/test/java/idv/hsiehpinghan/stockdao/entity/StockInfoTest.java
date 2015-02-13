@@ -1,6 +1,6 @@
 package idv.hsiehpinghan.stockdao.entity;
 
-import idv.hsiehpinghan.stockdao.entity.StockInfo.BasicDataFamily;
+import idv.hsiehpinghan.stockdao.entity.StockInfo.CompanyFamily;
 import idv.hsiehpinghan.stockdao.entity.StockInfo.RowKey;
 import idv.hsiehpinghan.stockdao.enumeration.IndustryType;
 import idv.hsiehpinghan.stockdao.enumeration.MarketType;
@@ -55,16 +55,16 @@ public class StockInfoTest {
 	public void bytesConvert() {
 		StockInfo entity = new StockInfo();
 		testRowKey(entity);
-		testBasicDataFamily(entity);
+		testCompanyFamily(entity);
 	}
 
-	private void testBasicDataFamily(StockInfo entity) {
-		generateBasicDataFamilyContent(entity);
-		assertBasicDataFamily(entity);
+	private void testCompanyFamily(StockInfo entity) {
+		generateCompanyFamilyContent(entity);
+		assertCompanyFamily(entity);
 	}
 
-	private void generateBasicDataFamilyContent(StockInfo entity) {
-		BasicDataFamily fam = entity.getBasicDataFamily();
+	private void generateCompanyFamilyContent(StockInfo entity) {
+		CompanyFamily fam = entity.getCompanyFamily();
 		fam.setAccountant1(ver, accountant1);
 		fam.setAccountant2(ver, accountant2);
 		fam.setAccountingFirm(ver, accountingFirm);
@@ -99,8 +99,8 @@ public class StockInfoTest {
 		fam.setWebSite(ver, webSite);
 	}
 
-	private void assertBasicDataFamily(StockInfo entity) {
-		BasicDataFamily fam = entity.getBasicDataFamily();
+	private void assertCompanyFamily(StockInfo entity) {
+		CompanyFamily fam = entity.getCompanyFamily();
 		Assert.assertEquals(accountant1, fam.getAccountant1());
 		Assert.assertEquals(accountant2, fam.getAccountant2());
 		Assert.assertEquals(accountingFirm, fam.getAccountingFirm());

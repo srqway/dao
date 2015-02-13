@@ -6,7 +6,7 @@
             "name":"stockCode"
          }
       ],
-      "BasicDataFamily":{  
+      "CompanyFamily":{  
          "Columns":[  
             {  
                "type":"MarketType",
@@ -129,13 +129,13 @@
                "name":"accountant2"
             }
          ],
-         "BasicDataQualifier":[  
+         "CompanyQualifier":[  
             {  
                "type":"String",
                "name":"columnName"
             }
          ],
-         "BasicDataValue":[  
+         "CompanyValue":[  
 
          ]
       }
