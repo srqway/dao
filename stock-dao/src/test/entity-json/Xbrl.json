@@ -120,13 +120,27 @@
          "ItemValue":[  
             {  
                "type":"BigDecimal",
-               "name":"value",
-               "length":20
+               "name":"value"
             }
          ]
       },
       "GrowthFamily":{
+        "Columns":[  
+            {  
+               "type":"BigDecimal",
+               "name":"ratio"
+            },
+            {  
+               "type":"BigDecimal",
+               "name":"naturalLogarithm"
+            }
+         ],
          "GrowthQualifier":[  
+            {  
+               "type":"String",
+               "name":"columnName",
+               "length":30
+            },
             {  
                "type":"String",
                "name":"elementId",
@@ -151,11 +165,7 @@
             }
          ],
          "GrowthValue":[  
-            {  
-               "type":"BigDecimal",
-               "name":"value",
-               "length":20
-            }
+         
          ]
       }
    }

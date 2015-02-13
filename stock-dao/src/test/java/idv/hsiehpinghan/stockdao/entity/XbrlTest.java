@@ -1,7 +1,6 @@
 package idv.hsiehpinghan.stockdao.entity;
 
 import idv.hsiehpinghan.stockdao.entity.Xbrl.GrowthFamily;
-import idv.hsiehpinghan.stockdao.entity.Xbrl.GrowthFamily.GrowthValue;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InfoFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily.InstanceValue;
@@ -40,6 +39,8 @@ public class XbrlTest {
 	private String statementOfCashFlowsContext = "statementOfCashFlowsContext";
 	private String statementOfChangesInEquityContext = "statementOfChangesInEquityContext";
 	private String statementOfComprehensiveIncomeContext = "statementOfComprehensiveIncomeContext";
+	private BigDecimal ratio = new BigDecimal("2.2");
+	private BigDecimal naturalLogarithm = new BigDecimal("3.3");
 
 	@BeforeClass
 	public void beforeClass() throws Exception {
@@ -82,20 +83,25 @@ public class XbrlTest {
 
 	private void generateGrowthFamilyContent(Xbrl entity) {
 		GrowthFamily fam = entity.getGrowthFamily();
-		fam.setGrowthValue(elementId, periodType, instant, startDate, endDate,
-				ver, value);
+		fam.setRatio(elementId, periodType, instant, startDate, endDate, ver,
+				ratio);
+		fam.setNaturalLogarithm(elementId, periodType, instant, startDate,
+				endDate, ver, naturalLogarithm);
 	}
 
 	private void assertGrowthFamily(Xbrl entity) {
 		GrowthFamily fam = entity.getGrowthFamily();
-		GrowthValue growthValue = null;
 		if (instant == null) {
-			growthValue = fam.getGrowthValue(elementId, periodType, startDate,
-					endDate);
+			Assert.assertEquals(ratio,
+					fam.getRatio(elementId, periodType, startDate, endDate));
+			Assert.assertEquals(naturalLogarithm, fam.getNaturalLogarithm(
+					elementId, periodType, startDate, endDate));
 		} else {
-			growthValue = fam.getGrowthValue(elementId, periodType, instant);
+			Assert.assertEquals(ratio,
+					fam.getRatio(elementId, periodType, instant));
+			Assert.assertEquals(naturalLogarithm,
+					fam.getNaturalLogarithm(elementId, periodType, instant));
 		}
-		Assert.assertEquals(value, growthValue.getValue());
 	}
 
 	private void testItemFamily(Xbrl entity) {

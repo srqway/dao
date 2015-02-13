@@ -94,11 +94,13 @@ public class Xbrl extends HBaseTable {
 		public RowKey(String stockCode, ReportType reportType, int year,
 				int season, Xbrl entity) {
 			super(entity);
-			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode, 10);
+			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode,
+					STOCK_CODE_LENGTH);
 			byte[] reportTypeBytes = ByteConvertUtility.toBytes(
-					reportType.name(), 30);
-			byte[] yearBytes = ByteConvertUtility.toBytes(year, 4);
-			byte[] seasonBytes = ByteConvertUtility.toBytes(season, 1);
+					reportType.name(), REPORT_TYPE_LENGTH);
+			byte[] yearBytes = ByteConvertUtility.toBytes(year, YEAR_LENGTH);
+			byte[] seasonBytes = ByteConvertUtility.toBytes(season,
+					SEASON_LENGTH);
 			super.setBytes(ArrayUtility.addAll(stockCodeBytes, SPACE,
 					reportTypeBytes, SPACE, yearBytes, SPACE, seasonBytes));
 		}
@@ -110,7 +112,8 @@ public class Xbrl extends HBaseTable {
 
 		public void setStockCode(String stockCode) {
 			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(stockCode, 10);
+			byte[] subBytes = ByteConvertUtility.toBytes(stockCode,
+					STOCK_CODE_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, STOCK_CODE_BEGIN_INDEX,
 					STOCK_CODE_END_INDEX);
 		}
@@ -123,7 +126,8 @@ public class Xbrl extends HBaseTable {
 
 		public void setReportType(ReportType reportType) {
 			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(reportType.name(), 30);
+			byte[] subBytes = ByteConvertUtility.toBytes(reportType.name(),
+					REPORT_TYPE_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, REPORT_TYPE_BEGIN_INDEX,
 					REPORT_TYPE_END_INDEX);
 		}
@@ -135,7 +139,7 @@ public class Xbrl extends HBaseTable {
 
 		public void setYear(int year) {
 			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(year, 4);
+			byte[] subBytes = ByteConvertUtility.toBytes(year, YEAR_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, YEAR_BEGIN_INDEX,
 					YEAR_END_INDEX);
 		}
@@ -147,7 +151,7 @@ public class Xbrl extends HBaseTable {
 
 		public void setSeason(int season) {
 			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(season, 1);
+			byte[] subBytes = ByteConvertUtility.toBytes(season, SEASON_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, SEASON_BEGIN_INDEX,
 					SEASON_END_INDEX);
 		}
@@ -392,9 +396,9 @@ public class Xbrl extends HBaseTable {
 					Date instant, Date startDate, Date endDate) {
 				super();
 				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
-						300);
+						ELEMENT_ID_LENGTH);
 				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
-						periodType.name(), 10);
+						periodType.name(), PERIOD_TYPE_LENGTH);
 				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
 				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
 				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
@@ -410,7 +414,8 @@ public class Xbrl extends HBaseTable {
 
 			public void setElementId(String elementId) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(elementId, 300);
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
 				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
 						ELEMENT_ID_END_INDEX);
 			}
@@ -425,7 +430,7 @@ public class Xbrl extends HBaseTable {
 			public void setPeriodType(PeriodType periodType) {
 				byte[] bytes = getBytes();
 				byte[] subBytes = ByteConvertUtility.toBytes(periodType.name(),
-						10);
+						PERIOD_TYPE_LENGTH);
 				ArrayUtility.replace(bytes, subBytes, PERIOD_TYPE_BEGIN_INDEX,
 						PERIOD_TYPE_END_INDEX);
 			}
@@ -501,8 +506,9 @@ public class Xbrl extends HBaseTable {
 			public InstanceValue(UnitType unitType, BigDecimal value) {
 				super();
 				byte[] unitTypeBytes = ByteConvertUtility.toBytes(
-						unitType.name(), 10);
-				byte[] valueBytes = ByteConvertUtility.toBytes(value, 20);
+						unitType.name(), UNIT_TYPE_LENGTH);
+				byte[] valueBytes = ByteConvertUtility.toBytes(value,
+						VALUE_LENGTH);
 				super.setBytes(ArrayUtility.addAll(unitTypeBytes, SPACE,
 						valueBytes));
 			}
@@ -517,7 +523,7 @@ public class Xbrl extends HBaseTable {
 			public void setUnitType(UnitType unitType) {
 				byte[] bytes = getBytes();
 				byte[] subBytes = ByteConvertUtility.toBytes(unitType.name(),
-						10);
+						UNIT_TYPE_LENGTH);
 				ArrayUtility.replace(bytes, subBytes, UNIT_TYPE_BEGIN_INDEX,
 						UNIT_TYPE_END_INDEX);
 			}
@@ -529,7 +535,8 @@ public class Xbrl extends HBaseTable {
 
 			public void setValue(BigDecimal value) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(value, 20);
+				byte[] subBytes = ByteConvertUtility.toBytes(value,
+						VALUE_LENGTH);
 				ArrayUtility.replace(bytes, subBytes, VALUE_BEGIN_INDEX,
 						VALUE_END_INDEX);
 			}
@@ -618,9 +625,9 @@ public class Xbrl extends HBaseTable {
 					Date instant, Date startDate, Date endDate) {
 				super();
 				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
-						300);
+						ELEMENT_ID_LENGTH);
 				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
-						periodType.name(), 10);
+						periodType.name(), PERIOD_TYPE_LENGTH);
 				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
 				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
 				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
@@ -636,7 +643,8 @@ public class Xbrl extends HBaseTable {
 
 			public void setElementId(String elementId) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(elementId, 300);
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
 				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
 						ELEMENT_ID_END_INDEX);
 			}
@@ -651,7 +659,7 @@ public class Xbrl extends HBaseTable {
 			public void setPeriodType(PeriodType periodType) {
 				byte[] bytes = getBytes();
 				byte[] subBytes = ByteConvertUtility.toBytes(periodType.name(),
-						10);
+						PERIOD_TYPE_LENGTH);
 				ArrayUtility.replace(bytes, subBytes, PERIOD_TYPE_BEGIN_INDEX,
 						PERIOD_TYPE_END_INDEX);
 			}
@@ -725,13 +733,16 @@ public class Xbrl extends HBaseTable {
 			}
 
 			public void setValue(BigDecimal value) {
-				byte[] bytes = ByteConvertUtility.toBytes(value, 20);
+				byte[] bytes = ByteConvertUtility.toBytes(value);
 				setBytes(bytes);
 			}
 		}
 	}
 
 	public class GrowthFamily extends HBaseColumnFamily {
+		public static final String RATIO = "ratio";
+		public static final String NATURAL_LOGARITHM = "naturalLogarithm";
+
 		private GrowthFamily(Xbrl entity) {
 			super(entity);
 		}
@@ -742,23 +753,45 @@ public class Xbrl extends HBaseTable {
 					.getQualifierVersionValueMap().keySet();
 		}
 
-		public GrowthValue getGrowthValue(String elementId,
+		public BigDecimal getRatio(String elementId, PeriodType periodType,
+				Date startDate, Date endDate) {
+			return getRatio(elementId, periodType, null, startDate, endDate);
+		}
+
+		public BigDecimal getRatio(String elementId, PeriodType periodType,
+				Date instant) {
+			return getRatio(elementId, periodType, instant, null, null);
+		}
+
+		public void setRatio(String elementId, PeriodType periodType,
+				Date instant, Date startDate, Date endDate, Date ver,
+				BigDecimal ratio) {
+			GrowthQualifier qual = new GrowthQualifier(RATIO, elementId,
+					periodType, instant, startDate, endDate);
+			GrowthValue val = new GrowthValue();
+			val.set(ratio);
+			add(qual, ver, val);
+		}
+
+		public BigDecimal getNaturalLogarithm(String elementId,
 				PeriodType periodType, Date startDate, Date endDate) {
-			return getGrowthValue(elementId, periodType, null, startDate,
+			return getNaturalLogarithm(elementId, periodType, null, startDate,
 					endDate);
 		}
 
-		public GrowthValue getGrowthValue(String elementId,
+		public BigDecimal getNaturalLogarithm(String elementId,
 				PeriodType periodType, Date instant) {
-			return getGrowthValue(elementId, periodType, instant, null, null);
+			return getNaturalLogarithm(elementId, periodType, instant, null,
+					null);
 		}
 
-		public void setGrowthValue(String elementId, PeriodType periodType,
-				Date instant, Date startDate, Date endDate, Date ver,
-				BigDecimal value) {
-			HBaseColumnQualifier qual = new GrowthQualifier(elementId,
-					periodType, instant, startDate, endDate);
-			GrowthValue val = new GrowthValue(value);
+		public void setNaturalLogarithm(String elementId,
+				PeriodType periodType, Date instant, Date startDate,
+				Date endDate, Date ver, BigDecimal naturalLogarithm) {
+			GrowthQualifier qual = new GrowthQualifier(NATURAL_LOGARITHM,
+					elementId, periodType, instant, startDate, endDate);
+			GrowthValue val = new GrowthValue();
+			val.set(naturalLogarithm);
 			add(qual, ver, val);
 		}
 
@@ -772,21 +805,34 @@ public class Xbrl extends HBaseTable {
 			return this.new GrowthValue(bytes);
 		}
 
-		private GrowthValue getGrowthValue(String elementId,
+		private BigDecimal getRatio(String elementId, PeriodType periodType,
+				Date instant, Date startDate, Date endDate) {
+			HBaseColumnQualifier qual = new GrowthQualifier(RATIO, elementId,
+					periodType, instant, startDate, endDate);
+			GrowthValue val = (GrowthValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		private BigDecimal getNaturalLogarithm(String elementId,
 				PeriodType periodType, Date instant, Date startDate,
 				Date endDate) {
-			HBaseColumnQualifier qual = new GrowthQualifier(elementId,
-					periodType, instant, startDate, endDate);
-			return (GrowthValue) super.getLatestValue(qual);
+			HBaseColumnQualifier qual = new GrowthQualifier(NATURAL_LOGARITHM,
+					elementId, periodType, instant, startDate, endDate);
+			GrowthValue val = (GrowthValue) super.getLatestValue(qual);
+			return val.getAsBigDecimal();
 		}
 
 		public class GrowthQualifier extends HBaseColumnQualifier {
+			private static final int COLUMN_NAME_LENGTH = 30;
 			private static final int ELEMENT_ID_LENGTH = 300;
 			private static final int PERIOD_TYPE_LENGTH = 10;
 			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
-			private static final int ELEMENT_ID_BEGIN_INDEX = 0;
+			private static final int COLUMN_NAME_BEGIN_INDEX = 0;
+			private static final int COLUMN_NAME_END_INDEX = COLUMN_NAME_BEGIN_INDEX
+					+ COLUMN_NAME_LENGTH;
+			private static final int ELEMENT_ID_BEGIN_INDEX = COLUMN_NAME_END_INDEX + 1;
 			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
 					+ ELEMENT_ID_LENGTH;
 			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
@@ -811,19 +857,36 @@ public class Xbrl extends HBaseTable {
 				setBytes(bytes);
 			}
 
-			public GrowthQualifier(String elementId, PeriodType periodType,
-					Date instant, Date startDate, Date endDate) {
+			public GrowthQualifier(String columnName, String elementId,
+					PeriodType periodType, Date instant, Date startDate,
+					Date endDate) {
 				super();
+				byte[] columnNameBytes = ByteConvertUtility.toBytes(columnName,
+						COLUMN_NAME_LENGTH);
 				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
-						300);
+						ELEMENT_ID_LENGTH);
 				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
-						periodType.name(), 10);
+						periodType.name(), PERIOD_TYPE_LENGTH);
 				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
 				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
 				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
-				super.setBytes(ArrayUtility.addAll(elementIdBytes, SPACE,
-						periodTypeBytes, SPACE, instantBytes, SPACE,
-						startDateBytes, SPACE, endDateBytes));
+				super.setBytes(ArrayUtility.addAll(columnNameBytes, SPACE,
+						elementIdBytes, SPACE, periodTypeBytes, SPACE,
+						instantBytes, SPACE, startDateBytes, SPACE,
+						endDateBytes));
+			}
+
+			public String getColumnName() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						COLUMN_NAME_BEGIN_INDEX, COLUMN_NAME_END_INDEX);
+			}
+
+			public void setColumnName(String columnName) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(columnName,
+						COLUMN_NAME_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, COLUMN_NAME_BEGIN_INDEX,
+						COLUMN_NAME_END_INDEX);
 			}
 
 			public String getElementId() {
@@ -833,7 +896,8 @@ public class Xbrl extends HBaseTable {
 
 			public void setElementId(String elementId) {
 				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(elementId, 300);
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
 				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
 						ELEMENT_ID_END_INDEX);
 			}
@@ -848,7 +912,7 @@ public class Xbrl extends HBaseTable {
 			public void setPeriodType(PeriodType periodType) {
 				byte[] bytes = getBytes();
 				byte[] subBytes = ByteConvertUtility.toBytes(periodType.name(),
-						10);
+						PERIOD_TYPE_LENGTH);
 				ArrayUtility.replace(bytes, subBytes, PERIOD_TYPE_BEGIN_INDEX,
 						PERIOD_TYPE_END_INDEX);
 			}
@@ -912,18 +976,12 @@ public class Xbrl extends HBaseTable {
 				setBytes(bytes);
 			}
 
-			public GrowthValue(BigDecimal value) {
-				super();
-				setValue(value);
-			}
-
-			public BigDecimal getValue() {
+			public BigDecimal getAsBigDecimal() {
 				return ByteConvertUtility.getBigDecimalFromBytes(getBytes());
 			}
 
-			public void setValue(BigDecimal value) {
-				byte[] bytes = ByteConvertUtility.toBytes(value, 20);
-				setBytes(bytes);
+			public void set(BigDecimal value) {
+				setBytes(ByteConvertUtility.toBytes(value));
 			}
 		}
 	}
