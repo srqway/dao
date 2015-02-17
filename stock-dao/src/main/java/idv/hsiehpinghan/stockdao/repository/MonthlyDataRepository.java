@@ -32,10 +32,6 @@ public class MonthlyDataRepository extends RepositoryBase {
 		return (MonthlyData) hbaseAssistant.get(rowKey);
 	}
 
-	public int getRowAmount() {
-		return hbaseAssistant.getRowAmount(getTargetTableClass());
-	}
-
 	@Override
 	public Class<? extends HBaseTable> getTargetTableClass() {
 		return MonthlyData.class;

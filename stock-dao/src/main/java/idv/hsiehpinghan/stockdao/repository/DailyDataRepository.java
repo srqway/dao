@@ -38,10 +38,6 @@ public class DailyDataRepository extends RepositoryBase {
 		return (DailyData) hbaseAssistant.get(rowKey);
 	}
 
-	public int getRowAmount() {
-		return hbaseAssistant.getRowAmount(getTargetTableClass());
-	}
-
 	public boolean exists(String stockCode, Date date)
 			throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,

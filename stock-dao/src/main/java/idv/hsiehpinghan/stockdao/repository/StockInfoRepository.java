@@ -41,10 +41,6 @@ public class StockInfoRepository extends RepositoryBase {
 		return (StockInfo) hbaseAssistant.get(rowKey);
 	}
 
-	public int getRowAmount() {
-		return hbaseAssistant.getRowAmount(getTargetTableClass());
-	}
-
 	public List<RowKey> getRowKeys() {
 		List<HBaseTable> entities = hbaseAssistant.scan(getTargetTableClass(),
 				new KeyOnlyFilter());
