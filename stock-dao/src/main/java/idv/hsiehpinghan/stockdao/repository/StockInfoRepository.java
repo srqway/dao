@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class StockInfoRepository extends RepositoryBase {
-
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 
@@ -37,19 +36,30 @@ public class StockInfoRepository extends RepositoryBase {
 			NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalArgumentException, InvocationTargetException, IOException {
 		HBaseRowKey rowKey = getRowKey(stockCode);
-
 		return (StockInfo) hbaseAssistant.get(rowKey);
+	}
+
+	public int getRowAmount() {
+		return hbaseAssistant.getRowAmount(getTargetTableClass());
 	}
 
 	public List<RowKey> getRowKeys() {
 		List<HBaseTable> entities = hbaseAssistant.scan(getTargetTableClass(),
 				new KeyOnlyFilter());
-		List<RowKey> rowKeys = new ArrayList<StockInfo.RowKey>(entities.size());
+		List<RowKey> rowKeys = new ArrayList<RowKey>(entities.size());
 		for (HBaseTable entity : entities) {
 			RowKey rowKey = (RowKey) entity.getRowKey();
 			rowKeys.add(rowKey);
 		}
 		return rowKeys;
+	}
+
+	public boolean exists(String stockCode) throws NoSuchFieldException,
+			SecurityException, IllegalArgumentException,
+			IllegalAccessException, NoSuchMethodException,
+			InvocationTargetException, InstantiationException, IOException {
+		HBaseRowKey key = getRowKey(stockCode);
+		return super.exists(key);
 	}
 
 	@Override

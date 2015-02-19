@@ -9,18 +9,20 @@
 	<test name="Taxonomy">
 		<classes>
 			<!-- Test entity -->
-			<class name="idv.hsiehpinghan.stockdao.entity.TaxonomyTest" />
+			<!-- <class name="idv.hsiehpinghan.stockdao.entity.TaxonomyTest" /> -->
 
 			<!-- Test repositoty -->
-			<class name="idv.hsiehpinghan.stockdao.repository.TaxonomyRepositoryTest" />
+			<!-- <class name="idv.hsiehpinghan.stockdao.repository.TaxonomyRepositoryTest" 
+				/> -->
 		</classes>
 	</test>
 	<test name="StockInfo">
 		<classes>
 			<!-- Test entity -->
-			<class name="idv.hsiehpinghan.stockdao.entity.StockInfoTest" />
+<!-- 			<class name="idv.hsiehpinghan.stockdao.entity.StockInfoTest" /> -->
 
 			<!-- Test repositoty -->
+<!-- 			<class name="idv.hsiehpinghan.stockdao.repository.StockInfoRepositoryTest" /> -->
 		</classes>
 	</test>
 	<test name="Xbrl">
@@ -34,15 +36,17 @@
 	<test name="MonthlyData">
 		<classes>
 			<!-- Test entity -->
-			<class name="idv.hsiehpinghan.stockdao.entity.MonthlyDataTest" />
+			<!-- <class name="idv.hsiehpinghan.stockdao.entity.MonthlyDataTest" /> -->
 
 			<!-- Test repositoty -->
+			<!-- <class name="idv.hsiehpinghan.stockdao.repository.MonthlyDataRepositoryTest" 
+				/> -->
 		</classes>
 	</test>
 	<test name="DailyData">
 		<classes>
 			<!-- Test entity -->
-			<class name="idv.hsiehpinghan.stockdao.entity.DailyDataTest" />
+			<!-- <class name="idv.hsiehpinghan.stockdao.entity.DailyDataTest" /> -->
 
 			<!-- Test repositoty -->
 		</classes>

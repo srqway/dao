@@ -1,17 +1,20 @@
-package idv.hsiehpinghan.stockdao.entity;
+package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
+import idv.hsiehpinghan.stockdao.entity.StockInfo;
 import idv.hsiehpinghan.stockdao.entity.StockInfo.CompanyFamily;
-import idv.hsiehpinghan.stockdao.entity.StockInfo.RowKey;
 import idv.hsiehpinghan.stockdao.enumeration.IndustryType;
 import idv.hsiehpinghan.stockdao.enumeration.MarketType;
+import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 
 import java.util.Date;
 
+import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class StockInfoTest {
+public class StockInfoRepositoryTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
 	private String stockCode = "stockCode";
 	private MarketType marketType = MarketType.EMERGING;
@@ -44,21 +47,26 @@ public class StockInfoTest {
 	private String accountingFirm = "accountingFirm";
 	private String accountant1 = "accountant1";
 	private String accountant2 = "accountant2";
+	private StockInfoRepository repository;
+
+	@BeforeClass
+	public void beforeClass() throws Exception {
+		ApplicationContext applicationContext = TestngSuitSetting
+				.getApplicationContext();
+		repository = applicationContext.getBean(StockInfoRepository.class);
+	}
 
 	@Test
-	public void bytesConvert() {
-		StockInfo entity = new StockInfo();
-		testRowKey(entity);
-		testCompanyFamily(entity);
-	}
-
-	private void testRowKey(StockInfo entity) {
-		RowKey key = entity.new RowKey(stockCode, entity);
-		Assert.assertEquals(stockCode, key.getStockCode());
-	}
-
-	private void testCompanyFamily(StockInfo entity) {
+	public void put() throws Exception {
+		StockInfo entity = repository.generateEntity(stockCode);
 		generateCompanyFamilyContent(entity);
+		repository.put(entity);
+		Assert.assertTrue(repository.exists(entity.getRowKey()));
+	}
+
+	@Test(dependsOnMethods = { "put" })
+	public void get() throws Exception {
+		StockInfo entity = repository.get(stockCode);
 		assertCompanyFamily(entity);
 	}
 

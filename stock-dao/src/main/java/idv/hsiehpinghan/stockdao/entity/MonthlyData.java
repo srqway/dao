@@ -8,6 +8,7 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseValue;
 import idv.hsiehpinghan.hbaseassistant.utility.ByteConvertUtility;
+import idv.hsiehpinghan.stockdao.enumeration.CurrencyType;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -61,9 +62,10 @@ public class MonthlyData extends HBaseTable {
 
 		public RowKey(String stockCode, int year, int month, MonthlyData entity) {
 			super(entity);
-			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode, 15);
-			byte[] yearBytes = ByteConvertUtility.toBytes(year, 4);
-			byte[] monthBytes = ByteConvertUtility.toBytes(month, 2);
+			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode,
+					STOCK_CODE_LENGTH);
+			byte[] yearBytes = ByteConvertUtility.toBytes(year, YEAR_LENGTH);
+			byte[] monthBytes = ByteConvertUtility.toBytes(month, MONTH_LENGTH);
 			super.setBytes(ArrayUtility.addAll(stockCodeBytes, SPACE,
 					yearBytes, SPACE, monthBytes));
 		}
@@ -75,7 +77,8 @@ public class MonthlyData extends HBaseTable {
 
 		public void setStockCode(String stockCode) {
 			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(stockCode, 15);
+			byte[] subBytes = ByteConvertUtility.toBytes(stockCode,
+					STOCK_CODE_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, STOCK_CODE_BEGIN_INDEX,
 					STOCK_CODE_END_INDEX);
 		}
@@ -87,7 +90,7 @@ public class MonthlyData extends HBaseTable {
 
 		public void setYear(int year) {
 			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(year, 4);
+			byte[] subBytes = ByteConvertUtility.toBytes(year, YEAR_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, YEAR_BEGIN_INDEX,
 					YEAR_END_INDEX);
 		}
@@ -99,13 +102,14 @@ public class MonthlyData extends HBaseTable {
 
 		public void setMonth(int month) {
 			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(month, 2);
+			byte[] subBytes = ByteConvertUtility.toBytes(month, MONTH_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, MONTH_BEGIN_INDEX,
 					MONTH_END_INDEX);
 		}
 	}
 
 	public class OperatingIncomeFamily extends HBaseColumnFamily {
+		public static final String CURRENCY = "currency";
 		public static final String CURRENT_MONTH = "currentMonth";
 		public static final String CURRENT_MONTH_OF_LAST_YEAR = "currentMonthOfLastYear";
 		public static final String DIFFERENT_AMOUNT = "differentAmount";
@@ -114,6 +118,8 @@ public class MonthlyData extends HBaseTable {
 		public static final String CUMULATIVE_AMOUNT_OF_LAST_YEAR = "cumulativeAmountOfLastYear";
 		public static final String CUMULATIVE_DIFFERENT_AMOUNT = "cumulativeDifferentAmount";
 		public static final String CUMULATIVE_DIFFERENT_PERCENT = "cumulativeDifferentPercent";
+		public static final String EXCHANGE_RATE_OF_CURRENT_MONTH = "exchangeRateOfCurrentMonth";
+		public static final String CUMULATIVE_EXCHANGE_RATE_OF_THIS_YEAR = "cumulativeExchangeRateOfThisYear";
 		public static final String COMMENT = "comment";
 
 		private OperatingIncomeFamily(MonthlyData entity) {
@@ -124,6 +130,21 @@ public class MonthlyData extends HBaseTable {
 		public Set<OperatingIncomeQualifier> getQualifiers() {
 			return (Set<OperatingIncomeQualifier>) (Object) super
 					.getQualifierVersionValueMap().keySet();
+		}
+
+		public CurrencyType getCurrency() {
+			HBaseColumnQualifier qual = new OperatingIncomeQualifier(CURRENCY);
+			OperatingIncomeValue val = (OperatingIncomeValue) super
+					.getLatestValue(qual);
+			return val.getAsCurrencyType();
+		}
+
+		public void setCurrency(Date ver, CurrencyType currency) {
+			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+					CURRENCY);
+			OperatingIncomeValue val = new OperatingIncomeValue();
+			val.set(currency);
+			add(qual, ver, val);
 		}
 
 		public BigInteger getCurrentMonth() {
@@ -259,6 +280,40 @@ public class MonthlyData extends HBaseTable {
 			add(qual, ver, val);
 		}
 
+		public BigDecimal getExchangeRateOfCurrentMonth() {
+			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+					EXCHANGE_RATE_OF_CURRENT_MONTH);
+			OperatingIncomeValue val = (OperatingIncomeValue) super
+					.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setExchangeRateOfCurrentMonth(Date ver,
+				BigDecimal exchangeRateOfCurrentMonth) {
+			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+					EXCHANGE_RATE_OF_CURRENT_MONTH);
+			OperatingIncomeValue val = new OperatingIncomeValue();
+			val.set(exchangeRateOfCurrentMonth);
+			add(qual, ver, val);
+		}
+
+		public BigDecimal getCumulativeExchangeRateOfThisYear() {
+			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+					CUMULATIVE_EXCHANGE_RATE_OF_THIS_YEAR);
+			OperatingIncomeValue val = (OperatingIncomeValue) super
+					.getLatestValue(qual);
+			return val.getAsBigDecimal();
+		}
+
+		public void setCumulativeExchangeRateOfThisYear(Date ver,
+				BigDecimal cumulativeExchangeRateOfThisYear) {
+			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+					CUMULATIVE_EXCHANGE_RATE_OF_THIS_YEAR);
+			OperatingIncomeValue val = new OperatingIncomeValue();
+			val.set(cumulativeExchangeRateOfThisYear);
+			add(qual, ver, val);
+		}
+
 		public String getComment() {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(COMMENT);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
@@ -304,7 +359,7 @@ public class MonthlyData extends HBaseTable {
 			}
 
 			public void setColumnName(String columnName) {
-				byte[] bytes = ByteConvertUtility.toBytes(columnName, 100);
+				byte[] bytes = ByteConvertUtility.toBytes(columnName);
 				setBytes(bytes);
 			}
 		}
@@ -341,6 +396,15 @@ public class MonthlyData extends HBaseTable {
 
 			public void set(BigInteger value) {
 				setBytes(ByteConvertUtility.toBytes(value));
+			}
+
+			public CurrencyType getAsCurrencyType() {
+				return CurrencyType.valueOf(ByteConvertUtility
+						.getStringFromBytes(getBytes()));
+			}
+
+			public void set(CurrencyType value) {
+				setBytes(ByteConvertUtility.toBytes(value.name()));
 			}
 		}
 	}

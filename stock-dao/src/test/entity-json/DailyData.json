@@ -57,8 +57,7 @@
          "ClosingConditionQualifier":[  
             {  
                "type":"String",
-               "name":"columnName",
-               "length":100
+               "name":"columnName"
             }
          ],
          "ClosingConditionValue":[  

@@ -1,52 +1,58 @@
-package idv.hsiehpinghan.stockdao.entity;
+package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
+import idv.hsiehpinghan.stockdao.entity.MonthlyData;
 import idv.hsiehpinghan.stockdao.entity.MonthlyData.OperatingIncomeFamily;
-import idv.hsiehpinghan.stockdao.entity.MonthlyData.RowKey;
 import idv.hsiehpinghan.stockdao.enumeration.CurrencyType;
+import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class MonthlyDataTest {
+public class MonthlyDataRepositoryTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
 	private String stockCode = "stockCode";
-	private int year = 2;
-	private int month = 3;
+	private int year = 17;
+	private int month = 18;
 	private CurrencyType currency = CurrencyType.TWD;
-	private BigInteger currentMonth = new BigInteger("5");
-	private BigInteger currentMonthOfLastYear = new BigInteger("6");
-	private BigInteger differentAmount = new BigInteger("7");
-	private BigDecimal differentPercent = new BigDecimal("8.8");
-	private BigInteger cumulativeAmountOfThisYear = new BigInteger("9");
-	private BigInteger cumulativeAmountOfLastYear = new BigInteger("10");
-	private BigInteger cumulativeDifferentAmount = new BigInteger("11");
-	private BigDecimal cumulativeDifferentPercent = new BigDecimal("12.12");
-	private BigDecimal exchangeRateOfCurrentMonth = new BigDecimal("13.13");
+	private BigInteger currentMonth = new BigInteger("20");
+	private BigInteger currentMonthOfLastYear = new BigInteger("21");
+	private BigInteger differentAmount = new BigInteger("22");
+	private BigDecimal differentPercent = new BigDecimal("23.23");
+	private BigInteger cumulativeAmountOfThisYear = new BigInteger("24");
+	private BigInteger cumulativeAmountOfLastYear = new BigInteger("25");
+	private BigInteger cumulativeDifferentAmount = new BigInteger("26");
+	private BigDecimal cumulativeDifferentPercent = new BigDecimal("27.27");
+	private BigDecimal exchangeRateOfCurrentMonth = new BigDecimal("28.28");
 	private BigDecimal cumulativeExchangeRateOfThisYear = new BigDecimal(
-			"14.14");
+			"29.29");
 	private String comment = "comment";
+	private MonthlyDataRepository repository;
+
+	@BeforeClass
+	public void beforeClass() throws Exception {
+		ApplicationContext applicationContext = TestngSuitSetting
+				.getApplicationContext();
+		repository = applicationContext.getBean(MonthlyDataRepository.class);
+	}
 
 	@Test
-	public void bytesConvert() {
-		MonthlyData entity = new MonthlyData();
-		testRowKey(entity);
-		testOperatingIncomeFamily(entity);
-	}
-
-	private void testRowKey(MonthlyData entity) {
-		RowKey key = entity.new RowKey(stockCode, year, month, entity);
-		Assert.assertEquals(stockCode, key.getStockCode());
-		Assert.assertEquals(year, key.getYear());
-		Assert.assertEquals(month, key.getMonth());
-	}
-
-	private void testOperatingIncomeFamily(MonthlyData entity) {
+	public void put() throws Exception {
+		MonthlyData entity = repository.generateEntity(stockCode, year, month);
 		generateOperatingIncomeFamilyContent(entity);
+		repository.put(entity);
+		Assert.assertTrue(repository.exists(entity.getRowKey()));
+	}
+
+	@Test(dependsOnMethods = { "put" })
+	public void get() throws Exception {
+		MonthlyData entity = repository.get(stockCode, year, month);
 		assertOperatingIncomeFamily(entity);
 	}
 

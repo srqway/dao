@@ -20,6 +20,10 @@
       "OperatingIncomeFamily":{ 
           "Columns":[  
             {  
+               "type":"CurrencyType",
+               "name":"currency"
+            },
+            {  
                "type":"BigInteger",
                "name":"currentMonth"
             },
@@ -52,6 +56,14 @@
                "name":"cumulativeDifferentPercent"
             },
             {  
+               "type":"BigDecimal",
+               "name":"exchangeRateOfCurrentMonth"
+            },
+            {  
+               "type":"BigDecimal",
+               "name":"cumulativeExchangeRateOfThisYear"
+            },
+            {  
                "type":"String",
                "name":"comment"
             }
@@ -59,8 +71,7 @@
          "OperatingIncomeQualifier":[  
             {  
                "type":"String",
-               "name":"columnName",
-               "length":100
+               "name":"columnName"
             }
          ],
          "OperatingIncomeValue":[  
