@@ -5,17 +5,20 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.stockdao.entity.Xbrl;
+import idv.hsiehpinghan.stockdao.entity.Xbrl.RowKey;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class XbrlRepository extends RepositoryBase {
-
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 
@@ -24,15 +27,6 @@ public class XbrlRepository extends RepositoryBase {
 		return Xbrl.class;
 	}
 
-	/**
-	 * Generate entity.
-	 * 
-	 * @param stockCode
-	 * @param reportType
-	 * @param year
-	 * @param season
-	 * @return
-	 */
 	public Xbrl generateEntity(String stockCode, ReportType reportType,
 			int year, int season) {
 		Xbrl entity = new Xbrl();
@@ -40,22 +34,6 @@ public class XbrlRepository extends RepositoryBase {
 		return entity;
 	}
 
-	/**
-	 * Get entity.
-	 * 
-	 * @param stockCode
-	 * @param reportType
-	 * @param year
-	 * @param season
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InstantiationException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws IOException
-	 */
 	public Xbrl get(String stockCode, ReportType reportType, int year,
 			int season) throws IllegalAccessException, NoSuchMethodException,
 			SecurityException, InstantiationException,
@@ -64,12 +42,28 @@ public class XbrlRepository extends RepositoryBase {
 		return (Xbrl) hbaseAssistant.get(rowKey);
 	}
 
+	public int getRowAmount() {
+		return hbaseAssistant.getRowAmount(getTargetTableClass());
+	}
+
+	public List<RowKey> getRowKeys() {
+		List<HBaseTable> entities = hbaseAssistant.scan(getTargetTableClass(),
+				new KeyOnlyFilter());
+		List<RowKey> rowKeys = new ArrayList<RowKey>(entities.size());
+		for (HBaseTable entity : entities) {
+			RowKey rowKey = (RowKey) entity.getRowKey();
+			rowKeys.add(rowKey);
+		}
+		return rowKeys;
+	}
+
 	public boolean exists(String stockCode, ReportType reportType, int year,
 			int season) throws NoSuchFieldException, SecurityException,
 			IllegalArgumentException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException,
 			InstantiationException, IOException {
-		return super.exists(getRowKey(stockCode, reportType, year, season));
+		HBaseRowKey key = getRowKey(stockCode, reportType, year, season);
+		return super.exists(key);
 	}
 
 	@Override

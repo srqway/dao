@@ -58,7 +58,8 @@ public class DailyData extends HBaseTable {
 
 		public RowKey(String stockCode, Date date, DailyData entity) {
 			super(entity);
-			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode, 15);
+			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode,
+					STOCK_CODE_LENGTH);
 			byte[] dateBytes = ByteConvertUtility.toBytes(date);
 			super.setBytes(ArrayUtility
 					.addAll(stockCodeBytes, SPACE, dateBytes));
@@ -71,7 +72,8 @@ public class DailyData extends HBaseTable {
 
 		public void setStockCode(String stockCode) {
 			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(stockCode, 15);
+			byte[] subBytes = ByteConvertUtility.toBytes(stockCode,
+					STOCK_CODE_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, STOCK_CODE_BEGIN_INDEX,
 					STOCK_CODE_END_INDEX);
 		}
@@ -305,7 +307,7 @@ public class DailyData extends HBaseTable {
 			}
 
 			public void setColumnName(String columnName) {
-				byte[] bytes = ByteConvertUtility.toBytes(columnName, 100);
+				byte[] bytes = ByteConvertUtility.toBytes(columnName);
 				setBytes(bytes);
 			}
 		}

@@ -1,66 +1,74 @@
-package idv.hsiehpinghan.stockdao.entity;
+package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
+import idv.hsiehpinghan.stockdao.entity.Xbrl;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.GrowthFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InfoFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily.InstanceValue;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.ItemFamily;
-import idv.hsiehpinghan.stockdao.entity.Xbrl.RowKey;
 import idv.hsiehpinghan.stockdao.enumeration.PeriodType;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
 import idv.hsiehpinghan.stockdao.enumeration.UnitType;
+import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class XbrlTest {
+public class XbrlRepositoryTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
 	private Date startDate = DateUtility.getDate(2015, 2, 3);
 	private String elementId = "elementId";
 	private String stockCode = "stockCode";
 	private ReportType reportType = ReportType.CONSOLIDATED_STATEMENT;
 	private UnitType unitType = UnitType.SHARES;
-	private BigDecimal naturalLogarithm = new BigDecimal("6.6");
+	private BigDecimal naturalLogarithm = new BigDecimal("24.24");
 	private Date endDate = DateUtility.getDate(2015, 2, 3);
 	private String statementOfChangesInEquityContext = "statementOfChangesInEquityContext";
 	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_BASI_CR_2013_03_31;
-	private int season = 1;
-	private BigDecimal ratio = new BigDecimal("11.11");
+	private int season = 2;
+	private BigDecimal ratio = new BigDecimal("29.29");
 	private String statementOfCashFlowsContext = "statementOfCashFlowsContext";
 	private String balanceSheetContext = "balanceSheetContext";
 	private PeriodType periodType = PeriodType.DURATION;
-	private BigDecimal value = new BigDecimal("15.15");
+	private BigDecimal value = new BigDecimal("33.33");
 	private String statementOfComprehensiveIncomeContext = "statementOfComprehensiveIncomeContext";
-	private int year = 2017;
+	private int year = 2015;
 	private Date instant = DateUtility.getDate(2015, 2, 3);
+	private XbrlRepository repository;
+
+	@BeforeClass
+	public void beforeClass() throws Exception {
+		ApplicationContext applicationContext = TestngSuitSetting
+				.getApplicationContext();
+		repository = applicationContext.getBean(XbrlRepository.class);
+	}
 
 	@Test
-	public void bytesConvert() {
-		Xbrl entity = new Xbrl();
-		testRowKey(entity);
-		testInfoFamily(entity);
-		testInstanceFamily(entity);
-		testItemFamily(entity);
-		testGrowthFamily(entity);
-	}
-
-	private void testRowKey(Xbrl entity) {
-		RowKey key = entity.new RowKey(stockCode, reportType, year, season,
-				entity);
-		Assert.assertEquals(stockCode, key.getStockCode());
-		Assert.assertEquals(reportType, key.getReportType());
-		Assert.assertEquals(year, key.getYear());
-		Assert.assertEquals(season, key.getSeason());
-	}
-
-	private void testInfoFamily(Xbrl entity) {
+	public void put() throws Exception {
+		Xbrl entity = repository.generateEntity(stockCode, reportType, year,
+				season);
 		generateInfoFamilyContent(entity);
+		generateInstanceFamilyContent(entity);
+		generateItemFamilyContent(entity);
+		generateGrowthFamilyContent(entity);
+		repository.put(entity);
+		Assert.assertTrue(repository.exists(entity.getRowKey()));
+	}
+
+	@Test(dependsOnMethods = { "put" })
+	public void get() throws Exception {
+		Xbrl entity = repository.get(stockCode, reportType, year, season);
 		assertInfoFamily(entity);
+		assertInstanceFamily(entity);
+		assertItemFamily(entity);
+		assertGrowthFamily(entity);
 	}
 
 	private void generateInfoFamilyContent(Xbrl entity) {
@@ -86,11 +94,6 @@ public class XbrlTest {
 				fam.getStatementOfChangesInEquityContext());
 	}
 
-	private void testInstanceFamily(Xbrl entity) {
-		generateInstanceFamilyContent(entity);
-		assertInstanceFamily(entity);
-	}
-
 	private void generateInstanceFamilyContent(Xbrl entity) {
 		InstanceFamily fam = entity.getInstanceFamily();
 		fam.setInstanceValue(elementId, periodType, instant, startDate,
@@ -105,11 +108,6 @@ public class XbrlTest {
 		Assert.assertEquals(val.getValue(), value);
 	}
 
-	private void testItemFamily(Xbrl entity) {
-		generateItemFamilyContent(entity);
-		assertItemFamily(entity);
-	}
-
 	private void generateItemFamilyContent(Xbrl entity) {
 		ItemFamily fam = entity.getItemFamily();
 		fam.set(elementId, periodType, instant, startDate, endDate, ver, value);
@@ -120,11 +118,6 @@ public class XbrlTest {
 		Assert.assertEquals(
 				fam.get(elementId, periodType, instant, startDate, endDate),
 				value);
-	}
-
-	private void testGrowthFamily(Xbrl entity) {
-		generateGrowthFamilyContent(entity);
-		assertGrowthFamily(entity);
 	}
 
 	private void generateGrowthFamilyContent(Xbrl entity) {

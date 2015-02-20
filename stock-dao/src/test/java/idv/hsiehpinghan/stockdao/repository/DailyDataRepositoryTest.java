@@ -1,46 +1,53 @@
-package idv.hsiehpinghan.stockdao.entity;
+package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
+import idv.hsiehpinghan.stockdao.entity.DailyData;
 import idv.hsiehpinghan.stockdao.entity.DailyData.ClosingConditionFamily;
-import idv.hsiehpinghan.stockdao.entity.DailyData.RowKey;
+import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class DailyDataTest {
+public class DailyDataRepositoryTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
-	private BigDecimal closingPrice = new BigDecimal("1.1");
-	private BigInteger transactionAmount = new BigInteger("2");
+	private BigDecimal closingPrice = new BigDecimal("13.13");
+	private BigInteger transactionAmount = new BigInteger("14");
 	private String stockCode = "stockCode";
-	private BigDecimal highestPrice = new BigDecimal("4.4");
-	private BigDecimal change = new BigDecimal("5.5");
-	private BigInteger moneyAmount = new BigInteger("6");
-	private BigDecimal finalPurchasePrice = new BigDecimal("7.7");
-	private BigInteger stockAmount = new BigInteger("8");
-	private BigDecimal finalSellingPrice = new BigDecimal("9.9");
-	private BigDecimal openingPrice = new BigDecimal("10.10");
+	private BigDecimal highestPrice = new BigDecimal("16.16");
+	private BigDecimal change = new BigDecimal("17.17");
+	private BigInteger moneyAmount = new BigInteger("18");
+	private BigDecimal finalPurchasePrice = new BigDecimal("19.19");
+	private BigInteger stockAmount = new BigInteger("20");
+	private BigDecimal finalSellingPrice = new BigDecimal("21.21");
+	private BigDecimal openingPrice = new BigDecimal("22.22");
 	private Date date = DateUtility.getDate(2015, 2, 3);
-	private BigDecimal lowestPrice = new BigDecimal("12.12");
+	private BigDecimal lowestPrice = new BigDecimal("24.24");
+	private DailyDataRepository repository;
+
+	@BeforeClass
+	public void beforeClass() throws Exception {
+		ApplicationContext applicationContext = TestngSuitSetting
+				.getApplicationContext();
+		repository = applicationContext.getBean(DailyDataRepository.class);
+	}
 
 	@Test
-	public void bytesConvert() {
-		DailyData entity = new DailyData();
-		testRowKey(entity);
-		testClosingConditionFamily(entity);
-	}
-
-	private void testRowKey(DailyData entity) {
-		RowKey key = entity.new RowKey(stockCode, date, entity);
-		Assert.assertEquals(stockCode, key.getStockCode());
-		Assert.assertEquals(date, key.getDate());
-	}
-
-	private void testClosingConditionFamily(DailyData entity) {
+	public void put() throws Exception {
+		DailyData entity = repository.generateEntity(stockCode, date);
 		generateClosingConditionFamilyContent(entity);
+		repository.put(entity);
+		Assert.assertTrue(repository.exists(entity.getRowKey()));
+	}
+
+	@Test(dependsOnMethods = { "put" })
+	public void get() throws Exception {
+		DailyData entity = repository.get(stockCode, date);
 		assertClosingConditionFamily(entity);
 	}
 

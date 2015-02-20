@@ -14,22 +14,22 @@ import org.testng.annotations.Test;
 
 public class MonthlyDataTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
+	private BigInteger differentAmount = new BigInteger("1");
 	private String stockCode = "stockCode";
-	private int year = 2;
-	private int month = 3;
-	private CurrencyType currency = CurrencyType.TWD;
-	private BigInteger currentMonth = new BigInteger("5");
-	private BigInteger currentMonthOfLastYear = new BigInteger("6");
-	private BigInteger differentAmount = new BigInteger("7");
-	private BigDecimal differentPercent = new BigDecimal("8.8");
-	private BigInteger cumulativeAmountOfThisYear = new BigInteger("9");
-	private BigInteger cumulativeAmountOfLastYear = new BigInteger("10");
-	private BigInteger cumulativeDifferentAmount = new BigInteger("11");
-	private BigDecimal cumulativeDifferentPercent = new BigDecimal("12.12");
-	private BigDecimal exchangeRateOfCurrentMonth = new BigDecimal("13.13");
+	private BigInteger cumulativeDifferentAmount = new BigInteger("3");
+	private BigInteger currentMonth = new BigInteger("4");
+	private CurrencyType currency = CurrencyType.CNY;
+	private BigInteger cumulativeAmountOfLastYear = new BigInteger("6");
+	private BigDecimal exchangeRateOfCurrentMonth = new BigDecimal("7.7");
+	private BigDecimal cumulativeDifferentPercent = new BigDecimal("8.8");
+	private BigInteger currentMonthOfLastYear = new BigInteger("9");
 	private BigDecimal cumulativeExchangeRateOfThisYear = new BigDecimal(
-			"14.14");
+			"10.10");
+	private BigInteger cumulativeAmountOfThisYear = new BigInteger("11");
+	private int month = 12;
+	private int year = 13;
 	private String comment = "comment";
+	private BigDecimal differentPercent = new BigDecimal("15.15");
 
 	@Test
 	public void bytesConvert() {

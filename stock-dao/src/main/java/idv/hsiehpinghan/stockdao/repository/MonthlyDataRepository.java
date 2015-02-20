@@ -55,6 +55,15 @@ public class MonthlyDataRepository extends RepositoryBase {
 		return rowKeys;
 	}
 
+	public boolean exists(String stockCode, int year, int month)
+			throws NoSuchFieldException, SecurityException,
+			IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, InvocationTargetException,
+			InstantiationException, IOException {
+		HBaseRowKey key = getRowKey(stockCode, year, month);
+		return super.exists(key);
+	}
+
 	@Override
 	protected HbaseAssistant getHbaseAssistant() {
 		return hbaseAssistant;
