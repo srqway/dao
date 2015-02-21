@@ -78,6 +78,9 @@ public class Taxonomy extends HBaseTable {
 			HBaseColumnQualifier qual = new PresentationQualifier(BALANCE_SHEET);
 			PresentationValue val = (PresentationValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -94,6 +97,9 @@ public class Taxonomy extends HBaseTable {
 					STATEMENT_OF_COMPREHENSIVE_INCOME);
 			PresentationValue val = (PresentationValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -111,6 +117,9 @@ public class Taxonomy extends HBaseTable {
 					STATEMENT_OF_CASH_FLOWS);
 			PresentationValue val = (PresentationValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -128,6 +137,9 @@ public class Taxonomy extends HBaseTable {
 					STATEMENT_OF_CHANGES_IN_EQUITY);
 			PresentationValue val = (PresentationValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 

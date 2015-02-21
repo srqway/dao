@@ -103,6 +103,9 @@ public class StockInfo extends HBaseTable {
 		public MarketType getMarketType() {
 			HBaseColumnQualifier qual = new CompanyQualifier(MARKET_TYPE);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsMarketType();
 		}
 
@@ -116,6 +119,9 @@ public class StockInfo extends HBaseTable {
 		public IndustryType getIndustryType() {
 			HBaseColumnQualifier qual = new CompanyQualifier(INDUSTRY_TYPE);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsIndustryType();
 		}
 
@@ -129,6 +135,9 @@ public class StockInfo extends HBaseTable {
 		public String getChineseName() {
 			HBaseColumnQualifier qual = new CompanyQualifier(CHINESE_NAME);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -142,6 +151,9 @@ public class StockInfo extends HBaseTable {
 		public String getEnglishBriefName() {
 			HBaseColumnQualifier qual = new CompanyQualifier(ENGLISH_BRIEF_NAME);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -156,6 +168,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					UNIFIED_BUSINESS_NUMBER);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -171,6 +186,9 @@ public class StockInfo extends HBaseTable {
 		public String getEstablishmentDate() {
 			HBaseColumnQualifier qual = new CompanyQualifier(ESTABLISHMENT_DATE);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -184,6 +202,9 @@ public class StockInfo extends HBaseTable {
 		public String getListingDate() {
 			HBaseColumnQualifier qual = new CompanyQualifier(LISTING_DATE);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -197,6 +218,9 @@ public class StockInfo extends HBaseTable {
 		public String getChairman() {
 			HBaseColumnQualifier qual = new CompanyQualifier(CHAIRMAN);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -210,6 +234,9 @@ public class StockInfo extends HBaseTable {
 		public String getGeneralManager() {
 			HBaseColumnQualifier qual = new CompanyQualifier(GENERAL_MANAGER);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -223,6 +250,9 @@ public class StockInfo extends HBaseTable {
 		public String getSpokesperson() {
 			HBaseColumnQualifier qual = new CompanyQualifier(SPOKESPERSON);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -237,6 +267,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					JOB_TITLE_OF_SPOKESPERSON);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -252,6 +285,9 @@ public class StockInfo extends HBaseTable {
 		public String getActingSpokesman() {
 			HBaseColumnQualifier qual = new CompanyQualifier(ACTING_SPOKESMAN);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -265,6 +301,9 @@ public class StockInfo extends HBaseTable {
 		public String getChineseAddress() {
 			HBaseColumnQualifier qual = new CompanyQualifier(CHINESE_ADDRESS);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -278,6 +317,9 @@ public class StockInfo extends HBaseTable {
 		public String getTelephone() {
 			HBaseColumnQualifier qual = new CompanyQualifier(TELEPHONE);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -292,6 +334,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					STOCK_TRANSFER_AGENCY);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -306,6 +351,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					TELEPHONE_OF_STOCK_TRANSFER_AGENCY);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -322,6 +370,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					ADDRESS_OF_STOCK_TRANSFER_AGENCY);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -337,6 +388,9 @@ public class StockInfo extends HBaseTable {
 		public String getEnglishAddress() {
 			HBaseColumnQualifier qual = new CompanyQualifier(ENGLISH_ADDRESS);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -350,6 +404,9 @@ public class StockInfo extends HBaseTable {
 		public String getFaxNumber() {
 			HBaseColumnQualifier qual = new CompanyQualifier(FAX_NUMBER);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -363,6 +420,9 @@ public class StockInfo extends HBaseTable {
 		public String getEmail() {
 			HBaseColumnQualifier qual = new CompanyQualifier(EMAIL);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -376,6 +436,9 @@ public class StockInfo extends HBaseTable {
 		public String getWebSite() {
 			HBaseColumnQualifier qual = new CompanyQualifier(WEB_SITE);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -390,6 +453,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					FINANCIAL_REPORT_TYPE);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -404,6 +470,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					PAR_VALUE_OF_ORDINARY_SHARES);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -419,6 +488,9 @@ public class StockInfo extends HBaseTable {
 		public String getPaidInCapital() {
 			HBaseColumnQualifier qual = new CompanyQualifier(PAID_IN_CAPITAL);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -433,6 +505,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					AMOUNT_OF_ORDINARY_SHARES);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -449,6 +524,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					PRIVATE_PLACEMENT_AMOUNT_OF_ORDINARY_SHARES);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -465,6 +543,9 @@ public class StockInfo extends HBaseTable {
 			HBaseColumnQualifier qual = new CompanyQualifier(
 					AMOUNT_OF_PREFERRED_SHARES);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -480,6 +561,9 @@ public class StockInfo extends HBaseTable {
 		public String getAccountingFirm() {
 			HBaseColumnQualifier qual = new CompanyQualifier(ACCOUNTING_FIRM);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -493,6 +577,9 @@ public class StockInfo extends HBaseTable {
 		public String getAccountant1() {
 			HBaseColumnQualifier qual = new CompanyQualifier(ACCOUNTANT1);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -506,6 +593,9 @@ public class StockInfo extends HBaseTable {
 		public String getAccountant2() {
 			HBaseColumnQualifier qual = new CompanyQualifier(ACCOUNTANT2);
 			CompanyValue val = (CompanyValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 

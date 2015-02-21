@@ -136,6 +136,9 @@ public class MonthlyData extends HBaseTable {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(CURRENCY);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsCurrencyType();
 		}
 
@@ -152,6 +155,9 @@ public class MonthlyData extends HBaseTable {
 					CURRENT_MONTH);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 
@@ -168,6 +174,9 @@ public class MonthlyData extends HBaseTable {
 					CURRENT_MONTH_OF_LAST_YEAR);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 
@@ -185,6 +194,9 @@ public class MonthlyData extends HBaseTable {
 					DIFFERENT_AMOUNT);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 
@@ -201,6 +213,9 @@ public class MonthlyData extends HBaseTable {
 					DIFFERENT_PERCENT);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -217,6 +232,9 @@ public class MonthlyData extends HBaseTable {
 					CUMULATIVE_AMOUNT_OF_THIS_YEAR);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 
@@ -234,6 +252,9 @@ public class MonthlyData extends HBaseTable {
 					CUMULATIVE_AMOUNT_OF_LAST_YEAR);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 
@@ -251,6 +272,9 @@ public class MonthlyData extends HBaseTable {
 					CUMULATIVE_DIFFERENT_AMOUNT);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 
@@ -268,6 +292,9 @@ public class MonthlyData extends HBaseTable {
 					CUMULATIVE_DIFFERENT_PERCENT);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -285,6 +312,9 @@ public class MonthlyData extends HBaseTable {
 					EXCHANGE_RATE_OF_CURRENT_MONTH);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -302,6 +332,9 @@ public class MonthlyData extends HBaseTable {
 					CUMULATIVE_EXCHANGE_RATE_OF_THIS_YEAR);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -318,6 +351,9 @@ public class MonthlyData extends HBaseTable {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(COMMENT);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 

@@ -122,6 +122,9 @@ public class DailyData extends HBaseTable {
 					OPENING_PRICE);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -138,6 +141,9 @@ public class DailyData extends HBaseTable {
 					CLOSING_PRICE);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -153,6 +159,9 @@ public class DailyData extends HBaseTable {
 			HBaseColumnQualifier qual = new ClosingConditionQualifier(CHANGE);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -169,6 +178,9 @@ public class DailyData extends HBaseTable {
 					HIGHEST_PRICE);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -185,6 +197,9 @@ public class DailyData extends HBaseTable {
 					LOWEST_PRICE);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -201,6 +216,9 @@ public class DailyData extends HBaseTable {
 					FINAL_PURCHASE_PRICE);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -218,6 +236,9 @@ public class DailyData extends HBaseTable {
 					FINAL_SELLING_PRICE);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
 		}
 
@@ -234,6 +255,9 @@ public class DailyData extends HBaseTable {
 					STOCK_AMOUNT);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 
@@ -250,6 +274,9 @@ public class DailyData extends HBaseTable {
 					MONEY_AMOUNT);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 
@@ -266,6 +293,9 @@ public class DailyData extends HBaseTable {
 					TRANSACTION_AMOUNT);
 			ClosingConditionValue val = (ClosingConditionValue) super
 					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigInteger();
 		}
 

@@ -177,6 +177,9 @@ public class Xbrl extends HBaseTable {
 		public XbrlTaxonomyVersion getVersion() {
 			HBaseColumnQualifier qual = new InfoQualifier(VERSION);
 			InfoValue val = (InfoValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsXbrlTaxonomyVersion();
 		}
 
@@ -190,6 +193,9 @@ public class Xbrl extends HBaseTable {
 		public String getBalanceSheetContext() {
 			HBaseColumnQualifier qual = new InfoQualifier(BALANCE_SHEET_CONTEXT);
 			InfoValue val = (InfoValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -204,6 +210,9 @@ public class Xbrl extends HBaseTable {
 			HBaseColumnQualifier qual = new InfoQualifier(
 					STATEMENT_OF_COMPREHENSIVE_INCOME_CONTEXT);
 			InfoValue val = (InfoValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -220,6 +229,9 @@ public class Xbrl extends HBaseTable {
 			HBaseColumnQualifier qual = new InfoQualifier(
 					STATEMENT_OF_CASH_FLOWS_CONTEXT);
 			InfoValue val = (InfoValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -236,6 +248,9 @@ public class Xbrl extends HBaseTable {
 			HBaseColumnQualifier qual = new InfoQualifier(
 					STATEMENT_OF_CHANGES_IN_EQUITY_CONTEXT);
 			InfoValue val = (InfoValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsString();
 		}
 
@@ -329,6 +344,17 @@ public class Xbrl extends HBaseTable {
 			HBaseColumnQualifier qual = new InstanceQualifier(elementId,
 					periodType, instant, startDate, endDate);
 			return (InstanceValue) super.getLatestValue(qual);
+		}
+
+		public InstanceValue getInstanceValue(String elementId,
+				PeriodType periodType, Date startDate, Date endDate) {
+			return getInstanceValue(elementId, periodType, null, startDate,
+					endDate);
+		}
+
+		public InstanceValue getInstanceValue(String elementId,
+				PeriodType periodType, Date instant) {
+			return getInstanceValue(elementId, periodType, instant, null, null);
 		}
 
 		public void setInstanceValue(String elementId, PeriodType periodType,
@@ -544,10 +570,23 @@ public class Xbrl extends HBaseTable {
 		}
 
 		public BigDecimal get(String elementId, PeriodType periodType,
+				Date instant) {
+			return get(elementId, periodType, instant, null, null);
+		}
+
+		public BigDecimal get(String elementId, PeriodType periodType,
+				Date startDate, Date endDate) {
+			return get(elementId, periodType, null, startDate, endDate);
+		}
+
+		public BigDecimal get(String elementId, PeriodType periodType,
 				Date instant, Date startDate, Date endDate) {
 			HBaseColumnQualifier qual = new ItemQualifier(elementId,
 					periodType, instant, startDate, endDate);
 			ItemValue val = (ItemValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getValue();
 		}
 
@@ -737,7 +776,20 @@ public class Xbrl extends HBaseTable {
 			HBaseColumnQualifier qual = new GrowthQualifier(RATIO, elementId,
 					periodType, instant, startDate, endDate);
 			GrowthValue val = (GrowthValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
+		}
+
+		public BigDecimal getRatio(String elementId, PeriodType periodType,
+				Date startDate, Date endDate) {
+			return getRatio(elementId, periodType, null, startDate, endDate);
+		}
+
+		public BigDecimal getRatio(String elementId, PeriodType periodType,
+				Date instant) {
+			return getRatio(elementId, periodType, instant, null, null);
 		}
 
 		public void setRatio(String elementId, PeriodType periodType,
@@ -756,7 +808,22 @@ public class Xbrl extends HBaseTable {
 			HBaseColumnQualifier qual = new GrowthQualifier(NATURAL_LOGARITHM,
 					elementId, periodType, instant, startDate, endDate);
 			GrowthValue val = (GrowthValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
 			return val.getAsBigDecimal();
+		}
+
+		public BigDecimal getNaturalLogarithm(String elementId,
+				PeriodType periodType, Date startDate, Date endDate) {
+			return getNaturalLogarithm(elementId, periodType, null, startDate,
+					endDate);
+		}
+
+		public BigDecimal getNaturalLogarithm(String elementId,
+				PeriodType periodType, Date instant) {
+			return getNaturalLogarithm(elementId, periodType, instant, null,
+					null);
 		}
 
 		public void setNaturalLogarithm(String elementId,
