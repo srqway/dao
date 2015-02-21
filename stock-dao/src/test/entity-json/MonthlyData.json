@@ -24,15 +24,15 @@
                "name":"currency"
             },
             {  
-               "type":"BigInteger",
+               "type":"BigDecimal",
                "name":"currentMonth"
             },
             {  
-               "type":"BigInteger",
+               "type":"BigDecimal",
                "name":"currentMonthOfLastYear"
             },
             {  
-               "type":"BigInteger",
+               "type":"BigDecimal",
                "name":"differentAmount"
             },
             {  
@@ -40,15 +40,15 @@
                "name":"differentPercent"
             },
             {  
-               "type":"BigInteger",
+               "type":"BigDecimal",
                "name":"cumulativeAmountOfThisYear"
             },
             {  
-               "type":"BigInteger",
+               "type":"BigDecimal",
                "name":"cumulativeAmountOfLastYear"
             },
             {  
-               "type":"BigInteger",
+               "type":"BigDecimal",
                "name":"cumulativeDifferentAmount"
             },
             {  

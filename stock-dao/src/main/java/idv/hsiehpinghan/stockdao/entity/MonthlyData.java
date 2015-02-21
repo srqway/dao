@@ -11,7 +11,6 @@ import idv.hsiehpinghan.hbaseassistant.utility.ByteConvertUtility;
 import idv.hsiehpinghan.stockdao.enumeration.CurrencyType;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
@@ -150,7 +149,7 @@ public class MonthlyData extends HBaseTable {
 			add(qual, ver, val);
 		}
 
-		public BigInteger getCurrentMonth() {
+		public BigDecimal getCurrentMonth() {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
 					CURRENT_MONTH);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
@@ -158,10 +157,10 @@ public class MonthlyData extends HBaseTable {
 			if (val == null) {
 				return null;
 			}
-			return val.getAsBigInteger();
+			return val.getAsBigDecimal();
 		}
 
-		public void setCurrentMonth(Date ver, BigInteger currentMonth) {
+		public void setCurrentMonth(Date ver, BigDecimal currentMonth) {
 			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
 					CURRENT_MONTH);
 			OperatingIncomeValue val = new OperatingIncomeValue();
@@ -169,7 +168,7 @@ public class MonthlyData extends HBaseTable {
 			add(qual, ver, val);
 		}
 
-		public BigInteger getCurrentMonthOfLastYear() {
+		public BigDecimal getCurrentMonthOfLastYear() {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
 					CURRENT_MONTH_OF_LAST_YEAR);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
@@ -177,11 +176,11 @@ public class MonthlyData extends HBaseTable {
 			if (val == null) {
 				return null;
 			}
-			return val.getAsBigInteger();
+			return val.getAsBigDecimal();
 		}
 
 		public void setCurrentMonthOfLastYear(Date ver,
-				BigInteger currentMonthOfLastYear) {
+				BigDecimal currentMonthOfLastYear) {
 			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
 					CURRENT_MONTH_OF_LAST_YEAR);
 			OperatingIncomeValue val = new OperatingIncomeValue();
@@ -189,7 +188,7 @@ public class MonthlyData extends HBaseTable {
 			add(qual, ver, val);
 		}
 
-		public BigInteger getDifferentAmount() {
+		public BigDecimal getDifferentAmount() {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
 					DIFFERENT_AMOUNT);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
@@ -197,10 +196,10 @@ public class MonthlyData extends HBaseTable {
 			if (val == null) {
 				return null;
 			}
-			return val.getAsBigInteger();
+			return val.getAsBigDecimal();
 		}
 
-		public void setDifferentAmount(Date ver, BigInteger differentAmount) {
+		public void setDifferentAmount(Date ver, BigDecimal differentAmount) {
 			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
 					DIFFERENT_AMOUNT);
 			OperatingIncomeValue val = new OperatingIncomeValue();
@@ -227,7 +226,7 @@ public class MonthlyData extends HBaseTable {
 			add(qual, ver, val);
 		}
 
-		public BigInteger getCumulativeAmountOfThisYear() {
+		public BigDecimal getCumulativeAmountOfThisYear() {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
 					CUMULATIVE_AMOUNT_OF_THIS_YEAR);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
@@ -235,11 +234,11 @@ public class MonthlyData extends HBaseTable {
 			if (val == null) {
 				return null;
 			}
-			return val.getAsBigInteger();
+			return val.getAsBigDecimal();
 		}
 
 		public void setCumulativeAmountOfThisYear(Date ver,
-				BigInteger cumulativeAmountOfThisYear) {
+				BigDecimal cumulativeAmountOfThisYear) {
 			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
 					CUMULATIVE_AMOUNT_OF_THIS_YEAR);
 			OperatingIncomeValue val = new OperatingIncomeValue();
@@ -247,7 +246,7 @@ public class MonthlyData extends HBaseTable {
 			add(qual, ver, val);
 		}
 
-		public BigInteger getCumulativeAmountOfLastYear() {
+		public BigDecimal getCumulativeAmountOfLastYear() {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
 					CUMULATIVE_AMOUNT_OF_LAST_YEAR);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
@@ -255,11 +254,11 @@ public class MonthlyData extends HBaseTable {
 			if (val == null) {
 				return null;
 			}
-			return val.getAsBigInteger();
+			return val.getAsBigDecimal();
 		}
 
 		public void setCumulativeAmountOfLastYear(Date ver,
-				BigInteger cumulativeAmountOfLastYear) {
+				BigDecimal cumulativeAmountOfLastYear) {
 			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
 					CUMULATIVE_AMOUNT_OF_LAST_YEAR);
 			OperatingIncomeValue val = new OperatingIncomeValue();
@@ -267,7 +266,7 @@ public class MonthlyData extends HBaseTable {
 			add(qual, ver, val);
 		}
 
-		public BigInteger getCumulativeDifferentAmount() {
+		public BigDecimal getCumulativeDifferentAmount() {
 			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
 					CUMULATIVE_DIFFERENT_AMOUNT);
 			OperatingIncomeValue val = (OperatingIncomeValue) super
@@ -275,11 +274,11 @@ public class MonthlyData extends HBaseTable {
 			if (val == null) {
 				return null;
 			}
-			return val.getAsBigInteger();
+			return val.getAsBigDecimal();
 		}
 
 		public void setCumulativeDifferentAmount(Date ver,
-				BigInteger cumulativeDifferentAmount) {
+				BigDecimal cumulativeDifferentAmount) {
 			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
 					CUMULATIVE_DIFFERENT_AMOUNT);
 			OperatingIncomeValue val = new OperatingIncomeValue();
@@ -423,14 +422,6 @@ public class MonthlyData extends HBaseTable {
 			}
 
 			public void set(BigDecimal value) {
-				setBytes(ByteConvertUtility.toBytes(value));
-			}
-
-			public BigInteger getAsBigInteger() {
-				return ByteConvertUtility.getBigIntegerFromBytes(getBytes());
-			}
-
-			public void set(BigInteger value) {
 				setBytes(ByteConvertUtility.toBytes(value));
 			}
 

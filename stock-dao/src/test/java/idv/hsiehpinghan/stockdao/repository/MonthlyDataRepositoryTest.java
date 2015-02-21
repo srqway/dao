@@ -7,7 +7,6 @@ import idv.hsiehpinghan.stockdao.enumeration.CurrencyType;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 import org.springframework.context.ApplicationContext;
@@ -17,18 +16,18 @@ import org.testng.annotations.Test;
 
 public class MonthlyDataRepositoryTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
-	private BigInteger differentAmount = new BigInteger("16");
+	private BigDecimal differentAmount = new BigDecimal("16.16");
 	private String stockCode = "stockCode";
-	private BigInteger cumulativeDifferentAmount = new BigInteger("18");
-	private BigInteger currentMonth = new BigInteger("19");
+	private BigDecimal cumulativeDifferentAmount = new BigDecimal("18.18");
+	private BigDecimal currentMonth = new BigDecimal("19.19");
 	private CurrencyType currency = CurrencyType.AUD;
-	private BigInteger cumulativeAmountOfLastYear = new BigInteger("21");
+	private BigDecimal cumulativeAmountOfLastYear = new BigDecimal("21.21");
 	private BigDecimal exchangeRateOfCurrentMonth = new BigDecimal("22.22");
 	private BigDecimal cumulativeDifferentPercent = new BigDecimal("23.23");
-	private BigInteger currentMonthOfLastYear = new BigInteger("24");
+	private BigDecimal currentMonthOfLastYear = new BigDecimal("24.24");
 	private BigDecimal cumulativeExchangeRateOfThisYear = new BigDecimal(
 			"25.25");
-	private BigInteger cumulativeAmountOfThisYear = new BigInteger("26");
+	private BigDecimal cumulativeAmountOfThisYear = new BigDecimal("26.26");
 	private int month = 27;
 	private int year = 28;
 	private String comment = "comment";
