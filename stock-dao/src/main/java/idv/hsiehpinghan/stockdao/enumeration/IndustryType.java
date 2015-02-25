@@ -1,40 +1,54 @@
 package idv.hsiehpinghan.stockdao.enumeration;
 
+import java.util.Locale;
+
 public enum IndustryType {
-	CEMENT, // 水泥工業
-	FOOD, // 食品工業
-	PLASTIC, // 塑膠工業
-	TEXTILE_FIBERS, // 紡織纖維
-	ELECTRICAL_MACHINERY, // 電機機械
-	ELECTRICAL_CABLE, // 電器電纜
-	CHEMICAL_AND_MEDICAL_BIOTECHNOLOGY, // 化學生技醫療
-	GLASS_CERAMICS, // 玻璃陶瓷
-	PAPER, // 造紙工業
-	STEEL, // 鋼鐵工業
-	RUBBER, // 橡膠工業
-	CAR, // 汽車工業
-	ELECTRONICS, // 電子工業
-	BUILDING, // 建材營造
-	SHIPPING, // 航運業
-	TOURISM, // 觀光事業
-	FINANCE_AND_INSURANCE, // 金融保險業
-	TRADE_AND_MERCHANDISE, // 貿易百貨
-	CONGLOMERATES, // 綜合企業
-	OTHER, // 其他
-	MEDICAL_BIOTECHNOLOGY, // 生技醫療業
-	OIL_AND_ELECTRICITY_GAS, // 油電燃氣業
-	SEMICONDUCTOR, // 半導體業
-	COMPUTER_AND_PERIPHERAL_EQUIPMENT, // 電腦及週邊設備業
-	OPTICAL, // 光電業
-	COMMUNICATION_NETWORK, // 通信網路業
-	ELECTRONIC_COMPONENTS, // 電子零組件業
-	ELECTRONIC_CHANNELS, // 電子通路業
-	INFORMATION_SERVICES, // 資訊服務業
-	OTHER_ELECTRONICS, // 其他電子業
-	CHEMICAL, // 化學工業
-	DEPOSITARY_RECEIPTS, // 存託憑證
-	CULTURAL_AND_CREATIVE, // 文化創意業
-	MANAGED_STOCK; // 管理股票
+	CEMENT("水泥工業", "cement"), FOOD("食品工業", "food"), PLASTIC("塑膠工業", "plastic"), TEXTILE_FIBERS(
+			"紡織纖維", "textile fibers"), ELECTRICAL_MACHINERY("電機機械",
+			"electrical machinery"), ELECTRICAL_CABLE("電器電纜",
+			"electrical cable"), CHEMICAL_AND_MEDICAL_BIOTECHNOLOGY("化學生技醫療",
+			"chemical and medical biotechnology"), GLASS_CERAMICS("玻璃陶瓷",
+			"glass ceramics"), PAPER("造紙工業", "paper"), STEEL("鋼鐵工業", "steel"), RUBBER(
+			"橡膠工業", "rubber"), CAR("汽車工業", "car"), ELECTRONICS("電子工業",
+			"electronics"), BUILDING("建材營造", "building"), SHIPPING("航運業",
+			"shipping"), TOURISM("觀光事業", "tourism"), FINANCE_AND_INSURANCE(
+			"金融保險業", "finance and insurance"), TRADE_AND_MERCHANDISE("貿易百貨",
+			"trade and merchandise"), CONGLOMERATES("綜合企業", "conglomerates"), OTHER(
+			"其他", "other"), MEDICAL_BIOTECHNOLOGY("生技醫療業",
+			"medical biotechnology"), OIL_AND_ELECTRICITY_GAS("油電燃氣業",
+			"oil and electricity gas"), SEMICONDUCTOR("半導體業", "semiconductor"), COMPUTER_AND_PERIPHERAL_EQUIPMENT(
+			"電腦及週邊設備業", "computer and peripheral equipment"), OPTICAL("光電業",
+			"optical"), COMMUNICATION_NETWORK("通信網路業", "communication network"), ELECTRONIC_COMPONENTS(
+			"電子零組件業", "electronic components"), ELECTRONIC_CHANNELS("電子通路業",
+			"electronic channels"), INFORMATION_SERVICES("資訊服務業",
+			"information services"), OTHER_ELECTRONICS("其他電子業",
+			"other electronics"), CHEMICAL("化學工業", "chemical"), DEPOSITARY_RECEIPTS(
+			"存託憑證", "depositary receipts"), CULTURAL_AND_CREATIVE("文化創意業",
+			"cultural and creative"), MANAGED_STOCK("管理股票", "managed stock");
+
+	private String chineseName;
+	private String englishName;
+
+	private IndustryType(String chineseName, String englishName) {
+		this.chineseName = chineseName;
+		this.englishName = englishName;
+	}
+
+	public String getChineseName() {
+		return this.chineseName;
+	}
+
+	public String getEnglishName() {
+		return this.englishName;
+	}
+
+	public String getName(Locale locale) {
+		if (Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+			return getEnglishName();
+		} else {
+			return getChineseName();
+		}
+	}
 
 	public static IndustryType getMopsIndustryType(String code) {
 		switch (code) {
