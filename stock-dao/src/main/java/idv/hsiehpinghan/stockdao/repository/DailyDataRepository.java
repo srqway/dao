@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.hadoop.hbase.filter.FuzzyRowFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
+import org.apache.hadoop.hbase.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -39,6 +41,20 @@ public class DailyDataRepository extends RepositoryBase {
 			IllegalArgumentException, InvocationTargetException, IOException {
 		HBaseRowKey rowKey = getRowKey(stockCode, date);
 		return (DailyData) hbaseAssistant.get(rowKey);
+	}
+
+	public List<DailyData> fuzzyGet(String stockCode, Date date) {
+		DailyData.RowKey rowKey = (DailyData.RowKey) getRowKey(stockCode, date);
+		List<Pair<byte[], byte[]>> fuzzyKeysData = new ArrayList<Pair<byte[], byte[]>>();
+		Pair<byte[], byte[]> pair = new Pair<byte[], byte[]>(rowKey.getBytes(),
+				rowKey.getFuzzyBytes(stockCode, date));
+		fuzzyKeysData.add(pair);
+		FuzzyRowFilter fuzzyRowFilter = new org.apache.hadoop.hbase.filter.FuzzyRowFilter(
+				fuzzyKeysData);
+		@SuppressWarnings("unchecked")
+		List<DailyData> dailyDatas = (List<DailyData>) (Object) hbaseAssistant
+				.scan(getTargetTableClass(), fuzzyRowFilter);
+		return dailyDatas;
 	}
 
 	public int getRowAmount() {

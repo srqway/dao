@@ -69,6 +69,37 @@ public class MonthlyData extends HBaseTable {
 					yearBytes, SPACE, monthBytes));
 		}
 
+		public byte[] getFuzzyBytes(String stockCode, Integer year,
+				Integer month) {
+			byte[] stockCodeBytes;
+			if (stockCode == null) {
+				stockCodeBytes = ArrayUtility.getBytes(STOCK_CODE_LENGTH,
+						ByteUtility.BYTE_ONE);
+			} else {
+				stockCodeBytes = ArrayUtility.getBytes(STOCK_CODE_LENGTH,
+						ByteUtility.BYTE_ZERO);
+			}
+			byte[] yearBytes;
+			if (year == null) {
+				yearBytes = ArrayUtility.getBytes(YEAR_LENGTH,
+						ByteUtility.BYTE_ONE);
+			} else {
+				yearBytes = ArrayUtility.getBytes(YEAR_LENGTH,
+						ByteUtility.BYTE_ZERO);
+			}
+			byte[] monthBytes;
+			if (month == null) {
+				monthBytes = ArrayUtility.getBytes(MONTH_LENGTH,
+						ByteUtility.BYTE_ONE);
+			} else {
+				monthBytes = ArrayUtility.getBytes(MONTH_LENGTH,
+						ByteUtility.BYTE_ZERO);
+			}
+			return ArrayUtility.addAll(stockCodeBytes,
+					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, yearBytes,
+					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, monthBytes);
+		}
+
 		public String getStockCode() {
 			return ByteConvertUtility.getStringFromBytes(getBytes(),
 					STOCK_CODE_BEGIN_INDEX, STOCK_CODE_END_INDEX);
