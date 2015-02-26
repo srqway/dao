@@ -69,17 +69,17 @@ public class StockInfoRepository extends RepositoryBase {
 		return super.exists(key);
 	}
 
-	public StockInfo getWithCompanyFamilyOnly(String stockCode) {
-		FilterList filters = new FilterList();
-		filters.addFilter(generateRowFilter(stockCode));
-		filters.addFilter(generateFamilyFilter("companyFamily"));
-		List<HBaseTable> entities = getHbaseAssistant().scan(
-				getTargetTableClass(), filters);
-		if (entities.size() > 0) {
-			return (StockInfo) entities.get(0);
-		}
-		return null;
-	}
+//	public StockInfo getWithCompanyFamilyOnly(String stockCode) {
+//		FilterList filters = new FilterList();
+//		filters.addFilter(generateRowFilter(stockCode));
+//		filters.addFilter(generateFamilyFilter("companyFamily"));
+//		List<HBaseTable> entities = getHbaseAssistant().scan(
+//				getTargetTableClass(), filters);
+//		if (entities.size() > 0) {
+//			return (StockInfo) entities.get(0);
+//		}
+//		return null;
+//	}
 
 	@Override
 	protected HbaseAssistant getHbaseAssistant() {
@@ -96,13 +96,13 @@ public class StockInfoRepository extends RepositoryBase {
 		entity.new RowKey(stockCode, entity);
 	}
 
-	private Filter generateRowFilter(String stockCode) {
-		return new RowFilter(CompareFilter.CompareOp.EQUAL,
-				new BinaryComparator(Bytes.toBytes(stockCode)));
-	}
-
-	private Filter generateFamilyFilter(String familyName) {
-		return new FamilyFilter(CompareFilter.CompareOp.EQUAL,
-				new BinaryComparator(Bytes.toBytes(familyName)));
-	}
+//	private Filter generateRowFilter(String stockCode) {
+//		return new RowFilter(CompareFilter.CompareOp.EQUAL,
+//				new BinaryComparator(Bytes.toBytes(stockCode)));
+//	}
+//
+//	private Filter generateFamilyFilter(String familyName) {
+//		return new FamilyFilter(CompareFilter.CompareOp.EQUAL,
+//				new BinaryComparator(Bytes.toBytes(familyName)));
+//	}
 }
