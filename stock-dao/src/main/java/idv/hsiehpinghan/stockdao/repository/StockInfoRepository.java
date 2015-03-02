@@ -12,14 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.hadoop.hbase.filter.BinaryComparator;
-import org.apache.hadoop.hbase.filter.CompareFilter;
-import org.apache.hadoop.hbase.filter.FamilyFilter;
-import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
-import org.apache.hadoop.hbase.filter.RowFilter;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -69,18 +62,6 @@ public class StockInfoRepository extends RepositoryBase {
 		return super.exists(key);
 	}
 
-//	public StockInfo getWithCompanyFamilyOnly(String stockCode) {
-//		FilterList filters = new FilterList();
-//		filters.addFilter(generateRowFilter(stockCode));
-//		filters.addFilter(generateFamilyFilter("companyFamily"));
-//		List<HBaseTable> entities = getHbaseAssistant().scan(
-//				getTargetTableClass(), filters);
-//		if (entities.size() > 0) {
-//			return (StockInfo) entities.get(0);
-//		}
-//		return null;
-//	}
-
 	@Override
 	protected HbaseAssistant getHbaseAssistant() {
 		return hbaseAssistant;
@@ -95,14 +76,4 @@ public class StockInfoRepository extends RepositoryBase {
 	private void generateRowKey(String stockCode, StockInfo entity) {
 		entity.new RowKey(stockCode, entity);
 	}
-
-//	private Filter generateRowFilter(String stockCode) {
-//		return new RowFilter(CompareFilter.CompareOp.EQUAL,
-//				new BinaryComparator(Bytes.toBytes(stockCode)));
-//	}
-//
-//	private Filter generateFamilyFilter(String familyName) {
-//		return new FamilyFilter(CompareFilter.CompareOp.EQUAL,
-//				new BinaryComparator(Bytes.toBytes(familyName)));
-//	}
 }
