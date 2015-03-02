@@ -64,7 +64,7 @@ public class DailyData extends HBaseTable {
 			super.setBytes(ArrayUtility
 					.addAll(stockCodeBytes, SPACE, dateBytes));
 		}
-
+		
 		public byte[] getFuzzyBytes(String stockCode, Date date) {
 			byte[] stockCodeBytes;
 			if (stockCode == null) {

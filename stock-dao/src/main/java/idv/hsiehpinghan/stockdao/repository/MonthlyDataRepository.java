@@ -12,7 +12,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.hbase.filter.FuzzyRowFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
+import org.apache.hadoop.hbase.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +40,21 @@ public class MonthlyDataRepository extends RepositoryBase {
 			IllegalArgumentException, InvocationTargetException, IOException {
 		HBaseRowKey rowKey = getRowKey(stockCode, year, month);
 		return (MonthlyData) hbaseAssistant.get(rowKey);
+	}
+
+	public List<MonthlyData> fuzzyScan(String stockCode, Integer year,
+			Integer month) {
+		MonthlyData.RowKey rowKey = (MonthlyData.RowKey) getRowKey(stockCode,
+				year == null ? 0 : year, month == null ? 0 : month);
+		List<Pair<byte[], byte[]>> fuzzyKeysData = new ArrayList<Pair<byte[], byte[]>>();
+		Pair<byte[], byte[]> pair = new Pair<byte[], byte[]>(rowKey.getBytes(),
+				rowKey.getFuzzyBytes(stockCode, year, month));
+		fuzzyKeysData.add(pair);
+		FuzzyRowFilter fuzzyRowFilter = new FuzzyRowFilter(fuzzyKeysData);
+		@SuppressWarnings("unchecked")
+		List<MonthlyData> monthlyDatas = (List<MonthlyData>) (Object) hbaseAssistant
+				.scan(getTargetTableClass(), fuzzyRowFilter);
+		return monthlyDatas;
 	}
 
 	public int getRowAmount() {
