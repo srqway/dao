@@ -13,7 +13,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.hbase.filter.FuzzyRowFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
+import org.apache.hadoop.hbase.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -40,6 +42,21 @@ public class XbrlRepository extends RepositoryBase {
 			IllegalArgumentException, InvocationTargetException, IOException {
 		HBaseRowKey rowKey = getRowKey(stockCode, reportType, year, season);
 		return (Xbrl) hbaseAssistant.get(rowKey);
+	}
+
+	public List<Xbrl> fuzzyScan(String stockCode, ReportType reportType,
+			Integer year, Integer season) {
+		Xbrl.RowKey rowKey = (Xbrl.RowKey) getRowKey(stockCode, reportType,
+				year == null ? 0 : year, season == null ? 0 : season);
+		List<Pair<byte[], byte[]>> fuzzyKeysData = new ArrayList<Pair<byte[], byte[]>>();
+		Pair<byte[], byte[]> pair = new Pair<byte[], byte[]>(rowKey.getBytes(),
+				rowKey.getFuzzyBytes(stockCode, reportType, year, season));
+		fuzzyKeysData.add(pair);
+		FuzzyRowFilter fuzzyRowFilter = new FuzzyRowFilter(fuzzyKeysData);
+		@SuppressWarnings("unchecked")
+		List<Xbrl> xbrls = (List<Xbrl>) (Object) hbaseAssistant.scan(
+				getTargetTableClass(), fuzzyRowFilter);
+		return xbrls;
 	}
 
 	public int getRowAmount() {
