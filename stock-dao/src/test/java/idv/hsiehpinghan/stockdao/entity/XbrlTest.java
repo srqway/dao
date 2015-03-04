@@ -29,14 +29,14 @@ public class XbrlTest {
 	private Date endDate = DateUtility.getDate(2015, 2, 3);
 	private String statementOfChangesInEquityContext = "statementOfChangesInEquityContext";
 	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_BASI_CR_2013_03_31;
-	private int season = 1;
+	private int season = 3;
 	private BigDecimal ratio = new BigDecimal("11.11");
 	private String statementOfCashFlowsContext = "statementOfCashFlowsContext";
 	private String balanceSheetContext = "balanceSheetContext";
 	private PeriodType periodType = PeriodType.DURATION;
 	private BigDecimal value = new BigDecimal("15.15");
 	private String statementOfComprehensiveIncomeContext = "statementOfComprehensiveIncomeContext";
-	private int year = 2017;
+	private int year = 2015;
 	private Date instant = DateUtility.getDate(2015, 2, 3);
 
 	@Test

@@ -53,7 +53,9 @@ public class Taxonomy extends HBaseTable {
 		}
 
 		public void setTaxonomyVersion(XbrlTaxonomyVersion taxonomyVersion) {
-			byte[] bytes = ByteConvertUtility.toBytes(taxonomyVersion.name());
+			byte[] bytes = ByteConvertUtility
+					.toBytes(taxonomyVersion == null ? null : taxonomyVersion
+							.name());
 			setBytes(bytes);
 		}
 	}

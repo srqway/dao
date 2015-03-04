@@ -1,8 +1,8 @@
 package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
-import idv.hsiehpinghan.stockdao.entity.DailyData;
-import idv.hsiehpinghan.stockdao.entity.DailyData.ClosingConditionFamily;
+import idv.hsiehpinghan.stockdao.entity.StockClosingCondition;
+import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.ClosingConditionFamily;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class DailyDataRepositoryTest {
+public class StockClosingConditionRepositoryTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
 	private BigDecimal closingPrice = new BigDecimal("13.13");
 	private BigInteger transactionAmount = new BigInteger("14");
@@ -28,18 +28,20 @@ public class DailyDataRepositoryTest {
 	private BigDecimal openingPrice = new BigDecimal("22.22");
 	private Date date = DateUtility.getDate(2015, 2, 3);
 	private BigDecimal lowestPrice = new BigDecimal("24.24");
-	private DailyDataRepository repository;
+	private StockClosingConditionRepository repository;
 
 	@BeforeClass
 	public void beforeClass() throws Exception {
 		ApplicationContext applicationContext = TestngSuitSetting
 				.getApplicationContext();
-		repository = applicationContext.getBean(DailyDataRepository.class);
+		repository = applicationContext
+				.getBean(StockClosingConditionRepository.class);
 	}
 
 	@Test
 	public void put() throws Exception {
-		DailyData entity = repository.generateEntity(stockCode, date);
+		StockClosingCondition entity = repository.generateEntity(stockCode,
+				date);
 		generateClosingConditionFamilyContent(entity);
 		repository.put(entity);
 		Assert.assertTrue(repository.exists(entity.getRowKey()));
@@ -47,11 +49,12 @@ public class DailyDataRepositoryTest {
 
 	@Test(dependsOnMethods = { "put" })
 	public void get() throws Exception {
-		DailyData entity = repository.get(stockCode, date);
+		StockClosingCondition entity = repository.get(stockCode, date);
 		assertClosingConditionFamily(entity);
 	}
 
-	private void generateClosingConditionFamilyContent(DailyData entity) {
+	private void generateClosingConditionFamilyContent(
+			StockClosingCondition entity) {
 		ClosingConditionFamily fam = entity.getClosingConditionFamily();
 		fam.setOpeningPrice(ver, openingPrice);
 		fam.setClosingPrice(ver, closingPrice);
@@ -65,7 +68,7 @@ public class DailyDataRepositoryTest {
 		fam.setTransactionAmount(ver, transactionAmount);
 	}
 
-	private void assertClosingConditionFamily(DailyData entity) {
+	private void assertClosingConditionFamily(StockClosingCondition entity) {
 		ClosingConditionFamily fam = entity.getClosingConditionFamily();
 		Assert.assertEquals(openingPrice, fam.getOpeningPrice());
 		Assert.assertEquals(closingPrice, fam.getClosingPrice());

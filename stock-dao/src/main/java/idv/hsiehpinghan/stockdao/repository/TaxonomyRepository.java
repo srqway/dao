@@ -10,8 +10,7 @@ import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +44,10 @@ public class TaxonomyRepository extends RepositoryBase {
 		return hbaseAssistant.getRowAmount(getTargetTableClass());
 	}
 
-	public List<RowKey> getRowKeys() {
-		List<HBaseTable> entities = hbaseAssistant.scan(getTargetTableClass(),
-				new KeyOnlyFilter());
-		List<RowKey> rowKeys = new ArrayList<RowKey>(entities.size());
+	public TreeSet<RowKey> getRowKeys() {
+		TreeSet<HBaseTable> entities = hbaseAssistant.scan(
+				getTargetTableClass(), new KeyOnlyFilter());
+		TreeSet<RowKey> rowKeys = new TreeSet<RowKey>();
 		for (HBaseTable entity : entities) {
 			RowKey rowKey = (RowKey) entity.getRowKey();
 			rowKeys.add(rowKey);

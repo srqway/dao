@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.hadoop.hbase.filter.FuzzyRowFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
@@ -44,7 +45,7 @@ public class XbrlRepository extends RepositoryBase {
 		return (Xbrl) hbaseAssistant.get(rowKey);
 	}
 
-	public List<Xbrl> fuzzyScan(String stockCode, ReportType reportType,
+	public TreeSet<Xbrl> fuzzyScan(String stockCode, ReportType reportType,
 			Integer year, Integer season) {
 		Xbrl.RowKey rowKey = (Xbrl.RowKey) getRowKey(stockCode, reportType,
 				year == null ? 0 : year, season == null ? 0 : season);
@@ -54,7 +55,7 @@ public class XbrlRepository extends RepositoryBase {
 		fuzzyKeysData.add(pair);
 		FuzzyRowFilter fuzzyRowFilter = new FuzzyRowFilter(fuzzyKeysData);
 		@SuppressWarnings("unchecked")
-		List<Xbrl> xbrls = (List<Xbrl>) (Object) hbaseAssistant.scan(
+		TreeSet<Xbrl> xbrls = (TreeSet<Xbrl>) (Object) hbaseAssistant.scan(
 				getTargetTableClass(), fuzzyRowFilter);
 		return xbrls;
 	}
@@ -63,10 +64,10 @@ public class XbrlRepository extends RepositoryBase {
 		return hbaseAssistant.getRowAmount(getTargetTableClass());
 	}
 
-	public List<RowKey> getRowKeys() {
-		List<HBaseTable> entities = hbaseAssistant.scan(getTargetTableClass(),
-				new KeyOnlyFilter());
-		List<RowKey> rowKeys = new ArrayList<RowKey>(entities.size());
+	public TreeSet<RowKey> getRowKeys() {
+		TreeSet<HBaseTable> entities = hbaseAssistant.scan(
+				getTargetTableClass(), new KeyOnlyFilter());
+		TreeSet<RowKey> rowKeys = new TreeSet<RowKey>();
 		for (HBaseTable entity : entities) {
 			RowKey rowKey = (RowKey) entity.getRowKey();
 			rowKeys.add(rowKey);

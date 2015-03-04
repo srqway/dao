@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.hadoop.hbase.filter.FuzzyRowFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
@@ -48,7 +49,7 @@ public class MonthlyOperatingIncomeRepository extends RepositoryBase {
 		return (MonthlyOperatingIncome) hbaseAssistant.get(rowKey);
 	}
 
-	public List<MonthlyOperatingIncome> fuzzyScan(String stockCode,
+	public TreeSet<MonthlyOperatingIncome> fuzzyScan(String stockCode,
 			Boolean isFunctionalCurrency, CurrencyType currency, Integer year,
 			Integer month) {
 		MonthlyOperatingIncome.RowKey rowKey = (MonthlyOperatingIncome.RowKey) getRowKey(
@@ -62,7 +63,7 @@ public class MonthlyOperatingIncomeRepository extends RepositoryBase {
 		fuzzyKeysData.add(pair);
 		FuzzyRowFilter fuzzyRowFilter = new FuzzyRowFilter(fuzzyKeysData);
 		@SuppressWarnings("unchecked")
-		List<MonthlyOperatingIncome> monthlyOperatingIncomes = (List<MonthlyOperatingIncome>) (Object) hbaseAssistant
+		TreeSet<MonthlyOperatingIncome> monthlyOperatingIncomes = (TreeSet<MonthlyOperatingIncome>) (Object) hbaseAssistant
 				.scan(getTargetTableClass(), fuzzyRowFilter);
 		return monthlyOperatingIncomes;
 	}
@@ -71,10 +72,10 @@ public class MonthlyOperatingIncomeRepository extends RepositoryBase {
 		return hbaseAssistant.getRowAmount(getTargetTableClass());
 	}
 
-	public List<RowKey> getRowKeys() {
-		List<HBaseTable> entities = hbaseAssistant.scan(getTargetTableClass(),
-				new KeyOnlyFilter());
-		List<RowKey> rowKeys = new ArrayList<RowKey>(entities.size());
+	public TreeSet<RowKey> getRowKeys() {
+		TreeSet<HBaseTable> entities = hbaseAssistant.scan(
+				getTargetTableClass(), new KeyOnlyFilter());
+		TreeSet<RowKey> rowKeys = new TreeSet<RowKey>();
 		for (HBaseTable entity : entities) {
 			RowKey rowKey = (RowKey) entity.getRowKey();
 			rowKeys.add(rowKey);

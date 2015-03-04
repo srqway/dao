@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 public class TaxonomyTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
-	private XbrlTaxonomyVersion taxonomyVersion = XbrlTaxonomyVersion.TIFRS_BASI_IR_2014_03_31;
+	private XbrlTaxonomyVersion taxonomyVersion = XbrlTaxonomyVersion.TIFRS_BASI_CR_2013_03_31;
 	private String balanceSheet = "balanceSheet";
 	private String statementOfCashFlows = "statementOfCashFlows";
 	private String statementOfChangesInEquity = "statementOfChangesInEquity";

@@ -15,7 +15,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Set;
 
-public class DailyData extends HBaseTable {
+public class StockClosingCondition extends HBaseTable {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private RowKey rowKey;
 	private ClosingConditionFamily closingConditionFamily;
@@ -47,16 +47,16 @@ public class DailyData extends HBaseTable {
 		private static final int DATE_END_INDEX = DATE_BEGIN_INDEX
 				+ DATE_LENGTH;
 
-		public RowKey(DailyData entity) {
+		public RowKey(StockClosingCondition entity) {
 			super(entity);
 		}
 
-		public RowKey(byte[] bytes, DailyData entity) {
+		public RowKey(byte[] bytes, StockClosingCondition entity) {
 			super(entity);
 			setBytes(bytes);
 		}
 
-		public RowKey(String stockCode, Date date, DailyData entity) {
+		public RowKey(String stockCode, Date date, StockClosingCondition entity) {
 			super(entity);
 			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode,
 					STOCK_CODE_LENGTH);
@@ -64,7 +64,7 @@ public class DailyData extends HBaseTable {
 			super.setBytes(ArrayUtility
 					.addAll(stockCodeBytes, SPACE, dateBytes));
 		}
-		
+
 		public byte[] getFuzzyBytes(String stockCode, Date date) {
 			byte[] stockCodeBytes;
 			if (stockCode == null) {
@@ -128,7 +128,7 @@ public class DailyData extends HBaseTable {
 		public static final String MONEY_AMOUNT = "moneyAmount";
 		public static final String TRANSACTION_AMOUNT = "transactionAmount";
 
-		private ClosingConditionFamily(DailyData entity) {
+		private ClosingConditionFamily(StockClosingCondition entity) {
 			super(entity);
 		}
 

@@ -1,8 +1,8 @@
 package idv.hsiehpinghan.stockdao.entity;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
-import idv.hsiehpinghan.stockdao.entity.DailyData.ClosingConditionFamily;
-import idv.hsiehpinghan.stockdao.entity.DailyData.RowKey;
+import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.ClosingConditionFamily;
+import idv.hsiehpinghan.stockdao.entity.StockClosingCondition.RowKey;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -11,7 +11,7 @@ import java.util.Date;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class DailyDataTest {
+public class StockClosingConditionTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
 	private BigDecimal closingPrice = new BigDecimal("1.1");
 	private BigInteger transactionAmount = new BigInteger("2");
@@ -28,23 +28,24 @@ public class DailyDataTest {
 
 	@Test
 	public void bytesConvert() {
-		DailyData entity = new DailyData();
+		StockClosingCondition entity = new StockClosingCondition();
 		testRowKey(entity);
 		testClosingConditionFamily(entity);
 	}
 
-	private void testRowKey(DailyData entity) {
+	private void testRowKey(StockClosingCondition entity) {
 		RowKey key = entity.new RowKey(stockCode, date, entity);
 		Assert.assertEquals(stockCode, key.getStockCode());
 		Assert.assertEquals(date, key.getDate());
 	}
 
-	private void testClosingConditionFamily(DailyData entity) {
+	private void testClosingConditionFamily(StockClosingCondition entity) {
 		generateClosingConditionFamilyContent(entity);
 		assertClosingConditionFamily(entity);
 	}
 
-	private void generateClosingConditionFamilyContent(DailyData entity) {
+	private void generateClosingConditionFamilyContent(
+			StockClosingCondition entity) {
 		ClosingConditionFamily fam = entity.getClosingConditionFamily();
 		fam.setOpeningPrice(ver, openingPrice);
 		fam.setClosingPrice(ver, closingPrice);
@@ -58,7 +59,7 @@ public class DailyDataTest {
 		fam.setTransactionAmount(ver, transactionAmount);
 	}
 
-	private void assertClosingConditionFamily(DailyData entity) {
+	private void assertClosingConditionFamily(StockClosingCondition entity) {
 		ClosingConditionFamily fam = entity.getClosingConditionFamily();
 		Assert.assertEquals(openingPrice, fam.getOpeningPrice());
 		Assert.assertEquals(closingPrice, fam.getClosingPrice());
