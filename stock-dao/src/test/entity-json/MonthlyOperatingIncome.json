@@ -1,10 +1,19 @@
 {  
-   "MonthlyData":{  
+   "MonthlyOperatingIncome":{  
       "RowKey":[  
          {  
             "type":"String",
             "name":"stockCode",
             "length":15
+         },
+         {  
+            "type":"boolean",
+            "name":"isFunctionalCurrency"
+         },
+         {  
+            "type":"CurrencyType",
+            "name":"currency",
+            "length":3
          },
          {  
             "type":"int",
@@ -17,12 +26,8 @@
             "length":2
          }
       ],
-      "OperatingIncomeFamily":{ 
+      "IncomeFamily":{ 
           "Columns":[  
-            {  
-               "type":"CurrencyType",
-               "name":"currency"
-            },
             {  
                "type":"BigDecimal",
                "name":"currentMonth"
@@ -68,13 +73,13 @@
                "name":"comment"
             }
          ],
-         "OperatingIncomeQualifier":[  
+         "IncomeQualifier":[  
             {  
                "type":"String",
                "name":"columnName"
             }
          ],
-         "OperatingIncomeValue":[  
+         "IncomeValue":[  
 
          ]
       }

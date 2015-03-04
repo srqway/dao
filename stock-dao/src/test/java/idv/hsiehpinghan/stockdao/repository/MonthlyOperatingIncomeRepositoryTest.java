@@ -1,8 +1,8 @@
 package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
-import idv.hsiehpinghan.stockdao.entity.MonthlyData;
-import idv.hsiehpinghan.stockdao.entity.MonthlyData.OperatingIncomeFamily;
+import idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncome;
+import idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncome.IncomeFamily;
 import idv.hsiehpinghan.stockdao.enumeration.CurrencyType;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 
@@ -14,50 +14,53 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class MonthlyDataRepositoryTest {
+public class MonthlyOperatingIncomeRepositoryTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
-	private BigDecimal differentAmount = new BigDecimal("16.16");
+	private BigDecimal differentAmount = new BigDecimal("17.17");
 	private String stockCode = "stockCode";
-	private BigDecimal cumulativeDifferentAmount = new BigDecimal("18.18");
-	private BigDecimal currentMonth = new BigDecimal("19.19");
+	private BigDecimal cumulativeDifferentAmount = new BigDecimal("19.19");
+	private BigDecimal currentMonth = new BigDecimal("20.20");
+	private boolean isFunctionalCurrency = false;
 	private CurrencyType currency = CurrencyType.AUD;
-	private BigDecimal cumulativeAmountOfLastYear = new BigDecimal("21.21");
-	private BigDecimal exchangeRateOfCurrentMonth = new BigDecimal("22.22");
-	private BigDecimal cumulativeDifferentPercent = new BigDecimal("23.23");
-	private BigDecimal currentMonthOfLastYear = new BigDecimal("24.24");
+	private BigDecimal cumulativeAmountOfLastYear = new BigDecimal("23.23");
+	private BigDecimal exchangeRateOfCurrentMonth = new BigDecimal("24.24");
+	private BigDecimal cumulativeDifferentPercent = new BigDecimal("25.25");
+	private BigDecimal currentMonthOfLastYear = new BigDecimal("26.26");
 	private BigDecimal cumulativeExchangeRateOfThisYear = new BigDecimal(
-			"25.25");
-	private BigDecimal cumulativeAmountOfThisYear = new BigDecimal("26.26");
-	private int month = 27;
-	private int year = 28;
+			"27.27");
+	private BigDecimal cumulativeAmountOfThisYear = new BigDecimal("28.28");
+	private int month = 29;
+	private int year = 30;
 	private String comment = "comment";
-	private BigDecimal differentPercent = new BigDecimal("30.30");
-	private MonthlyDataRepository repository;
+	private BigDecimal differentPercent = new BigDecimal("32.32");
+	private MonthlyOperatingIncomeRepository repository;
 
 	@BeforeClass
 	public void beforeClass() throws Exception {
 		ApplicationContext applicationContext = TestngSuitSetting
 				.getApplicationContext();
-		repository = applicationContext.getBean(MonthlyDataRepository.class);
+		repository = applicationContext
+				.getBean(MonthlyOperatingIncomeRepository.class);
 	}
 
 	@Test
 	public void put() throws Exception {
-		MonthlyData entity = repository.generateEntity(stockCode, year, month);
-		generateOperatingIncomeFamilyContent(entity);
+		MonthlyOperatingIncome entity = repository.generateEntity(stockCode,
+				isFunctionalCurrency, currency, year, month);
+		generateIncomeFamilyContent(entity);
 		repository.put(entity);
 		Assert.assertTrue(repository.exists(entity.getRowKey()));
 	}
 
 	@Test(dependsOnMethods = { "put" })
 	public void get() throws Exception {
-		MonthlyData entity = repository.get(stockCode, year, month);
-		assertOperatingIncomeFamily(entity);
+		MonthlyOperatingIncome entity = repository.get(stockCode,
+				isFunctionalCurrency, currency, year, month);
+		assertIncomeFamily(entity);
 	}
 
-	private void generateOperatingIncomeFamilyContent(MonthlyData entity) {
-		OperatingIncomeFamily fam = entity.getOperatingIncomeFamily();
-		fam.setCurrency(ver, currency);
+	private void generateIncomeFamilyContent(MonthlyOperatingIncome entity) {
+		IncomeFamily fam = entity.getIncomeFamily();
 		fam.setCurrentMonth(ver, currentMonth);
 		fam.setCurrentMonthOfLastYear(ver, currentMonthOfLastYear);
 		fam.setDifferentAmount(ver, differentAmount);
@@ -72,9 +75,8 @@ public class MonthlyDataRepositoryTest {
 		fam.setComment(ver, comment);
 	}
 
-	private void assertOperatingIncomeFamily(MonthlyData entity) {
-		OperatingIncomeFamily fam = entity.getOperatingIncomeFamily();
-		Assert.assertEquals(currency, fam.getCurrency());
+	private void assertIncomeFamily(MonthlyOperatingIncome entity) {
+		IncomeFamily fam = entity.getIncomeFamily();
 		Assert.assertEquals(currentMonth, fam.getCurrentMonth());
 		Assert.assertEquals(currentMonthOfLastYear,
 				fam.getCurrentMonthOfLastYear());

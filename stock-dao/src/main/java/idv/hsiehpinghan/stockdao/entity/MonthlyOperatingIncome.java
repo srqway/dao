@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
-public class MonthlyData extends HBaseTable {
+public class MonthlyOperatingIncome extends HBaseTable {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private RowKey rowKey;
-	private OperatingIncomeFamily operatingIncomeFamily;
+	private IncomeFamily incomeFamily;
 
 	@Override
 	public HBaseRowKey getRowKey() {
@@ -29,54 +29,86 @@ public class MonthlyData extends HBaseTable {
 		this.rowKey = (RowKey) rowKey;
 	}
 
-	public OperatingIncomeFamily getOperatingIncomeFamily() {
-		if (operatingIncomeFamily == null) {
-			operatingIncomeFamily = this.new OperatingIncomeFamily(this);
+	public IncomeFamily getIncomeFamily() {
+		if (incomeFamily == null) {
+			incomeFamily = this.new IncomeFamily(this);
 		}
-		return operatingIncomeFamily;
+		return incomeFamily;
 	}
 
 	public class RowKey extends HBaseRowKey {
 		private static final int STOCK_CODE_LENGTH = 15;
+		private static final int IS_FUNCTIONAL_CURRENCY_LENGTH = ByteConvertUtility.DEFAULT_BOOLEAN_LENGTH;
+		private static final int CURRENCY_LENGTH = 3;
 		private static final int YEAR_LENGTH = 4;
 		private static final int MONTH_LENGTH = 2;
 		private static final int STOCK_CODE_BEGIN_INDEX = 0;
 		private static final int STOCK_CODE_END_INDEX = STOCK_CODE_BEGIN_INDEX
 				+ STOCK_CODE_LENGTH;
-		private static final int YEAR_BEGIN_INDEX = STOCK_CODE_END_INDEX + 1;
+		private static final int IS_FUNCTIONAL_CURRENCY_BEGIN_INDEX = STOCK_CODE_END_INDEX + 1;
+		private static final int IS_FUNCTIONAL_CURRENCY_END_INDEX = IS_FUNCTIONAL_CURRENCY_BEGIN_INDEX
+				+ IS_FUNCTIONAL_CURRENCY_LENGTH;
+		private static final int CURRENCY_BEGIN_INDEX = IS_FUNCTIONAL_CURRENCY_END_INDEX + 1;
+		private static final int CURRENCY_END_INDEX = CURRENCY_BEGIN_INDEX
+				+ CURRENCY_LENGTH;
+		private static final int YEAR_BEGIN_INDEX = CURRENCY_END_INDEX + 1;
 		private static final int YEAR_END_INDEX = YEAR_BEGIN_INDEX
 				+ YEAR_LENGTH;
 		private static final int MONTH_BEGIN_INDEX = YEAR_END_INDEX + 1;
 		private static final int MONTH_END_INDEX = MONTH_BEGIN_INDEX
 				+ MONTH_LENGTH;
 
-		public RowKey(MonthlyData entity) {
+		public RowKey(MonthlyOperatingIncome entity) {
 			super(entity);
 		}
 
-		public RowKey(byte[] bytes, MonthlyData entity) {
+		public RowKey(byte[] bytes, MonthlyOperatingIncome entity) {
 			super(entity);
 			setBytes(bytes);
 		}
 
-		public RowKey(String stockCode, int year, int month, MonthlyData entity) {
+		public RowKey(String stockCode, boolean isFunctionalCurrency,
+				CurrencyType currency, int year, int month,
+				MonthlyOperatingIncome entity) {
 			super(entity);
 			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode,
 					STOCK_CODE_LENGTH);
+			byte[] isFunctionalCurrencyBytes = ByteConvertUtility
+					.toBytes(isFunctionalCurrency);
+			byte[] currencyBytes = ByteConvertUtility.toBytes(
+					currency == null ? null : currency.name(), CURRENCY_LENGTH);
 			byte[] yearBytes = ByteConvertUtility.toBytes(year, YEAR_LENGTH);
 			byte[] monthBytes = ByteConvertUtility.toBytes(month, MONTH_LENGTH);
 			super.setBytes(ArrayUtility.addAll(stockCodeBytes, SPACE,
+					isFunctionalCurrencyBytes, SPACE, currencyBytes, SPACE,
 					yearBytes, SPACE, monthBytes));
 		}
 
-		public byte[] getFuzzyBytes(String stockCode, Integer year,
-				Integer month) {
+		public byte[] getFuzzyBytes(String stockCode,
+				Boolean isFunctionalCurrency, CurrencyType currency,
+				Integer year, Integer month) {
 			byte[] stockCodeBytes;
 			if (stockCode == null) {
 				stockCodeBytes = ArrayUtility.getBytes(STOCK_CODE_LENGTH,
 						ByteUtility.BYTE_ONE);
 			} else {
 				stockCodeBytes = ArrayUtility.getBytes(STOCK_CODE_LENGTH,
+						ByteUtility.BYTE_ZERO);
+			}
+			byte[] isFunctionalCurrencyBytes;
+			if (isFunctionalCurrency == null) {
+				isFunctionalCurrencyBytes = ArrayUtility.getBytes(
+						IS_FUNCTIONAL_CURRENCY_LENGTH, ByteUtility.BYTE_ONE);
+			} else {
+				isFunctionalCurrencyBytes = ArrayUtility.getBytes(
+						IS_FUNCTIONAL_CURRENCY_LENGTH, ByteUtility.BYTE_ZERO);
+			}
+			byte[] currencyBytes;
+			if (currency == null) {
+				currencyBytes = ArrayUtility.getBytes(CURRENCY_LENGTH,
+						ByteUtility.BYTE_ONE);
+			} else {
+				currencyBytes = ArrayUtility.getBytes(CURRENCY_LENGTH,
 						ByteUtility.BYTE_ZERO);
 			}
 			byte[] yearBytes;
@@ -96,6 +128,9 @@ public class MonthlyData extends HBaseTable {
 						ByteUtility.BYTE_ZERO);
 			}
 			return ArrayUtility.addAll(stockCodeBytes,
+					ByteUtility.SINGLE_ZERO_BYTE_ARRAY,
+					isFunctionalCurrencyBytes,
+					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, currencyBytes,
 					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, yearBytes,
 					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, monthBytes);
 		}
@@ -111,6 +146,33 @@ public class MonthlyData extends HBaseTable {
 					STOCK_CODE_LENGTH);
 			ArrayUtility.replace(bytes, subBytes, STOCK_CODE_BEGIN_INDEX,
 					STOCK_CODE_END_INDEX);
+		}
+
+		public boolean getIsFunctionalCurrency() {
+			return ByteConvertUtility.getBooleanFromBytes(getBytes(),
+					IS_FUNCTIONAL_CURRENCY_BEGIN_INDEX,
+					IS_FUNCTIONAL_CURRENCY_END_INDEX);
+		}
+
+		public void setIsFunctionalCurrency(boolean isFunctionalCurrency) {
+			byte[] bytes = getBytes();
+			byte[] subBytes = ByteConvertUtility.toBytes(isFunctionalCurrency);
+			ArrayUtility.replace(bytes, subBytes,
+					IS_FUNCTIONAL_CURRENCY_BEGIN_INDEX,
+					IS_FUNCTIONAL_CURRENCY_END_INDEX);
+		}
+
+		public CurrencyType getCurrency() {
+			return CurrencyType.valueOf(ByteConvertUtility.getStringFromBytes(
+					getBytes(), CURRENCY_BEGIN_INDEX, CURRENCY_END_INDEX));
+		}
+
+		public void setCurrency(CurrencyType currency) {
+			byte[] bytes = getBytes();
+			byte[] subBytes = ByteConvertUtility.toBytes(
+					currency == null ? null : currency.name(), CURRENCY_LENGTH);
+			ArrayUtility.replace(bytes, subBytes, CURRENCY_BEGIN_INDEX,
+					CURRENCY_END_INDEX);
 		}
 
 		public int getYear() {
@@ -138,8 +200,7 @@ public class MonthlyData extends HBaseTable {
 		}
 	}
 
-	public class OperatingIncomeFamily extends HBaseColumnFamily {
-		public static final String CURRENCY = "currency";
+	public class IncomeFamily extends HBaseColumnFamily {
 		public static final String CURRENT_MONTH = "currentMonth";
 		public static final String CURRENT_MONTH_OF_LAST_YEAR = "currentMonthOfLastYear";
 		public static final String DIFFERENT_AMOUNT = "differentAmount";
@@ -152,39 +213,19 @@ public class MonthlyData extends HBaseTable {
 		public static final String CUMULATIVE_EXCHANGE_RATE_OF_THIS_YEAR = "cumulativeExchangeRateOfThisYear";
 		public static final String COMMENT = "comment";
 
-		private OperatingIncomeFamily(MonthlyData entity) {
+		private IncomeFamily(MonthlyOperatingIncome entity) {
 			super(entity);
 		}
 
 		@SuppressWarnings("unchecked")
-		public Set<OperatingIncomeQualifier> getQualifiers() {
-			return (Set<OperatingIncomeQualifier>) (Object) super
+		public Set<IncomeQualifier> getQualifiers() {
+			return (Set<IncomeQualifier>) (Object) super
 					.getQualifierVersionValueMap().keySet();
 		}
 
-		public CurrencyType getCurrency() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(CURRENCY);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
-			if (val == null) {
-				return null;
-			}
-			return val.getAsCurrencyType();
-		}
-
-		public void setCurrency(Date ver, CurrencyType currency) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
-					CURRENCY);
-			OperatingIncomeValue val = new OperatingIncomeValue();
-			val.set(currency);
-			add(qual, ver, val);
-		}
-
 		public BigDecimal getCurrentMonth() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
-					CURRENT_MONTH);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			HBaseColumnQualifier qual = new IncomeQualifier(CURRENT_MONTH);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -192,18 +233,16 @@ public class MonthlyData extends HBaseTable {
 		}
 
 		public void setCurrentMonth(Date ver, BigDecimal currentMonth) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
-					CURRENT_MONTH);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeQualifier qual = new IncomeQualifier(CURRENT_MONTH);
+			IncomeValue val = new IncomeValue();
 			val.set(currentMonth);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getCurrentMonthOfLastYear() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+			HBaseColumnQualifier qual = new IncomeQualifier(
 					CURRENT_MONTH_OF_LAST_YEAR);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -212,18 +251,16 @@ public class MonthlyData extends HBaseTable {
 
 		public void setCurrentMonthOfLastYear(Date ver,
 				BigDecimal currentMonthOfLastYear) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+			IncomeQualifier qual = new IncomeQualifier(
 					CURRENT_MONTH_OF_LAST_YEAR);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeValue val = new IncomeValue();
 			val.set(currentMonthOfLastYear);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getDifferentAmount() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
-					DIFFERENT_AMOUNT);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			HBaseColumnQualifier qual = new IncomeQualifier(DIFFERENT_AMOUNT);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -231,18 +268,15 @@ public class MonthlyData extends HBaseTable {
 		}
 
 		public void setDifferentAmount(Date ver, BigDecimal differentAmount) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
-					DIFFERENT_AMOUNT);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeQualifier qual = new IncomeQualifier(DIFFERENT_AMOUNT);
+			IncomeValue val = new IncomeValue();
 			val.set(differentAmount);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getDifferentPercent() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
-					DIFFERENT_PERCENT);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			HBaseColumnQualifier qual = new IncomeQualifier(DIFFERENT_PERCENT);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -250,18 +284,16 @@ public class MonthlyData extends HBaseTable {
 		}
 
 		public void setDifferentPercent(Date ver, BigDecimal differentPercent) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
-					DIFFERENT_PERCENT);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeQualifier qual = new IncomeQualifier(DIFFERENT_PERCENT);
+			IncomeValue val = new IncomeValue();
 			val.set(differentPercent);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getCumulativeAmountOfThisYear() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+			HBaseColumnQualifier qual = new IncomeQualifier(
 					CUMULATIVE_AMOUNT_OF_THIS_YEAR);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -270,18 +302,17 @@ public class MonthlyData extends HBaseTable {
 
 		public void setCumulativeAmountOfThisYear(Date ver,
 				BigDecimal cumulativeAmountOfThisYear) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+			IncomeQualifier qual = new IncomeQualifier(
 					CUMULATIVE_AMOUNT_OF_THIS_YEAR);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeValue val = new IncomeValue();
 			val.set(cumulativeAmountOfThisYear);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getCumulativeAmountOfLastYear() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+			HBaseColumnQualifier qual = new IncomeQualifier(
 					CUMULATIVE_AMOUNT_OF_LAST_YEAR);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -290,18 +321,17 @@ public class MonthlyData extends HBaseTable {
 
 		public void setCumulativeAmountOfLastYear(Date ver,
 				BigDecimal cumulativeAmountOfLastYear) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+			IncomeQualifier qual = new IncomeQualifier(
 					CUMULATIVE_AMOUNT_OF_LAST_YEAR);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeValue val = new IncomeValue();
 			val.set(cumulativeAmountOfLastYear);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getCumulativeDifferentAmount() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+			HBaseColumnQualifier qual = new IncomeQualifier(
 					CUMULATIVE_DIFFERENT_AMOUNT);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -310,18 +340,17 @@ public class MonthlyData extends HBaseTable {
 
 		public void setCumulativeDifferentAmount(Date ver,
 				BigDecimal cumulativeDifferentAmount) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+			IncomeQualifier qual = new IncomeQualifier(
 					CUMULATIVE_DIFFERENT_AMOUNT);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeValue val = new IncomeValue();
 			val.set(cumulativeDifferentAmount);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getCumulativeDifferentPercent() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+			HBaseColumnQualifier qual = new IncomeQualifier(
 					CUMULATIVE_DIFFERENT_PERCENT);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -330,18 +359,17 @@ public class MonthlyData extends HBaseTable {
 
 		public void setCumulativeDifferentPercent(Date ver,
 				BigDecimal cumulativeDifferentPercent) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+			IncomeQualifier qual = new IncomeQualifier(
 					CUMULATIVE_DIFFERENT_PERCENT);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeValue val = new IncomeValue();
 			val.set(cumulativeDifferentPercent);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getExchangeRateOfCurrentMonth() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+			HBaseColumnQualifier qual = new IncomeQualifier(
 					EXCHANGE_RATE_OF_CURRENT_MONTH);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -350,18 +378,17 @@ public class MonthlyData extends HBaseTable {
 
 		public void setExchangeRateOfCurrentMonth(Date ver,
 				BigDecimal exchangeRateOfCurrentMonth) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+			IncomeQualifier qual = new IncomeQualifier(
 					EXCHANGE_RATE_OF_CURRENT_MONTH);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeValue val = new IncomeValue();
 			val.set(exchangeRateOfCurrentMonth);
 			add(qual, ver, val);
 		}
 
 		public BigDecimal getCumulativeExchangeRateOfThisYear() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(
+			HBaseColumnQualifier qual = new IncomeQualifier(
 					CUMULATIVE_EXCHANGE_RATE_OF_THIS_YEAR);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -370,17 +397,16 @@ public class MonthlyData extends HBaseTable {
 
 		public void setCumulativeExchangeRateOfThisYear(Date ver,
 				BigDecimal cumulativeExchangeRateOfThisYear) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
+			IncomeQualifier qual = new IncomeQualifier(
 					CUMULATIVE_EXCHANGE_RATE_OF_THIS_YEAR);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeValue val = new IncomeValue();
 			val.set(cumulativeExchangeRateOfThisYear);
 			add(qual, ver, val);
 		}
 
 		public String getComment() {
-			HBaseColumnQualifier qual = new OperatingIncomeQualifier(COMMENT);
-			OperatingIncomeValue val = (OperatingIncomeValue) super
-					.getLatestValue(qual);
+			HBaseColumnQualifier qual = new IncomeQualifier(COMMENT);
+			IncomeValue val = (IncomeValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
@@ -388,34 +414,33 @@ public class MonthlyData extends HBaseTable {
 		}
 
 		public void setComment(Date ver, String comment) {
-			OperatingIncomeQualifier qual = new OperatingIncomeQualifier(
-					COMMENT);
-			OperatingIncomeValue val = new OperatingIncomeValue();
+			IncomeQualifier qual = new IncomeQualifier(COMMENT);
+			IncomeValue val = new IncomeValue();
 			val.set(comment);
 			add(qual, ver, val);
 		}
 
 		@Override
 		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
-			return this.new OperatingIncomeQualifier(bytes);
+			return this.new IncomeQualifier(bytes);
 		}
 
 		@Override
 		protected HBaseValue generateValue(byte[] bytes) {
-			return this.new OperatingIncomeValue(bytes);
+			return this.new IncomeValue(bytes);
 		}
 
-		public class OperatingIncomeQualifier extends HBaseColumnQualifier {
-			public OperatingIncomeQualifier() {
+		public class IncomeQualifier extends HBaseColumnQualifier {
+			public IncomeQualifier() {
 				super();
 			}
 
-			public OperatingIncomeQualifier(byte[] bytes) {
+			public IncomeQualifier(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}
 
-			public OperatingIncomeQualifier(String columnName) {
+			public IncomeQualifier(String columnName) {
 				super();
 				setColumnName(columnName);
 			}
@@ -430,12 +455,12 @@ public class MonthlyData extends HBaseTable {
 			}
 		}
 
-		public class OperatingIncomeValue extends HBaseValue {
-			public OperatingIncomeValue() {
+		public class IncomeValue extends HBaseValue {
+			public IncomeValue() {
 				super();
 			}
 
-			public OperatingIncomeValue(byte[] bytes) {
+			public IncomeValue(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}
@@ -454,15 +479,6 @@ public class MonthlyData extends HBaseTable {
 
 			public void set(BigDecimal value) {
 				setBytes(ByteConvertUtility.toBytes(value));
-			}
-
-			public CurrencyType getAsCurrencyType() {
-				return CurrencyType.valueOf(ByteConvertUtility
-						.getStringFromBytes(getBytes()));
-			}
-
-			public void set(CurrencyType value) {
-				setBytes(ByteConvertUtility.toBytes(value.name()));
 			}
 		}
 	}

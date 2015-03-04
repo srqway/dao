@@ -33,14 +33,14 @@
 			<class name="idv.hsiehpinghan.stockdao.repository.XbrlRepositoryTest" />
 		</classes>
 	</test>
-	<test name="MonthlyData">
+	<test name="MonthlyOperatingIncome">
 		<classes>
 			<!-- Test entity -->
-			<class name="idv.hsiehpinghan.stockdao.entity.MonthlyDataTest" />
+			<class name="idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncomeTest" />
 
 			<!-- Test repositoty -->
 			<class
-				name="idv.hsiehpinghan.stockdao.repository.MonthlyDataRepositoryTest" />
+				name="idv.hsiehpinghan.stockdao.repository.MonthlyOperatingIncomeRepositoryTest" />
 		</classes>
 	</test>
 	<test name="DailyData">
