@@ -25,6 +25,8 @@ public class Xbrl extends HBaseTable {
 	private InstanceFamily instanceFamily;
 	private ItemFamily itemFamily;
 	private GrowthFamily growthFamily;
+	private RatioFamily ratioFamily;
+	private RatioDifferenceFamily ratioDifferenceFamily;
 
 	@Override
 	public HBaseRowKey getRowKey() {
@@ -62,6 +64,20 @@ public class Xbrl extends HBaseTable {
 			growthFamily = this.new GrowthFamily(this);
 		}
 		return growthFamily;
+	}
+
+	public RatioFamily getRatioFamily() {
+		if (ratioFamily == null) {
+			ratioFamily = this.new RatioFamily(this);
+		}
+		return ratioFamily;
+	}
+
+	public RatioDifferenceFamily getRatioDifferenceFamily() {
+		if (ratioDifferenceFamily == null) {
+			ratioDifferenceFamily = this.new RatioDifferenceFamily(this);
+		}
+		return ratioDifferenceFamily;
 	}
 
 	public class RowKey extends HBaseRowKey {
@@ -807,7 +823,6 @@ public class Xbrl extends HBaseTable {
 
 	public class GrowthFamily extends HBaseColumnFamily {
 		public static final String RATIO = "ratio";
-		public static final String NATURAL_LOGARITHM = "naturalLogarithm";
 
 		private GrowthFamily(Xbrl entity) {
 			super(entity);
@@ -847,40 +862,6 @@ public class Xbrl extends HBaseTable {
 					periodType, instant, startDate, endDate);
 			GrowthValue val = new GrowthValue();
 			val.set(ratio);
-			add(qual, ver, val);
-		}
-
-		public BigDecimal getNaturalLogarithm(String elementId,
-				PeriodType periodType, Date instant, Date startDate,
-				Date endDate) {
-			HBaseColumnQualifier qual = new GrowthQualifier(NATURAL_LOGARITHM,
-					elementId, periodType, instant, startDate, endDate);
-			GrowthValue val = (GrowthValue) super.getLatestValue(qual);
-			if (val == null) {
-				return null;
-			}
-			return val.getAsBigDecimal();
-		}
-
-		public BigDecimal getNaturalLogarithm(String elementId,
-				PeriodType periodType, Date startDate, Date endDate) {
-			return getNaturalLogarithm(elementId, periodType, null, startDate,
-					endDate);
-		}
-
-		public BigDecimal getNaturalLogarithm(String elementId,
-				PeriodType periodType, Date instant) {
-			return getNaturalLogarithm(elementId, periodType, instant, null,
-					null);
-		}
-
-		public void setNaturalLogarithm(String elementId,
-				PeriodType periodType, Date instant, Date startDate,
-				Date endDate, Date ver, BigDecimal naturalLogarithm) {
-			GrowthQualifier qual = new GrowthQualifier(NATURAL_LOGARITHM,
-					elementId, periodType, instant, startDate, endDate);
-			GrowthValue val = new GrowthValue();
-			val.set(naturalLogarithm);
 			add(qual, ver, val);
 		}
 
@@ -1046,6 +1027,430 @@ public class Xbrl extends HBaseTable {
 			}
 
 			public GrowthValue(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public BigDecimal getAsBigDecimal() {
+				return ByteConvertUtility.getBigDecimalFromBytes(getBytes());
+			}
+
+			public void set(BigDecimal value) {
+				setBytes(ByteConvertUtility.toBytes(value));
+			}
+		}
+	}
+
+	public class RatioFamily extends HBaseColumnFamily {
+		public static final String PERCENT = "percent";
+
+		private RatioFamily(Xbrl entity) {
+			super(entity);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Set<RatioQualifier> getQualifiers() {
+			return (Set<RatioQualifier>) (Object) super
+					.getQualifierVersionValueMap().keySet();
+		}
+
+		public BigDecimal getPercent(String elementId, PeriodType periodType,
+				Date instant, Date startDate, Date endDate) {
+			HBaseColumnQualifier qual = new RatioQualifier(PERCENT, elementId,
+					periodType, instant, startDate, endDate);
+			RatioValue val = (RatioValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
+			return val.getAsBigDecimal();
+		}
+
+		public void setPercent(String elementId, PeriodType periodType,
+				Date instant, Date startDate, Date endDate, Date ver,
+				BigDecimal percent) {
+			RatioQualifier qual = new RatioQualifier(PERCENT, elementId,
+					periodType, instant, startDate, endDate);
+			RatioValue val = new RatioValue();
+			val.set(percent);
+			add(qual, ver, val);
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
+			return this.new RatioQualifier(bytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] bytes) {
+			return this.new RatioValue(bytes);
+		}
+
+		public class RatioQualifier extends HBaseColumnQualifier {
+			private static final int COLUMN_NAME_LENGTH = 30;
+			private static final int ELEMENT_ID_LENGTH = 300;
+			private static final int PERIOD_TYPE_LENGTH = 10;
+			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int COLUMN_NAME_BEGIN_INDEX = 0;
+			private static final int COLUMN_NAME_END_INDEX = COLUMN_NAME_BEGIN_INDEX
+					+ COLUMN_NAME_LENGTH;
+			private static final int ELEMENT_ID_BEGIN_INDEX = COLUMN_NAME_END_INDEX + 1;
+			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
+					+ ELEMENT_ID_LENGTH;
+			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
+			private static final int PERIOD_TYPE_END_INDEX = PERIOD_TYPE_BEGIN_INDEX
+					+ PERIOD_TYPE_LENGTH;
+			private static final int INSTANT_BEGIN_INDEX = PERIOD_TYPE_END_INDEX + 1;
+			private static final int INSTANT_END_INDEX = INSTANT_BEGIN_INDEX
+					+ INSTANT_LENGTH;
+			private static final int START_DATE_BEGIN_INDEX = INSTANT_END_INDEX + 1;
+			private static final int START_DATE_END_INDEX = START_DATE_BEGIN_INDEX
+					+ START_DATE_LENGTH;
+			private static final int END_DATE_BEGIN_INDEX = START_DATE_END_INDEX + 1;
+			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
+					+ END_DATE_LENGTH;
+
+			public RatioQualifier() {
+				super();
+			}
+
+			public RatioQualifier(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public RatioQualifier(String columnName, String elementId,
+					PeriodType periodType, Date instant, Date startDate,
+					Date endDate) {
+				super();
+				byte[] columnNameBytes = ByteConvertUtility.toBytes(columnName,
+						COLUMN_NAME_LENGTH);
+				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
+				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
+						periodType == null ? null : periodType.name(),
+						PERIOD_TYPE_LENGTH);
+				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
+				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
+				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
+				super.setBytes(ArrayUtility.addAll(columnNameBytes, SPACE,
+						elementIdBytes, SPACE, periodTypeBytes, SPACE,
+						instantBytes, SPACE, startDateBytes, SPACE,
+						endDateBytes));
+			}
+
+			public String getColumnName() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						COLUMN_NAME_BEGIN_INDEX, COLUMN_NAME_END_INDEX);
+			}
+
+			public void setColumnName(String columnName) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(columnName,
+						COLUMN_NAME_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, COLUMN_NAME_BEGIN_INDEX,
+						COLUMN_NAME_END_INDEX);
+			}
+
+			public String getElementId() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						ELEMENT_ID_BEGIN_INDEX, ELEMENT_ID_END_INDEX);
+			}
+
+			public void setElementId(String elementId) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
+						ELEMENT_ID_END_INDEX);
+			}
+
+			public PeriodType getPeriodType() {
+				return PeriodType
+						.valueOf(ByteConvertUtility.getStringFromBytes(
+								getBytes(), PERIOD_TYPE_BEGIN_INDEX,
+								PERIOD_TYPE_END_INDEX));
+			}
+
+			public void setPeriodType(PeriodType periodType) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(
+						periodType == null ? null : periodType.name(),
+						PERIOD_TYPE_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, PERIOD_TYPE_BEGIN_INDEX,
+						PERIOD_TYPE_END_INDEX);
+			}
+
+			public Date getInstant() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							INSTANT_BEGIN_INDEX, INSTANT_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setInstant(Date instant) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(instant);
+				ArrayUtility.replace(bytes, subBytes, INSTANT_BEGIN_INDEX,
+						INSTANT_END_INDEX);
+			}
+
+			public Date getStartDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							START_DATE_BEGIN_INDEX, START_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setStartDate(Date startDate) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(startDate);
+				ArrayUtility.replace(bytes, subBytes, START_DATE_BEGIN_INDEX,
+						START_DATE_END_INDEX);
+			}
+
+			public Date getEndDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							END_DATE_BEGIN_INDEX, END_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setEndDate(Date endDate) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(endDate);
+				ArrayUtility.replace(bytes, subBytes, END_DATE_BEGIN_INDEX,
+						END_DATE_END_INDEX);
+			}
+		}
+
+		public class RatioValue extends HBaseValue {
+			public RatioValue() {
+				super();
+			}
+
+			public RatioValue(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public BigDecimal getAsBigDecimal() {
+				return ByteConvertUtility.getBigDecimalFromBytes(getBytes());
+			}
+
+			public void set(BigDecimal value) {
+				setBytes(ByteConvertUtility.toBytes(value));
+			}
+		}
+	}
+
+	public class RatioDifferenceFamily extends HBaseColumnFamily {
+		public static final String DIFFERENCE = "difference";
+
+		private RatioDifferenceFamily(Xbrl entity) {
+			super(entity);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Set<RatioDifferenceQualifier> getQualifiers() {
+			return (Set<RatioDifferenceQualifier>) (Object) super
+					.getQualifierVersionValueMap().keySet();
+		}
+
+		public BigDecimal getDifference(String elementId,
+				PeriodType periodType, Date instant, Date startDate,
+				Date endDate) {
+			HBaseColumnQualifier qual = new RatioDifferenceQualifier(
+					DIFFERENCE, elementId, periodType, instant, startDate,
+					endDate);
+			RatioDifferenceValue val = (RatioDifferenceValue) super
+					.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
+			return val.getAsBigDecimal();
+		}
+
+		public void setDifference(String elementId, PeriodType periodType,
+				Date instant, Date startDate, Date endDate, Date ver,
+				BigDecimal difference) {
+			RatioDifferenceQualifier qual = new RatioDifferenceQualifier(
+					DIFFERENCE, elementId, periodType, instant, startDate,
+					endDate);
+			RatioDifferenceValue val = new RatioDifferenceValue();
+			val.set(difference);
+			add(qual, ver, val);
+		}
+
+		@Override
+		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
+			return this.new RatioDifferenceQualifier(bytes);
+		}
+
+		@Override
+		protected HBaseValue generateValue(byte[] bytes) {
+			return this.new RatioDifferenceValue(bytes);
+		}
+
+		public class RatioDifferenceQualifier extends HBaseColumnQualifier {
+			private static final int COLUMN_NAME_LENGTH = 30;
+			private static final int ELEMENT_ID_LENGTH = 300;
+			private static final int PERIOD_TYPE_LENGTH = 10;
+			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
+			private static final int COLUMN_NAME_BEGIN_INDEX = 0;
+			private static final int COLUMN_NAME_END_INDEX = COLUMN_NAME_BEGIN_INDEX
+					+ COLUMN_NAME_LENGTH;
+			private static final int ELEMENT_ID_BEGIN_INDEX = COLUMN_NAME_END_INDEX + 1;
+			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
+					+ ELEMENT_ID_LENGTH;
+			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
+			private static final int PERIOD_TYPE_END_INDEX = PERIOD_TYPE_BEGIN_INDEX
+					+ PERIOD_TYPE_LENGTH;
+			private static final int INSTANT_BEGIN_INDEX = PERIOD_TYPE_END_INDEX + 1;
+			private static final int INSTANT_END_INDEX = INSTANT_BEGIN_INDEX
+					+ INSTANT_LENGTH;
+			private static final int START_DATE_BEGIN_INDEX = INSTANT_END_INDEX + 1;
+			private static final int START_DATE_END_INDEX = START_DATE_BEGIN_INDEX
+					+ START_DATE_LENGTH;
+			private static final int END_DATE_BEGIN_INDEX = START_DATE_END_INDEX + 1;
+			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
+					+ END_DATE_LENGTH;
+
+			public RatioDifferenceQualifier() {
+				super();
+			}
+
+			public RatioDifferenceQualifier(byte[] bytes) {
+				super();
+				setBytes(bytes);
+			}
+
+			public RatioDifferenceQualifier(String columnName,
+					String elementId, PeriodType periodType, Date instant,
+					Date startDate, Date endDate) {
+				super();
+				byte[] columnNameBytes = ByteConvertUtility.toBytes(columnName,
+						COLUMN_NAME_LENGTH);
+				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
+				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
+						periodType == null ? null : periodType.name(),
+						PERIOD_TYPE_LENGTH);
+				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
+				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
+				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
+				super.setBytes(ArrayUtility.addAll(columnNameBytes, SPACE,
+						elementIdBytes, SPACE, periodTypeBytes, SPACE,
+						instantBytes, SPACE, startDateBytes, SPACE,
+						endDateBytes));
+			}
+
+			public String getColumnName() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						COLUMN_NAME_BEGIN_INDEX, COLUMN_NAME_END_INDEX);
+			}
+
+			public void setColumnName(String columnName) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(columnName,
+						COLUMN_NAME_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, COLUMN_NAME_BEGIN_INDEX,
+						COLUMN_NAME_END_INDEX);
+			}
+
+			public String getElementId() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						ELEMENT_ID_BEGIN_INDEX, ELEMENT_ID_END_INDEX);
+			}
+
+			public void setElementId(String elementId) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
+						ELEMENT_ID_END_INDEX);
+			}
+
+			public PeriodType getPeriodType() {
+				return PeriodType
+						.valueOf(ByteConvertUtility.getStringFromBytes(
+								getBytes(), PERIOD_TYPE_BEGIN_INDEX,
+								PERIOD_TYPE_END_INDEX));
+			}
+
+			public void setPeriodType(PeriodType periodType) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(
+						periodType == null ? null : periodType.name(),
+						PERIOD_TYPE_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, PERIOD_TYPE_BEGIN_INDEX,
+						PERIOD_TYPE_END_INDEX);
+			}
+
+			public Date getInstant() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							INSTANT_BEGIN_INDEX, INSTANT_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setInstant(Date instant) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(instant);
+				ArrayUtility.replace(bytes, subBytes, INSTANT_BEGIN_INDEX,
+						INSTANT_END_INDEX);
+			}
+
+			public Date getStartDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							START_DATE_BEGIN_INDEX, START_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setStartDate(Date startDate) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(startDate);
+				ArrayUtility.replace(bytes, subBytes, START_DATE_BEGIN_INDEX,
+						START_DATE_END_INDEX);
+			}
+
+			public Date getEndDate() {
+				try {
+					return ByteConvertUtility.getDateFromBytes(getBytes(),
+							END_DATE_BEGIN_INDEX, END_DATE_END_INDEX);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public void setEndDate(Date endDate) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(endDate);
+				ArrayUtility.replace(bytes, subBytes, END_DATE_BEGIN_INDEX,
+						END_DATE_END_INDEX);
+			}
+		}
+
+		public class RatioDifferenceValue extends HBaseValue {
+			public RatioDifferenceValue() {
+				super();
+			}
+
+			public RatioDifferenceValue(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}

@@ -129,10 +129,6 @@
             {  
                "type":"BigDecimal",
                "name":"ratio"
-            },
-            {  
-               "type":"BigDecimal",
-               "name":"naturalLogarithm"
             }
          ],
          "GrowthQualifier":[  
@@ -165,6 +161,86 @@
             }
          ],
          "GrowthValue":[  
+         
+         ]
+      },
+      "RatioFamily":{
+        "Columns":[  
+            {  
+               "type":"BigDecimal",
+               "name":"percent"
+            }
+         ],
+         "RatioQualifier":[  
+            {  
+               "type":"String",
+               "name":"columnName",
+               "length":30
+            },
+            {  
+               "type":"String",
+               "name":"elementId",
+               "length":300
+            },
+            {  
+               "type":"PeriodType",
+               "name":"periodType",
+               "length":10
+            },
+            {  
+               "type":"Date",
+               "name":"instant"
+            },
+            {  
+               "type":"Date",
+               "name":"startDate"
+            },
+            {  
+               "type":"Date",
+               "name":"endDate"
+            }
+         ],
+         "RatioValue":[  
+         
+         ]
+      },
+      "RatioDifferenceFamily":{
+        "Columns":[  
+            {  
+               "type":"BigDecimal",
+               "name":"difference"
+            }
+         ],
+         "RatioDifferenceQualifier":[  
+            {  
+               "type":"String",
+               "name":"columnName",
+               "length":30
+            },
+            {  
+               "type":"String",
+               "name":"elementId",
+               "length":300
+            },
+            {  
+               "type":"PeriodType",
+               "name":"periodType",
+               "length":10
+            },
+            {  
+               "type":"Date",
+               "name":"instant"
+            },
+            {  
+               "type":"Date",
+               "name":"startDate"
+            },
+            {  
+               "type":"Date",
+               "name":"endDate"
+            }
+         ],
+         "RatioDifferenceValue":[  
          
          ]
       }
