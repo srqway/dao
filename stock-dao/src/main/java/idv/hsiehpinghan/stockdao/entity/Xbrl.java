@@ -1065,6 +1065,16 @@ public class Xbrl extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
+		public BigDecimal getPercent(String elementId, PeriodType periodType,
+				Date instant) {
+			return getPercent(elementId, periodType, instant, null, null);
+		}
+
+		public BigDecimal getPercent(String elementId, PeriodType periodType,
+				Date startDate, Date endDate) {
+			return getPercent(elementId, periodType, null, startDate, endDate);
+		}
+
 		public void setPercent(String elementId, PeriodType periodType,
 				Date instant, Date startDate, Date endDate, Date ver,
 				BigDecimal percent) {
@@ -1073,6 +1083,17 @@ public class Xbrl extends HBaseTable {
 			RatioValue val = new RatioValue();
 			val.set(percent);
 			add(qual, ver, val);
+		}
+
+		public void setPercent(String elementId, PeriodType periodType,
+				Date instant, Date ver, BigDecimal percent) {
+			setPercent(elementId, periodType, instant, null, null, ver, percent);
+		}
+
+		public void setPercent(String elementId, PeriodType periodType,
+				Date startDate, Date endDate, Date ver, BigDecimal percent) {
+			setPercent(elementId, periodType, null, startDate, endDate, ver,
+					percent);
 		}
 
 		@Override
