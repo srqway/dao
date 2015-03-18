@@ -31,32 +31,28 @@ public class RatioDifferenceRepository extends RepositoryBase {
 	}
 
 	public RatioDifference generateEntity(String stockCode,
-			ReportType reportType, int year, int season, String elementId) {
+			ReportType reportType, int year, int season) {
 		RatioDifference entity = new RatioDifference();
-		generateRowKey(stockCode, reportType, year, season, elementId, entity);
+		generateRowKey(stockCode, reportType, year, season, entity);
 		return entity;
 	}
 
 	public RatioDifference get(String stockCode, ReportType reportType,
-			int year, int season, String elementId)
-			throws IllegalAccessException, NoSuchMethodException,
-			SecurityException, InstantiationException,
+			int year, int season) throws IllegalAccessException,
+			NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalArgumentException, InvocationTargetException, IOException {
-		HBaseRowKey rowKey = getRowKey(stockCode, reportType, year, season,
-				elementId);
+		HBaseRowKey rowKey = getRowKey(stockCode, reportType, year, season);
 		return (RatioDifference) hbaseAssistant.get(rowKey);
 	}
 
 	public TreeSet<RatioDifference> fuzzyScan(String stockCode,
-			ReportType reportType, Integer year, Integer season,
-			String elementId) {
+			ReportType reportType, Integer year, Integer season) {
 		RatioDifference.RowKey rowKey = (RatioDifference.RowKey) getRowKey(
 				stockCode, reportType, year == null ? 0 : year,
-				season == null ? 0 : season, elementId);
+				season == null ? 0 : season);
 		List<Pair<byte[], byte[]>> fuzzyKeysData = new ArrayList<Pair<byte[], byte[]>>();
 		Pair<byte[], byte[]> pair = new Pair<byte[], byte[]>(rowKey.getBytes(),
-				rowKey.getFuzzyBytes(stockCode, reportType, year, season,
-						elementId));
+				rowKey.getFuzzyBytes(stockCode, reportType, year, season));
 		fuzzyKeysData.add(pair);
 		FuzzyRowFilter fuzzyRowFilter = new FuzzyRowFilter(fuzzyKeysData);
 		@SuppressWarnings("unchecked")
@@ -81,12 +77,11 @@ public class RatioDifferenceRepository extends RepositoryBase {
 	}
 
 	public boolean exists(String stockCode, ReportType reportType, int year,
-			int season, String elementId) throws NoSuchFieldException,
-			SecurityException, IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException, InstantiationException, IOException {
-		HBaseRowKey key = getRowKey(stockCode, reportType, year, season,
-				elementId);
+			int season) throws NoSuchFieldException, SecurityException,
+			IllegalArgumentException, IllegalAccessException,
+			NoSuchMethodException, InvocationTargetException,
+			InstantiationException, IOException {
+		HBaseRowKey key = getRowKey(stockCode, reportType, year, season);
 		return super.exists(key);
 	}
 
@@ -96,15 +91,14 @@ public class RatioDifferenceRepository extends RepositoryBase {
 	}
 
 	private HBaseRowKey getRowKey(String stockCode, ReportType reportType,
-			int year, int season, String elementId) {
+			int year, int season) {
 		RatioDifference entity = new RatioDifference();
-		generateRowKey(stockCode, reportType, year, season, elementId, entity);
+		generateRowKey(stockCode, reportType, year, season, entity);
 		return entity.getRowKey();
 	}
 
 	private void generateRowKey(String stockCode, ReportType reportType,
-			int year, int season, String elementId, RatioDifference entity) {
-		entity.new RowKey(stockCode, reportType, year, season, elementId,
-				entity);
+			int year, int season, RatioDifference entity) {
+		entity.new RowKey(stockCode, reportType, year, season, entity);
 	}
 }

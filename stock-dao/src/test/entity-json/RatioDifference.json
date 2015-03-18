@@ -20,11 +20,6 @@
             "type":"int",
             "name":"season",
             "length":1
-         },
-         {  
-            "type":"String",
-            "name":"elementId",
-            "length":300
          }
       ],
       "TTestFamily":{
@@ -57,7 +52,13 @@
          "TTestQualifier":[  
             {  
                "type":"String",
-               "name":"columnName"
+               "name":"columnName",
+               "length":30
+            },
+            {  
+               "type":"String",
+               "name":"elementId",
+               "length":300
             }
          ],
          "TTestValue":[  

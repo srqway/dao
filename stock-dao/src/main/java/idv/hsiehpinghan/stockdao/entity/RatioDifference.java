@@ -41,7 +41,6 @@ public class RatioDifference extends HBaseTable {
 		private static final int REPORT_TYPE_LENGTH = 30;
 		private static final int YEAR_LENGTH = 4;
 		private static final int SEASON_LENGTH = 1;
-		private static final int ELEMENT_ID_LENGTH = 300;
 		private static final int STOCK_CODE_BEGIN_INDEX = 0;
 		private static final int STOCK_CODE_END_INDEX = STOCK_CODE_BEGIN_INDEX
 				+ STOCK_CODE_LENGTH;
@@ -54,9 +53,6 @@ public class RatioDifference extends HBaseTable {
 		private static final int SEASON_BEGIN_INDEX = YEAR_END_INDEX + 1;
 		private static final int SEASON_END_INDEX = SEASON_BEGIN_INDEX
 				+ SEASON_LENGTH;
-		private static final int ELEMENT_ID_BEGIN_INDEX = SEASON_END_INDEX + 1;
-		private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
-				+ ELEMENT_ID_LENGTH;
 
 		public RowKey(RatioDifference entity) {
 			super(entity);
@@ -68,7 +64,7 @@ public class RatioDifference extends HBaseTable {
 		}
 
 		public RowKey(String stockCode, ReportType reportType, int year,
-				int season, String elementId, RatioDifference entity) {
+				int season, RatioDifference entity) {
 			super(entity);
 			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode,
 					STOCK_CODE_LENGTH);
@@ -78,15 +74,12 @@ public class RatioDifference extends HBaseTable {
 			byte[] yearBytes = ByteConvertUtility.toBytes(year, YEAR_LENGTH);
 			byte[] seasonBytes = ByteConvertUtility.toBytes(season,
 					SEASON_LENGTH);
-			byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
-					ELEMENT_ID_LENGTH);
 			super.setBytes(ArrayUtility.addAll(stockCodeBytes, SPACE,
-					reportTypeBytes, SPACE, yearBytes, SPACE, seasonBytes,
-					SPACE, elementIdBytes));
+					reportTypeBytes, SPACE, yearBytes, SPACE, seasonBytes));
 		}
 
 		public byte[] getFuzzyBytes(String stockCode, ReportType reportType,
-				Integer year, Integer season, String elementId) {
+				Integer year, Integer season) {
 			byte[] stockCodeBytes;
 			if (stockCode == null) {
 				stockCodeBytes = ArrayUtility.getBytes(STOCK_CODE_LENGTH,
@@ -119,19 +112,10 @@ public class RatioDifference extends HBaseTable {
 				seasonBytes = ArrayUtility.getBytes(SEASON_LENGTH,
 						ByteUtility.BYTE_ZERO);
 			}
-			byte[] elementIdBytes;
-			if (elementId == null) {
-				elementIdBytes = ArrayUtility.getBytes(ELEMENT_ID_LENGTH,
-						ByteUtility.BYTE_ONE);
-			} else {
-				elementIdBytes = ArrayUtility.getBytes(ELEMENT_ID_LENGTH,
-						ByteUtility.BYTE_ZERO);
-			}
 			return ArrayUtility.addAll(stockCodeBytes,
 					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, reportTypeBytes,
 					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, yearBytes,
-					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, seasonBytes,
-					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, elementIdBytes);
+					ByteUtility.SINGLE_ZERO_BYTE_ARRAY, seasonBytes);
 		}
 
 		public String getStockCode() {
@@ -185,19 +169,6 @@ public class RatioDifference extends HBaseTable {
 			ArrayUtility.replace(bytes, subBytes, SEASON_BEGIN_INDEX,
 					SEASON_END_INDEX);
 		}
-
-		public String getElementId() {
-			return ByteConvertUtility.getStringFromBytes(getBytes(),
-					ELEMENT_ID_BEGIN_INDEX, ELEMENT_ID_END_INDEX);
-		}
-
-		public void setElementId(String elementId) {
-			byte[] bytes = getBytes();
-			byte[] subBytes = ByteConvertUtility.toBytes(elementId,
-					ELEMENT_ID_LENGTH);
-			ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
-					ELEMENT_ID_END_INDEX);
-		}
 	}
 
 	public class TTestFamily extends HBaseColumnFamily {
@@ -218,8 +189,8 @@ public class RatioDifference extends HBaseTable {
 					.getQualifierVersionValueMap().keySet();
 		}
 
-		public BigDecimal getStatistic() {
-			HBaseColumnQualifier qual = new TTestQualifier(STATISTIC);
+		public BigDecimal getStatistic(String elementId) {
+			HBaseColumnQualifier qual = new TTestQualifier(STATISTIC, elementId);
 			TTestValue val = (TTestValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
@@ -227,15 +198,17 @@ public class RatioDifference extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
-		public void setStatistic(Date ver, BigDecimal statistic) {
-			TTestQualifier qual = new TTestQualifier(STATISTIC);
+		public void setStatistic(String elementId, Date ver,
+				BigDecimal statistic) {
+			TTestQualifier qual = new TTestQualifier(STATISTIC, elementId);
 			TTestValue val = new TTestValue();
 			val.set(statistic);
 			add(qual, ver, val);
 		}
 
-		public BigDecimal getDegreeOfFreedom() {
-			HBaseColumnQualifier qual = new TTestQualifier(DEGREE_OF_FREEDOM);
+		public BigDecimal getDegreeOfFreedom(String elementId) {
+			HBaseColumnQualifier qual = new TTestQualifier(DEGREE_OF_FREEDOM,
+					elementId);
 			TTestValue val = (TTestValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
@@ -243,15 +216,18 @@ public class RatioDifference extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
-		public void setDegreeOfFreedom(Date ver, BigDecimal degreeOfFreedom) {
-			TTestQualifier qual = new TTestQualifier(DEGREE_OF_FREEDOM);
+		public void setDegreeOfFreedom(String elementId, Date ver,
+				BigDecimal degreeOfFreedom) {
+			TTestQualifier qual = new TTestQualifier(DEGREE_OF_FREEDOM,
+					elementId);
 			TTestValue val = new TTestValue();
 			val.set(degreeOfFreedom);
 			add(qual, ver, val);
 		}
 
-		public BigDecimal getConfidenceInterval() {
-			HBaseColumnQualifier qual = new TTestQualifier(CONFIDENCE_INTERVAL);
+		public BigDecimal getConfidenceInterval(String elementId) {
+			HBaseColumnQualifier qual = new TTestQualifier(CONFIDENCE_INTERVAL,
+					elementId);
 			TTestValue val = (TTestValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
@@ -259,16 +235,18 @@ public class RatioDifference extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
-		public void setConfidenceInterval(Date ver,
+		public void setConfidenceInterval(String elementId, Date ver,
 				BigDecimal confidenceInterval) {
-			TTestQualifier qual = new TTestQualifier(CONFIDENCE_INTERVAL);
+			TTestQualifier qual = new TTestQualifier(CONFIDENCE_INTERVAL,
+					elementId);
 			TTestValue val = new TTestValue();
 			val.set(confidenceInterval);
 			add(qual, ver, val);
 		}
 
-		public BigDecimal getSampleMean() {
-			HBaseColumnQualifier qual = new TTestQualifier(SAMPLE_MEAN);
+		public BigDecimal getSampleMean(String elementId) {
+			HBaseColumnQualifier qual = new TTestQualifier(SAMPLE_MEAN,
+					elementId);
 			TTestValue val = (TTestValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
@@ -276,15 +254,17 @@ public class RatioDifference extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
-		public void setSampleMean(Date ver, BigDecimal sampleMean) {
-			TTestQualifier qual = new TTestQualifier(SAMPLE_MEAN);
+		public void setSampleMean(String elementId, Date ver,
+				BigDecimal sampleMean) {
+			TTestQualifier qual = new TTestQualifier(SAMPLE_MEAN, elementId);
 			TTestValue val = new TTestValue();
 			val.set(sampleMean);
 			add(qual, ver, val);
 		}
 
-		public BigDecimal getHypothesizedMean() {
-			HBaseColumnQualifier qual = new TTestQualifier(HYPOTHESIZED_MEAN);
+		public BigDecimal getHypothesizedMean(String elementId) {
+			HBaseColumnQualifier qual = new TTestQualifier(HYPOTHESIZED_MEAN,
+					elementId);
 			TTestValue val = (TTestValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
@@ -292,15 +272,17 @@ public class RatioDifference extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
-		public void setHypothesizedMean(Date ver, BigDecimal hypothesizedMean) {
-			TTestQualifier qual = new TTestQualifier(HYPOTHESIZED_MEAN);
+		public void setHypothesizedMean(String elementId, Date ver,
+				BigDecimal hypothesizedMean) {
+			TTestQualifier qual = new TTestQualifier(HYPOTHESIZED_MEAN,
+					elementId);
 			TTestValue val = new TTestValue();
 			val.set(hypothesizedMean);
 			add(qual, ver, val);
 		}
 
-		public BigDecimal getPValue() {
-			HBaseColumnQualifier qual = new TTestQualifier(P_VALUE);
+		public BigDecimal getPValue(String elementId) {
+			HBaseColumnQualifier qual = new TTestQualifier(P_VALUE, elementId);
 			TTestValue val = (TTestValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
@@ -308,8 +290,8 @@ public class RatioDifference extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
-		public void setPValue(Date ver, BigDecimal pValue) {
-			TTestQualifier qual = new TTestQualifier(P_VALUE);
+		public void setPValue(String elementId, Date ver, BigDecimal pValue) {
+			TTestQualifier qual = new TTestQualifier(P_VALUE, elementId);
 			TTestValue val = new TTestValue();
 			val.set(pValue);
 			add(qual, ver, val);
@@ -326,6 +308,15 @@ public class RatioDifference extends HBaseTable {
 		}
 
 		public class TTestQualifier extends HBaseColumnQualifier {
+			private static final int COLUMN_NAME_LENGTH = 30;
+			private static final int ELEMENT_ID_LENGTH = 300;
+			private static final int COLUMN_NAME_BEGIN_INDEX = 0;
+			private static final int COLUMN_NAME_END_INDEX = COLUMN_NAME_BEGIN_INDEX
+					+ COLUMN_NAME_LENGTH;
+			private static final int ELEMENT_ID_BEGIN_INDEX = COLUMN_NAME_END_INDEX + 1;
+			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
+					+ ELEMENT_ID_LENGTH;
+
 			public TTestQualifier() {
 				super();
 			}
@@ -335,18 +326,40 @@ public class RatioDifference extends HBaseTable {
 				setBytes(bytes);
 			}
 
-			public TTestQualifier(String columnName) {
+			public TTestQualifier(String columnName, String elementId) {
 				super();
-				setColumnName(columnName);
+				byte[] columnNameBytes = ByteConvertUtility.toBytes(columnName,
+						COLUMN_NAME_LENGTH);
+				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
+				super.setBytes(ArrayUtility.addAll(columnNameBytes, SPACE,
+						elementIdBytes));
 			}
 
 			public String getColumnName() {
-				return ByteConvertUtility.getStringFromBytes(getBytes());
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						COLUMN_NAME_BEGIN_INDEX, COLUMN_NAME_END_INDEX);
 			}
 
 			public void setColumnName(String columnName) {
-				byte[] bytes = ByteConvertUtility.toBytes(columnName);
-				setBytes(bytes);
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(columnName,
+						COLUMN_NAME_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, COLUMN_NAME_BEGIN_INDEX,
+						COLUMN_NAME_END_INDEX);
+			}
+
+			public String getElementId() {
+				return ByteConvertUtility.getStringFromBytes(getBytes(),
+						ELEMENT_ID_BEGIN_INDEX, ELEMENT_ID_END_INDEX);
+			}
+
+			public void setElementId(String elementId) {
+				byte[] bytes = getBytes();
+				byte[] subBytes = ByteConvertUtility.toBytes(elementId,
+						ELEMENT_ID_LENGTH);
+				ArrayUtility.replace(bytes, subBytes, ELEMENT_ID_BEGIN_INDEX,
+						ELEMENT_ID_END_INDEX);
 			}
 		}
 
