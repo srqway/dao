@@ -2,6 +2,7 @@ package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
 import idv.hsiehpinghan.stockdao.entity.Taxonomy;
+import idv.hsiehpinghan.stockdao.entity.Taxonomy.NameFamily;
 import idv.hsiehpinghan.stockdao.entity.Taxonomy.PresentationFamily;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 import idv.hsiehpinghan.xbrlassistant.enumeration.XbrlTaxonomyVersion;
@@ -14,9 +15,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class TaxonomyRepositoryTest {
-	private Date ver = DateUtility.getDate(2099, 2, 3);
-	private XbrlTaxonomyVersion taxonomyVersion = XbrlTaxonomyVersion.TIFRS_BASI_CR_2013_03_31;
+	private Date ver = DateUtility.getDate(2015, 2, 3);
+	private String englishName = "englishName";
+	private XbrlTaxonomyVersion taxonomyVersion = XbrlTaxonomyVersion.TIFRS_BASI_IR_2013_03_31;
+	private String elementId = "elementId";
 	private String balanceSheet = "balanceSheet";
+	private String chineseName = "chineseName";
 	private String statementOfCashFlows = "statementOfCashFlows";
 	private String statementOfChangesInEquity = "statementOfChangesInEquity";
 	private String statementOfComprehensiveIncome = "statementOfComprehensiveIncome";
@@ -33,6 +37,7 @@ public class TaxonomyRepositoryTest {
 	public void put() throws Exception {
 		Taxonomy entity = repository.generateEntity(taxonomyVersion);
 		generatePresentationFamilyContent(entity);
+		generateNameFamilyContent(entity);
 		repository.put(entity);
 		Assert.assertTrue(repository.exists(entity.getRowKey()));
 	}
@@ -41,6 +46,7 @@ public class TaxonomyRepositoryTest {
 	public void get() throws Exception {
 		Taxonomy entity = repository.get(taxonomyVersion);
 		assertPresentationFamily(entity);
+		assertNameFamily(entity);
 	}
 
 	private void generatePresentationFamilyContent(Taxonomy entity) {
@@ -60,5 +66,17 @@ public class TaxonomyRepositoryTest {
 		Assert.assertEquals(statementOfCashFlows, fam.getStatementOfCashFlows());
 		Assert.assertEquals(statementOfChangesInEquity,
 				fam.getStatementOfChangesInEquity());
+	}
+
+	private void generateNameFamilyContent(Taxonomy entity) {
+		NameFamily fam = entity.getNameFamily();
+		fam.setChineseName(elementId, ver, chineseName);
+		fam.setEnglishName(elementId, ver, englishName);
+	}
+
+	private void assertNameFamily(Taxonomy entity) {
+		NameFamily fam = entity.getNameFamily();
+		Assert.assertEquals(chineseName, fam.getChineseName(elementId));
+		Assert.assertEquals(englishName, fam.getEnglishName(elementId));
 	}
 }

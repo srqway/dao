@@ -63,11 +63,13 @@
 	<test name="RatioDifference">
 		<classes>
 			<!-- Test entity -->
-<!-- 			<class name="idv.hsiehpinghan.stockdao.entity.RatioDifferenceTest" /> -->
+			<!-- <class name="idv.hsiehpinghan.stockdao.entity.RatioDifferenceTest" 
+				/> -->
 
 			<!-- Test repositoty -->
-<!-- 			<class -->
-<!-- 				name="idv.hsiehpinghan.stockdao.repository.RatioDifferenceRepositoryTest" /> -->
+			<!-- <class -->
+			<!-- name="idv.hsiehpinghan.stockdao.repository.RatioDifferenceRepositoryTest" 
+				/> -->
 		</classes>
 	</test>
 </suite>
