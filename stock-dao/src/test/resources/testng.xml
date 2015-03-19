@@ -32,8 +32,8 @@
 			<!-- <class name="idv.hsiehpinghan.stockdao.entity.XbrlTest" /> -->
 
 			<!-- Test repositoty -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.repository.XbrlRepositoryTest" 
-				/> -->
+			<!-- <class name="idv.hsiehpinghan.stockdao.repository.XbrlRepositoryTest" -->
+			<!-- /> -->
 		</classes>
 	</test>
 	<test name="MonthlyOperatingIncome">

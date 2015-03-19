@@ -35,7 +35,7 @@ public class XbrlRepositoryTest {
 	private String statementOfChangesInEquityContext = "statementOfChangesInEquityContext";
 	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_BASI_CR_2013_03_31;
 	private BigDecimal difference = new BigDecimal("29.29");
-	private int season = 2;
+	private int season = 3;
 	private BigDecimal ratio = new BigDecimal("31.31");
 	private String statementOfCashFlowsContext = "statementOfCashFlowsContext";
 	private String balanceSheetContext = "balanceSheetContext";
@@ -163,14 +163,14 @@ public class XbrlRepositoryTest {
 
 	private void assertInfoFamily(Xbrl entity) {
 		InfoFamily fam = entity.getInfoFamily();
-		Assert.assertEquals(version, fam.getVersion());
-		Assert.assertEquals(balanceSheetContext, fam.getBalanceSheetContext());
-		Assert.assertEquals(statementOfComprehensiveIncomeContext,
-				fam.getStatementOfComprehensiveIncomeContext());
-		Assert.assertEquals(statementOfCashFlowsContext,
-				fam.getStatementOfCashFlowsContext());
-		Assert.assertEquals(statementOfChangesInEquityContext,
-				fam.getStatementOfChangesInEquityContext());
+		Assert.assertEquals(fam.getVersion(), version);
+		Assert.assertEquals(fam.getBalanceSheetContext(), balanceSheetContext);
+		Assert.assertEquals(fam.getStatementOfComprehensiveIncomeContext(),
+				statementOfComprehensiveIncomeContext);
+		Assert.assertEquals(fam.getStatementOfCashFlowsContext(),
+				statementOfCashFlowsContext);
+		Assert.assertEquals(fam.getStatementOfChangesInEquityContext(),
+				statementOfChangesInEquityContext);
 	}
 
 	private void assertEmptyInfoFamily(Xbrl entity) {
@@ -222,8 +222,8 @@ public class XbrlRepositoryTest {
 
 	private void assertGrowthFamily(Xbrl entity) {
 		GrowthFamily fam = entity.getGrowthFamily();
-		Assert.assertEquals(ratio, fam.getRatio(elementId, periodType, instant,
-				startDate, endDate));
+		Assert.assertEquals(fam.getRatio(elementId, periodType, instant,
+				startDate, endDate), ratio);
 	}
 
 	private void assertEmptyGrowthFamily(Xbrl entity) {
@@ -239,8 +239,8 @@ public class XbrlRepositoryTest {
 
 	private void assertRatioFamily(Xbrl entity) {
 		RatioFamily fam = entity.getRatioFamily();
-		Assert.assertEquals(percent, fam.getPercent(elementId, periodType,
-				instant, startDate, endDate));
+		Assert.assertEquals(fam.getPercent(elementId, periodType, instant,
+				startDate, endDate), percent);
 	}
 
 	private void assertEmptyRatioFamily(Xbrl entity) {
@@ -256,8 +256,8 @@ public class XbrlRepositoryTest {
 
 	private void assertRatioDifferenceFamily(Xbrl entity) {
 		RatioDifferenceFamily fam = entity.getRatioDifferenceFamily();
-		Assert.assertEquals(difference, fam.getDifference(elementId,
-				periodType, instant, startDate, endDate));
+		Assert.assertEquals(fam.getDifference(elementId, periodType, instant,
+				startDate, endDate), difference);
 	}
 
 	private void assertEmptyRatioDifferenceFamily(Xbrl entity) {
