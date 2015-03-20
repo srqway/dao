@@ -4,6 +4,7 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseRowKey;
 import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
+import idv.hsiehpinghan.hbaseassistant.utility.ByteConvertUtility;
 import idv.hsiehpinghan.stockdao.entity.RatioDifference;
 import idv.hsiehpinghan.stockdao.entity.RatioDifference.RowKey;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
@@ -14,8 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.apache.hadoop.hbase.filter.BinaryComparator;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.FamilyFilter;
+import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.FuzzyRowFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -83,6 +89,40 @@ public class RatioDifferenceRepository extends RepositoryBase {
 			InstantiationException, IOException {
 		HBaseRowKey key = getRowKey(stockCode, reportType, year, season);
 		return super.exists(key);
+	}
+
+	public RatioDifference getWithTTestFamilyOnly(String stockCode,
+			ReportType reportType, int year, int season) {
+		RatioDifference entity = generateEntity(stockCode, reportType, year,
+				season);
+		RowFilter rowFilter = getRowFilter(entity);
+		FamilyFilter familyFilter = getFamilyFilter("tTestFamily");
+		FilterList filterList = new FilterList(rowFilter, familyFilter);
+		TreeSet<HBaseTable> entities = hbaseAssistant.scan(
+				RatioDifference.class, filterList);
+		if (entities.size() <= 0) {
+			return null;
+		}
+		return (RatioDifference) entities.first();
+	}
+
+	public TreeSet<RatioDifference> scanWithTTestFamilyOnly() {
+		FamilyFilter familyFilter = getFamilyFilter("tTestFamily");
+		@SuppressWarnings("unchecked")
+		TreeSet<RatioDifference> entities = (TreeSet<RatioDifference>) (Object) hbaseAssistant
+				.scan(RatioDifference.class, familyFilter);
+		return entities;
+	}
+
+	private RowFilter getRowFilter(RatioDifference entity) {
+		return new RowFilter(CompareFilter.CompareOp.EQUAL,
+				new BinaryComparator(entity.getRowKey().getBytes()));
+	}
+
+	private FamilyFilter getFamilyFilter(String columnFamilyName) {
+		return new FamilyFilter(CompareFilter.CompareOp.EQUAL,
+				new BinaryComparator(
+						ByteConvertUtility.toBytes(columnFamilyName)));
 	}
 
 	@Override

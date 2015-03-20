@@ -172,6 +172,8 @@ public class RatioDifference extends HBaseTable {
 	}
 
 	public class TTestFamily extends HBaseColumnFamily {
+		public static final String CHINESE_NAME = "chineseName";
+		public static final String ENGLISH_NAME = "englishName";
 		public static final String STATISTIC = "statistic";
 		public static final String DEGREE_OF_FREEDOM = "degreeOfFreedom";
 		public static final String CONFIDENCE_INTERVAL = "confidenceInterval";
@@ -187,6 +189,42 @@ public class RatioDifference extends HBaseTable {
 		public Set<TTestQualifier> getQualifiers() {
 			return (Set<TTestQualifier>) (Object) super
 					.getQualifierVersionValueMap().keySet();
+		}
+
+		public String getChineseName(String elementId) {
+			HBaseColumnQualifier qual = new TTestQualifier(CHINESE_NAME,
+					elementId);
+			TTestValue val = (TTestValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
+			return val.getAsString();
+		}
+
+		public void setChineseName(String elementId, Date ver,
+				String chineseName) {
+			TTestQualifier qual = new TTestQualifier(CHINESE_NAME, elementId);
+			TTestValue val = new TTestValue();
+			val.set(chineseName);
+			add(qual, ver, val);
+		}
+
+		public String getEnglishName(String elementId) {
+			HBaseColumnQualifier qual = new TTestQualifier(ENGLISH_NAME,
+					elementId);
+			TTestValue val = (TTestValue) super.getLatestValue(qual);
+			if (val == null) {
+				return null;
+			}
+			return val.getAsString();
+		}
+
+		public void setEnglishName(String elementId, Date ver,
+				String englishName) {
+			TTestQualifier qual = new TTestQualifier(ENGLISH_NAME, elementId);
+			TTestValue val = new TTestValue();
+			val.set(englishName);
+			add(qual, ver, val);
 		}
 
 		public BigDecimal getStatistic(String elementId) {
@@ -378,6 +416,14 @@ public class RatioDifference extends HBaseTable {
 			}
 
 			public void set(BigDecimal value) {
+				setBytes(ByteConvertUtility.toBytes(value));
+			}
+
+			public String getAsString() {
+				return ByteConvertUtility.getStringFromBytes(getBytes());
+			}
+
+			public void set(String value) {
 				setBytes(ByteConvertUtility.toBytes(value));
 			}
 		}

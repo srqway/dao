@@ -25,6 +25,14 @@
       "TTestFamily":{
         "Columns":[  
             {  
+               "type":"String",
+               "name":"chineseName"
+            },
+            {  
+               "type":"String",
+               "name":"englishName"
+            },
+            {  
                "type":"BigDecimal",
                "name":"statistic"
             },
