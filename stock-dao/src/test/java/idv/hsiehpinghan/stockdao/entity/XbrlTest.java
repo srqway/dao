@@ -6,7 +6,7 @@ import idv.hsiehpinghan.stockdao.entity.Xbrl.InfoFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily.InstanceValue;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.ItemFamily;
-import idv.hsiehpinghan.stockdao.entity.Xbrl.RatioDifferenceFamily;
+import idv.hsiehpinghan.stockdao.entity.Xbrl.MainRatioFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.RatioFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.RowKey;
 import idv.hsiehpinghan.stockdao.enumeration.PeriodType;
@@ -25,19 +25,17 @@ public class XbrlTest {
 	private Date startDate = DateUtility.getDate(2015, 2, 3);
 	private String elementId = "elementId";
 	private String stockCode = "stockCode";
-	private BigDecimal percent = new BigDecimal("4.4");
 	private ReportType reportType = ReportType.CONSOLIDATED_STATEMENT;
-	private UnitType unitType = UnitType.TWD;
+	private UnitType unitType = UnitType.SHARES;
 	private Date endDate = DateUtility.getDate(2015, 2, 3);
 	private String statementOfChangesInEquityContext = "statementOfChangesInEquityContext";
-	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_BASI_CR_2014_03_31;
-	private BigDecimal difference = new BigDecimal("10.10");
-	private int season = 3;
-	private BigDecimal ratio = new BigDecimal("12.12");
+	private XbrlTaxonomyVersion version = XbrlTaxonomyVersion.TIFRS_BASI_CR_2013_03_31;
+	private int season = 4;
+	private BigDecimal ratio = new BigDecimal("10.10");
 	private String statementOfCashFlowsContext = "statementOfCashFlowsContext";
 	private String balanceSheetContext = "balanceSheetContext";
 	private PeriodType periodType = PeriodType.DURATION;
-	private BigDecimal value = new BigDecimal("16.16");
+	private BigDecimal value = new BigDecimal("14.14");
 	private String statementOfComprehensiveIncomeContext = "statementOfComprehensiveIncomeContext";
 	private int year = 2015;
 	private Date instant = DateUtility.getDate(2015, 2, 3);
@@ -51,16 +49,16 @@ public class XbrlTest {
 		testItemFamily(entity);
 		testGrowthFamily(entity);
 		testRatioFamily(entity);
-		testRatioDifferenceFamily(entity);
+		testMainRatioFamily(entity);
 	}
 
 	private void testRowKey(Xbrl entity) {
 		RowKey key = entity.new RowKey(stockCode, reportType, year, season,
 				entity);
-		Assert.assertEquals(stockCode, key.getStockCode());
-		Assert.assertEquals(reportType, key.getReportType());
-		Assert.assertEquals(year, key.getYear());
-		Assert.assertEquals(season, key.getSeason());
+		Assert.assertEquals(key.getStockCode(), stockCode);
+		Assert.assertEquals(key.getReportType(), reportType);
+		Assert.assertEquals(key.getYear(), year);
+		Assert.assertEquals(key.getSeason(), season);
 	}
 
 	private void testInfoFamily(Xbrl entity) {
@@ -81,14 +79,14 @@ public class XbrlTest {
 
 	private void assertInfoFamily(Xbrl entity) {
 		InfoFamily fam = entity.getInfoFamily();
-		Assert.assertEquals(version, fam.getVersion());
-		Assert.assertEquals(balanceSheetContext, fam.getBalanceSheetContext());
-		Assert.assertEquals(statementOfComprehensiveIncomeContext,
-				fam.getStatementOfComprehensiveIncomeContext());
-		Assert.assertEquals(statementOfCashFlowsContext,
-				fam.getStatementOfCashFlowsContext());
-		Assert.assertEquals(statementOfChangesInEquityContext,
-				fam.getStatementOfChangesInEquityContext());
+		Assert.assertEquals(fam.getVersion(), version);
+		Assert.assertEquals(fam.getBalanceSheetContext(), balanceSheetContext);
+		Assert.assertEquals(fam.getStatementOfComprehensiveIncomeContext(),
+				statementOfComprehensiveIncomeContext);
+		Assert.assertEquals(fam.getStatementOfCashFlowsContext(),
+				statementOfCashFlowsContext);
+		Assert.assertEquals(fam.getStatementOfChangesInEquityContext(),
+				statementOfChangesInEquityContext);
 	}
 
 	private void testInstanceFamily(Xbrl entity) {
@@ -140,8 +138,8 @@ public class XbrlTest {
 
 	private void assertGrowthFamily(Xbrl entity) {
 		GrowthFamily fam = entity.getGrowthFamily();
-		Assert.assertEquals(ratio, fam.getRatio(elementId, periodType, instant,
-				startDate, endDate));
+		Assert.assertEquals(fam.getRatio(elementId, periodType, instant,
+				startDate, endDate), ratio);
 	}
 
 	private void testRatioFamily(Xbrl entity) {
@@ -151,30 +149,30 @@ public class XbrlTest {
 
 	private void generateRatioFamilyContent(Xbrl entity) {
 		RatioFamily fam = entity.getRatioFamily();
-		fam.setPercent(elementId, periodType, instant, startDate, endDate, ver,
-				percent);
+		fam.setRatio(elementId, periodType, instant, startDate, endDate, ver,
+				ratio);
 	}
 
 	private void assertRatioFamily(Xbrl entity) {
 		RatioFamily fam = entity.getRatioFamily();
-		Assert.assertEquals(percent, fam.getPercent(elementId, periodType,
-				instant, startDate, endDate));
+		Assert.assertEquals(fam.getRatio(elementId, periodType, instant,
+				startDate, endDate), ratio);
 	}
 
-	private void testRatioDifferenceFamily(Xbrl entity) {
-		generateRatioDifferenceFamilyContent(entity);
-		assertRatioDifferenceFamily(entity);
+	private void testMainRatioFamily(Xbrl entity) {
+		generateMainRatioFamilyContent(entity);
+		assertMainRatioFamily(entity);
 	}
 
-	private void generateRatioDifferenceFamilyContent(Xbrl entity) {
-		RatioDifferenceFamily fam = entity.getRatioDifferenceFamily();
-		fam.setDifference(elementId, periodType, instant, startDate, endDate,
-				ver, difference);
+	private void generateMainRatioFamilyContent(Xbrl entity) {
+		MainRatioFamily fam = entity.getMainRatioFamily();
+		fam.setRatio(elementId, periodType, instant, startDate, endDate, ver,
+				ratio);
 	}
 
-	private void assertRatioDifferenceFamily(Xbrl entity) {
-		RatioDifferenceFamily fam = entity.getRatioDifferenceFamily();
-		Assert.assertEquals(difference, fam.getDifference(elementId,
-				periodType, instant, startDate, endDate));
+	private void assertMainRatioFamily(Xbrl entity) {
+		MainRatioFamily fam = entity.getMainRatioFamily();
+		Assert.assertEquals(fam.getRatio(elementId, periodType, instant,
+				startDate, endDate), ratio);
 	}
 }

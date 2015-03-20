@@ -26,7 +26,7 @@ public class Xbrl extends HBaseTable {
 	private ItemFamily itemFamily;
 	private GrowthFamily growthFamily;
 	private RatioFamily ratioFamily;
-	private RatioDifferenceFamily ratioDifferenceFamily;
+	private MainRatioFamily mainRatioFamily;
 
 	@Override
 	public HBaseRowKey getRowKey() {
@@ -73,11 +73,11 @@ public class Xbrl extends HBaseTable {
 		return ratioFamily;
 	}
 
-	public RatioDifferenceFamily getRatioDifferenceFamily() {
-		if (ratioDifferenceFamily == null) {
-			ratioDifferenceFamily = this.new RatioDifferenceFamily(this);
+	public MainRatioFamily getMainRatioFamily() {
+		if (mainRatioFamily == null) {
+			mainRatioFamily = this.new MainRatioFamily(this);
 		}
-		return ratioDifferenceFamily;
+		return mainRatioFamily;
 	}
 
 	public class RowKey extends HBaseRowKey {
@@ -1042,7 +1042,7 @@ public class Xbrl extends HBaseTable {
 	}
 
 	public class RatioFamily extends HBaseColumnFamily {
-		public static final String PERCENT = "percent";
+		public static final String RATIO = "ratio";
 
 		private RatioFamily(Xbrl entity) {
 			super(entity);
@@ -1054,9 +1054,9 @@ public class Xbrl extends HBaseTable {
 					.getQualifierVersionValueMap().keySet();
 		}
 
-		public BigDecimal getPercent(String elementId, PeriodType periodType,
+		public BigDecimal getRatio(String elementId, PeriodType periodType,
 				Date instant, Date startDate, Date endDate) {
-			HBaseColumnQualifier qual = new RatioQualifier(PERCENT, elementId,
+			HBaseColumnQualifier qual = new RatioQualifier(RATIO, elementId,
 					periodType, instant, startDate, endDate);
 			RatioValue val = (RatioValue) super.getLatestValue(qual);
 			if (val == null) {
@@ -1065,34 +1065,34 @@ public class Xbrl extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
-		public BigDecimal getPercent(String elementId, PeriodType periodType,
+		public BigDecimal getRatio(String elementId, PeriodType periodType,
 				Date instant) {
-			return getPercent(elementId, periodType, instant, null, null);
+			return getRatio(elementId, periodType, instant, null, null);
 		}
 
-		public BigDecimal getPercent(String elementId, PeriodType periodType,
+		public BigDecimal getRatio(String elementId, PeriodType periodType,
 				Date startDate, Date endDate) {
-			return getPercent(elementId, periodType, null, startDate, endDate);
+			return getRatio(elementId, periodType, null, startDate, endDate);
 		}
 
-		public void setPercent(String elementId, PeriodType periodType,
+		public void setRatio(String elementId, PeriodType periodType,
 				Date instant, Date startDate, Date endDate, Date ver,
-				BigDecimal percent) {
-			RatioQualifier qual = new RatioQualifier(PERCENT, elementId,
+				BigDecimal ratio) {
+			RatioQualifier qual = new RatioQualifier(RATIO, elementId,
 					periodType, instant, startDate, endDate);
 			RatioValue val = new RatioValue();
-			val.set(percent);
+			val.set(ratio);
 			add(qual, ver, val);
 		}
 
-		public void setPercent(String elementId, PeriodType periodType,
+		public void setRatio(String elementId, PeriodType periodType,
 				Date instant, Date ver, BigDecimal percent) {
-			setPercent(elementId, periodType, instant, null, null, ver, percent);
+			setRatio(elementId, periodType, instant, null, null, ver, percent);
 		}
 
-		public void setPercent(String elementId, PeriodType periodType,
+		public void setRatio(String elementId, PeriodType periodType,
 				Date startDate, Date endDate, Date ver, BigDecimal percent) {
-			setPercent(elementId, periodType, null, startDate, endDate, ver,
+			setRatio(elementId, periodType, null, startDate, endDate, ver,
 					percent);
 		}
 
@@ -1272,55 +1272,51 @@ public class Xbrl extends HBaseTable {
 		}
 	}
 
-	public class RatioDifferenceFamily extends HBaseColumnFamily {
-		public static final String DIFFERENCE = "difference";
+	public class MainRatioFamily extends HBaseColumnFamily {
+		public static final String RATIO = "ratio";
 
-		private RatioDifferenceFamily(Xbrl entity) {
+		private MainRatioFamily(Xbrl entity) {
 			super(entity);
 		}
 
 		@SuppressWarnings("unchecked")
-		public Set<RatioDifferenceQualifier> getQualifiers() {
-			return (Set<RatioDifferenceQualifier>) (Object) super
+		public Set<MainRatioQualifier> getQualifiers() {
+			return (Set<MainRatioQualifier>) (Object) super
 					.getQualifierVersionValueMap().keySet();
 		}
 
-		public BigDecimal getDifference(String elementId,
-				PeriodType periodType, Date instant, Date startDate,
-				Date endDate) {
-			HBaseColumnQualifier qual = new RatioDifferenceQualifier(
-					DIFFERENCE, elementId, periodType, instant, startDate,
-					endDate);
-			RatioDifferenceValue val = (RatioDifferenceValue) super
-					.getLatestValue(qual);
+		public BigDecimal getRatio(String elementId, PeriodType periodType,
+				Date instant, Date startDate, Date endDate) {
+			HBaseColumnQualifier qual = new MainRatioQualifier(RATIO,
+					elementId, periodType, instant, startDate, endDate);
+			MainRatioValue val = (MainRatioValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
 			return val.getAsBigDecimal();
 		}
 
-		public void setDifference(String elementId, PeriodType periodType,
+		public void setRatio(String elementId, PeriodType periodType,
 				Date instant, Date startDate, Date endDate, Date ver,
-				BigDecimal difference) {
-			RatioDifferenceQualifier qual = new RatioDifferenceQualifier(
-					DIFFERENCE, elementId, periodType, instant, startDate,
-					endDate);
-			RatioDifferenceValue val = new RatioDifferenceValue();
-			val.set(difference);
+				BigDecimal ratio) {
+			MainRatioQualifier qual = new MainRatioQualifier(RATIO, elementId,
+					periodType, instant, startDate, endDate);
+			MainRatioValue val = new MainRatioValue();
+			val.set(ratio);
 			add(qual, ver, val);
 		}
 
 		@Override
 		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
-			return this.new RatioDifferenceQualifier(bytes);
+			return this.new MainRatioQualifier(bytes);
 		}
 
 		@Override
 		protected HBaseValue generateValue(byte[] bytes) {
-			return this.new RatioDifferenceValue(bytes);
+			return this.new MainRatioValue(bytes);
 		}
 
-		public class RatioDifferenceQualifier extends HBaseColumnQualifier {
+		public class MainRatioQualifier extends HBaseColumnQualifier {
 			private static final int COLUMN_NAME_LENGTH = 30;
 			private static final int ELEMENT_ID_LENGTH = 300;
 			private static final int PERIOD_TYPE_LENGTH = 10;
@@ -1346,18 +1342,18 @@ public class Xbrl extends HBaseTable {
 			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
 					+ END_DATE_LENGTH;
 
-			public RatioDifferenceQualifier() {
+			public MainRatioQualifier() {
 				super();
 			}
 
-			public RatioDifferenceQualifier(byte[] bytes) {
+			public MainRatioQualifier(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}
 
-			public RatioDifferenceQualifier(String columnName,
-					String elementId, PeriodType periodType, Date instant,
-					Date startDate, Date endDate) {
+			public MainRatioQualifier(String columnName, String elementId,
+					PeriodType periodType, Date instant, Date startDate,
+					Date endDate) {
 				super();
 				byte[] columnNameBytes = ByteConvertUtility.toBytes(columnName,
 						COLUMN_NAME_LENGTH);
@@ -1466,12 +1462,12 @@ public class Xbrl extends HBaseTable {
 			}
 		}
 
-		public class RatioDifferenceValue extends HBaseValue {
-			public RatioDifferenceValue() {
+		public class MainRatioValue extends HBaseValue {
+			public MainRatioValue() {
 				super();
 			}
 
-			public RatioDifferenceValue(byte[] bytes) {
+			public MainRatioValue(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}

@@ -168,7 +168,7 @@
         "Columns":[  
             {  
                "type":"BigDecimal",
-               "name":"percent"
+               "name":"ratio"
             }
          ],
          "RatioQualifier":[  
@@ -204,14 +204,14 @@
          
          ]
       },
-      "RatioDifferenceFamily":{
+      "MainRatioFamily":{
         "Columns":[  
             {  
                "type":"BigDecimal",
-               "name":"difference"
+               "name":"ratio"
             }
          ],
-         "RatioDifferenceQualifier":[  
+         "MainRatioQualifier":[  
             {  
                "type":"String",
                "name":"columnName",
@@ -240,7 +240,7 @@
                "name":"endDate"
             }
          ],
-         "RatioDifferenceValue":[  
+         "MainRatioValue":[  
          
          ]
       }

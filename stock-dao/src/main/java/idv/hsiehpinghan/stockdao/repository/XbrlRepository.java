@@ -200,11 +200,11 @@ public class XbrlRepository extends RepositoryBase {
 		return entities;
 	}
 
-	public Xbrl getWithRatioDifferenceFamilyOnly(String stockCode,
+	public Xbrl getWithMainRatioFamilyOnly(String stockCode,
 			ReportType reportType, int year, int season) {
 		Xbrl entity = generateEntity(stockCode, reportType, year, season);
 		RowFilter rowFilter = getRowFilter(entity);
-		FamilyFilter familyFilter = getFamilyFilter("ratioDifferenceFamily");
+		FamilyFilter familyFilter = getFamilyFilter("mainRatioFamily");
 		FilterList filterList = new FilterList(rowFilter, familyFilter);
 		TreeSet<HBaseTable> entities = hbaseAssistant.scan(Xbrl.class,
 				filterList);
@@ -214,8 +214,8 @@ public class XbrlRepository extends RepositoryBase {
 		return (Xbrl) entities.first();
 	}
 
-	public TreeSet<Xbrl> scanWithRatioDifferenceFamilyOnly() {
-		FamilyFilter familyFilter = getFamilyFilter("ratioDifferenceFamily");
+	public TreeSet<Xbrl> scanWithMainRatioFamilyOnly() {
+		FamilyFilter familyFilter = getFamilyFilter("mainRatioFamily");
 		@SuppressWarnings("unchecked")
 		TreeSet<Xbrl> entities = (TreeSet<Xbrl>) (Object) hbaseAssistant.scan(
 				Xbrl.class, familyFilter);
