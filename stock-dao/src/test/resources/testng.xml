@@ -9,67 +9,58 @@
 	<test name="Taxonomy">
 		<classes>
 			<!-- Test entity -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.entity.TaxonomyTest" /> -->
+			<class name="idv.hsiehpinghan.stockdao.entity.TaxonomyTest" />
 
 			<!-- Test repositoty -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.repository.TaxonomyRepositoryTest" 
-				/> -->
+			<class name="idv.hsiehpinghan.stockdao.repository.TaxonomyRepositoryTest" />
 		</classes>
 	</test>
 	<test name="StockInfo">
 		<classes>
 			<!-- Test entity -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.entity.StockInfoTest" /> -->
+			<class name="idv.hsiehpinghan.stockdao.entity.StockInfoTest" />
 
 			<!-- Test repositoty -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.repository.StockInfoRepositoryTest" 
-				/> -->
+			<class name="idv.hsiehpinghan.stockdao.repository.StockInfoRepositoryTest" />
 		</classes>
 	</test>
 	<test name="Xbrl">
 		<classes>
 			<!-- Test entity -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.entity.XbrlTest" /> -->
+			<class name="idv.hsiehpinghan.stockdao.entity.XbrlTest" />
 
 			<!-- Test repositoty -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.repository.XbrlRepositoryTest" 
-				/> -->
+			<class name="idv.hsiehpinghan.stockdao.repository.XbrlRepositoryTest" />
 		</classes>
 	</test>
 	<test name="MonthlyOperatingIncome">
 		<classes>
 			<!-- Test entity -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncomeTest" 
-				/> -->
+			<class name="idv.hsiehpinghan.stockdao.entity.MonthlyOperatingIncomeTest" />
 
 			<!-- Test repositoty -->
-			<!-- <class -->
-			<!-- name="idv.hsiehpinghan.stockdao.repository.MonthlyOperatingIncomeRepositoryTest" 
-				/> -->
+			<class
+				name="idv.hsiehpinghan.stockdao.repository.MonthlyOperatingIncomeRepositoryTest" />
 		</classes>
 	</test>
 	<test name="StockClosingCondition">
 		<classes>
 			<!-- Test entity -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.entity.StockClosingConditionTest" 
-				/> -->
+			<class name="idv.hsiehpinghan.stockdao.entity.StockClosingConditionTest" />
 
 			<!-- Test repositoty -->
-			<!-- <class -->
-			<!-- name="idv.hsiehpinghan.stockdao.repository.StockClosingConditionRepositoryTest" 
-				/> -->
+			<class
+				name="idv.hsiehpinghan.stockdao.repository.StockClosingConditionRepositoryTest" />
 		</classes>
 	</test>
 	<test name="MainRatioAnalysis">
 		<classes>
 			<!-- Test entity -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.entity.MainRatioAnalysisTest" 
-				/> -->
+			<class name="idv.hsiehpinghan.stockdao.entity.MainRatioAnalysisTest" />
 
 			<!-- Test repositoty -->
-			<!-- <class -->
-			<!-- name="idv.hsiehpinghan.stockdao.repository.MainRatioAnalysisRepositoryTest" 
-				/> -->
+			<class
+				name="idv.hsiehpinghan.stockdao.repository.MainRatioAnalysisRepositoryTest" />
 		</classes>
 	</test>
 </suite>
