@@ -1,8 +1,8 @@
 package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
-import idv.hsiehpinghan.stockdao.entity.RatioDifference;
-import idv.hsiehpinghan.stockdao.entity.RatioDifference.TTestFamily;
+import idv.hsiehpinghan.stockdao.entity.MainRatioAnalysis;
+import idv.hsiehpinghan.stockdao.entity.MainRatioAnalysis.TTestFamily;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
 import idv.hsiehpinghan.stockdao.suit.TestngSuitSetting;
 
@@ -14,7 +14,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class RatioDifferenceRepositoryTest {
+public class MainRatioAnalysisRepositoryTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
 	private BigDecimal degreeOfFreedom = new BigDecimal("14.14");
 	private String elementId = "elementId";
@@ -26,22 +26,22 @@ public class RatioDifferenceRepositoryTest {
 	private BigDecimal statistic = new BigDecimal("21.21");
 	private BigDecimal pValue = new BigDecimal("22.22");
 	private BigDecimal sampleMean = new BigDecimal("23.23");
-	private int season = 4;
+	private int season = 2;
 	private int year = 2015;
 	private BigDecimal hypothesizedMean = new BigDecimal("26.26");
-	private RatioDifferenceRepository repository;
+	private MainRatioAnalysisRepository repository;
 
 	@BeforeClass
 	public void beforeClass() throws Exception {
 		ApplicationContext applicationContext = TestngSuitSetting
 				.getApplicationContext();
 		repository = applicationContext
-				.getBean(RatioDifferenceRepository.class);
+				.getBean(MainRatioAnalysisRepository.class);
 	}
 
 	@Test
 	public void put() throws Exception {
-		RatioDifference entity = repository.generateEntity(stockCode,
+		MainRatioAnalysis entity = repository.generateEntity(stockCode,
 				reportType, year, season);
 		generateTTestFamilyContent(entity);
 		repository.put(entity);
@@ -50,19 +50,19 @@ public class RatioDifferenceRepositoryTest {
 
 	@Test(dependsOnMethods = { "get" })
 	public void getWithTTestFamilyOnly() throws Exception {
-		RatioDifference entity = repository.getWithTTestFamilyOnly(stockCode,
+		MainRatioAnalysis entity = repository.getWithTTestFamilyOnly(stockCode,
 				reportType, year, season);
 		assertTTestFamily(entity);
 	}
 
 	@Test(dependsOnMethods = { "put" })
 	public void get() throws Exception {
-		RatioDifference entity = repository.get(stockCode, reportType, year,
+		MainRatioAnalysis entity = repository.get(stockCode, reportType, year,
 				season);
 		assertTTestFamily(entity);
 	}
 
-	private void generateTTestFamilyContent(RatioDifference entity) {
+	private void generateTTestFamilyContent(MainRatioAnalysis entity) {
 		TTestFamily fam = entity.getTTestFamily();
 		fam.setChineseName(elementId, ver, chineseName);
 		fam.setEnglishName(elementId, ver, englishName);
@@ -74,7 +74,7 @@ public class RatioDifferenceRepositoryTest {
 		fam.setPValue(elementId, ver, pValue);
 	}
 
-	private void assertTTestFamily(RatioDifference entity) {
+	private void assertTTestFamily(MainRatioAnalysis entity) {
 		TTestFamily fam = entity.getTTestFamily();
 		Assert.assertEquals(fam.getChineseName(elementId), chineseName);
 		Assert.assertEquals(fam.getEnglishName(elementId), englishName);
@@ -87,4 +87,5 @@ public class RatioDifferenceRepositoryTest {
 				hypothesizedMean);
 		Assert.assertEquals(fam.getPValue(elementId), pValue);
 	}
+
 }

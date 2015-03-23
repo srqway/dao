@@ -124,19 +124,8 @@
             }
          ]
       },
-      "GrowthFamily":{
-        "Columns":[  
-            {  
-               "type":"BigDecimal",
-               "name":"ratio"
-            }
-         ],
-         "GrowthQualifier":[  
-            {  
-               "type":"String",
-               "name":"columnName",
-               "length":30
-            },
+      "MainItemFamily":{
+         "MainItemQualifier":[  
             {  
                "type":"String",
                "name":"elementId",
@@ -160,8 +149,11 @@
                "name":"endDate"
             }
          ],
-         "GrowthValue":[  
-         
+         "MainItemValue":[  
+            {  
+               "type":"BigDecimal",
+               "name":"value"
+            }
          ]
       },
       "RatioFamily":{

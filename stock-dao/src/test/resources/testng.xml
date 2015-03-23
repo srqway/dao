@@ -32,8 +32,8 @@
 			<!-- <class name="idv.hsiehpinghan.stockdao.entity.XbrlTest" /> -->
 
 			<!-- Test repositoty -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.repository.XbrlRepositoryTest" -->
-			<!-- /> -->
+			<!-- <class name="idv.hsiehpinghan.stockdao.repository.XbrlRepositoryTest" 
+				/> -->
 		</classes>
 	</test>
 	<test name="MonthlyOperatingIncome">
@@ -60,15 +60,15 @@
 				/> -->
 		</classes>
 	</test>
-	<test name="RatioDifference">
+	<test name="MainRatioAnalysis">
 		<classes>
 			<!-- Test entity -->
-			<!-- <class name="idv.hsiehpinghan.stockdao.entity.RatioDifferenceTest" 
+			<!-- <class name="idv.hsiehpinghan.stockdao.entity.MainRatioAnalysisTest" 
 				/> -->
 
 			<!-- Test repositoty -->
 			<!-- <class -->
-			<!-- name="idv.hsiehpinghan.stockdao.repository.RatioDifferenceRepositoryTest" 
+			<!-- name="idv.hsiehpinghan.stockdao.repository.MainRatioAnalysisRepositoryTest" 
 				/> -->
 		</classes>
 	</test>

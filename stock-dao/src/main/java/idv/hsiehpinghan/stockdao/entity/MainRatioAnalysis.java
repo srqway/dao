@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
-public class RatioDifference extends HBaseTable {
+public class MainRatioAnalysis extends HBaseTable {
 	private static final byte[] SPACE = ByteUtility.SINGLE_SPACE_BYTE_ARRAY;
 	private RowKey rowKey;
 	private TTestFamily tTestFamily;
@@ -54,17 +54,17 @@ public class RatioDifference extends HBaseTable {
 		private static final int SEASON_END_INDEX = SEASON_BEGIN_INDEX
 				+ SEASON_LENGTH;
 
-		public RowKey(RatioDifference entity) {
+		public RowKey(MainRatioAnalysis entity) {
 			super(entity);
 		}
 
-		public RowKey(byte[] bytes, RatioDifference entity) {
+		public RowKey(byte[] bytes, MainRatioAnalysis entity) {
 			super(entity);
 			setBytes(bytes);
 		}
 
 		public RowKey(String stockCode, ReportType reportType, int year,
-				int season, RatioDifference entity) {
+				int season, MainRatioAnalysis entity) {
 			super(entity);
 			byte[] stockCodeBytes = ByteConvertUtility.toBytes(stockCode,
 					STOCK_CODE_LENGTH);
@@ -181,7 +181,7 @@ public class RatioDifference extends HBaseTable {
 		public static final String HYPOTHESIZED_MEAN = "hypothesizedMean";
 		public static final String P_VALUE = "pValue";
 
-		private TTestFamily(RatioDifference entity) {
+		private TTestFamily(MainRatioAnalysis entity) {
 			super(entity);
 		}
 

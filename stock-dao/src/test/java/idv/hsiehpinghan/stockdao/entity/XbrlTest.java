@@ -1,11 +1,11 @@
 package idv.hsiehpinghan.stockdao.entity;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
-import idv.hsiehpinghan.stockdao.entity.Xbrl.GrowthFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InfoFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily.InstanceValue;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.ItemFamily;
+import idv.hsiehpinghan.stockdao.entity.Xbrl.MainItemFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.MainRatioFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.RatioFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.RowKey;
@@ -47,7 +47,7 @@ public class XbrlTest {
 		testInfoFamily(entity);
 		testInstanceFamily(entity);
 		testItemFamily(entity);
-		testGrowthFamily(entity);
+		testMainItemFamily(entity);
 		testRatioFamily(entity);
 		testMainRatioFamily(entity);
 	}
@@ -125,21 +125,21 @@ public class XbrlTest {
 				value);
 	}
 
-	private void testGrowthFamily(Xbrl entity) {
-		generateGrowthFamilyContent(entity);
-		assertGrowthFamily(entity);
+	private void testMainItemFamily(Xbrl entity) {
+		generateMainItemFamilyContent(entity);
+		assertMainItemFamily(entity);
 	}
 
-	private void generateGrowthFamilyContent(Xbrl entity) {
-		GrowthFamily fam = entity.getGrowthFamily();
-		fam.setRatio(elementId, periodType, instant, startDate, endDate, ver,
-				ratio);
+	private void generateMainItemFamilyContent(Xbrl entity) {
+		MainItemFamily fam = entity.getMainItemFamily();
+		fam.set(elementId, periodType, instant, startDate, endDate, ver, value);
 	}
 
-	private void assertGrowthFamily(Xbrl entity) {
-		GrowthFamily fam = entity.getGrowthFamily();
-		Assert.assertEquals(fam.getRatio(elementId, periodType, instant,
-				startDate, endDate), ratio);
+	private void assertMainItemFamily(Xbrl entity) {
+		MainItemFamily fam = entity.getMainItemFamily();
+		Assert.assertEquals(
+				fam.get(elementId, periodType, instant, startDate, endDate),
+				value);
 	}
 
 	private void testRatioFamily(Xbrl entity) {

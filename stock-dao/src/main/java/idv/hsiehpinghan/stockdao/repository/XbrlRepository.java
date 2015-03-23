@@ -156,11 +156,11 @@ public class XbrlRepository extends RepositoryBase {
 		return entities;
 	}
 
-	public Xbrl getWithGrowthFamilyOnly(String stockCode,
+	public Xbrl getWithMainItemFamilyOnly(String stockCode,
 			ReportType reportType, int year, int season) {
 		Xbrl entity = generateEntity(stockCode, reportType, year, season);
 		RowFilter rowFilter = getRowFilter(entity);
-		FamilyFilter familyFilter = getFamilyFilter("growthFamily");
+		FamilyFilter familyFilter = getFamilyFilter("mainItemFamily");
 		FilterList filterList = new FilterList(rowFilter, familyFilter);
 		TreeSet<HBaseTable> entities = hbaseAssistant.scan(Xbrl.class,
 				filterList);
@@ -170,8 +170,8 @@ public class XbrlRepository extends RepositoryBase {
 		return (Xbrl) entities.first();
 	}
 
-	public TreeSet<Xbrl> scanWithGrowthFamilyOnly() {
-		FamilyFilter familyFilter = getFamilyFilter("growthFamily");
+	public TreeSet<Xbrl> scanWithMainItemFamilyOnly() {
+		FamilyFilter familyFilter = getFamilyFilter("mainItemFamily");
 		@SuppressWarnings("unchecked")
 		TreeSet<Xbrl> entities = (TreeSet<Xbrl>) (Object) hbaseAssistant.scan(
 				Xbrl.class, familyFilter);

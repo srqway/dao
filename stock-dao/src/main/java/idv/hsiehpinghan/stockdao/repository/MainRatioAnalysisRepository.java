@@ -5,8 +5,8 @@ import idv.hsiehpinghan.hbaseassistant.abstractclass.HBaseTable;
 import idv.hsiehpinghan.hbaseassistant.assistant.HbaseAssistant;
 import idv.hsiehpinghan.hbaseassistant.repository.RepositoryBase;
 import idv.hsiehpinghan.hbaseassistant.utility.ByteConvertUtility;
-import idv.hsiehpinghan.stockdao.entity.RatioDifference;
-import idv.hsiehpinghan.stockdao.entity.RatioDifference.RowKey;
+import idv.hsiehpinghan.stockdao.entity.MainRatioAnalysis;
+import idv.hsiehpinghan.stockdao.entity.MainRatioAnalysis.RowKey;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
 
 import java.io.IOException;
@@ -27,33 +27,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class RatioDifferenceRepository extends RepositoryBase {
+public class MainRatioAnalysisRepository extends RepositoryBase {
 	@Autowired
 	private HbaseAssistant hbaseAssistant;
 
 	@Override
 	public Class<? extends HBaseTable> getTargetTableClass() {
-		return RatioDifference.class;
+		return MainRatioAnalysis.class;
 	}
 
-	public RatioDifference generateEntity(String stockCode,
+	public MainRatioAnalysis generateEntity(String stockCode,
 			ReportType reportType, int year, int season) {
-		RatioDifference entity = new RatioDifference();
+		MainRatioAnalysis entity = new MainRatioAnalysis();
 		generateRowKey(stockCode, reportType, year, season, entity);
 		return entity;
 	}
 
-	public RatioDifference get(String stockCode, ReportType reportType,
+	public MainRatioAnalysis get(String stockCode, ReportType reportType,
 			int year, int season) throws IllegalAccessException,
 			NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalArgumentException, InvocationTargetException, IOException {
 		HBaseRowKey rowKey = getRowKey(stockCode, reportType, year, season);
-		return (RatioDifference) hbaseAssistant.get(rowKey);
+		return (MainRatioAnalysis) hbaseAssistant.get(rowKey);
 	}
 
-	public TreeSet<RatioDifference> fuzzyScan(String stockCode,
+	public TreeSet<MainRatioAnalysis> fuzzyScan(String stockCode,
 			ReportType reportType, Integer year, Integer season) {
-		RatioDifference.RowKey rowKey = (RatioDifference.RowKey) getRowKey(
+		MainRatioAnalysis.RowKey rowKey = (MainRatioAnalysis.RowKey) getRowKey(
 				stockCode, reportType, year == null ? 0 : year,
 				season == null ? 0 : season);
 		List<Pair<byte[], byte[]>> fuzzyKeysData = new ArrayList<Pair<byte[], byte[]>>();
@@ -62,9 +62,9 @@ public class RatioDifferenceRepository extends RepositoryBase {
 		fuzzyKeysData.add(pair);
 		FuzzyRowFilter fuzzyRowFilter = new FuzzyRowFilter(fuzzyKeysData);
 		@SuppressWarnings("unchecked")
-		TreeSet<RatioDifference> ratioDifferences = (TreeSet<RatioDifference>) (Object) hbaseAssistant
+		TreeSet<MainRatioAnalysis> mainRatioAnalysiss = (TreeSet<MainRatioAnalysis>) (Object) hbaseAssistant
 				.scan(getTargetTableClass(), fuzzyRowFilter);
-		return ratioDifferences;
+		return mainRatioAnalysiss;
 	}
 
 	public int getRowAmount() {
@@ -91,30 +91,30 @@ public class RatioDifferenceRepository extends RepositoryBase {
 		return super.exists(key);
 	}
 
-	public RatioDifference getWithTTestFamilyOnly(String stockCode,
+	public MainRatioAnalysis getWithTTestFamilyOnly(String stockCode,
 			ReportType reportType, int year, int season) {
-		RatioDifference entity = generateEntity(stockCode, reportType, year,
+		MainRatioAnalysis entity = generateEntity(stockCode, reportType, year,
 				season);
 		RowFilter rowFilter = getRowFilter(entity);
 		FamilyFilter familyFilter = getFamilyFilter("tTestFamily");
 		FilterList filterList = new FilterList(rowFilter, familyFilter);
 		TreeSet<HBaseTable> entities = hbaseAssistant.scan(
-				RatioDifference.class, filterList);
+				MainRatioAnalysis.class, filterList);
 		if (entities.size() <= 0) {
 			return null;
 		}
-		return (RatioDifference) entities.first();
+		return (MainRatioAnalysis) entities.first();
 	}
 
-	public TreeSet<RatioDifference> scanWithTTestFamilyOnly() {
+	public TreeSet<MainRatioAnalysis> scanWithTTestFamilyOnly() {
 		FamilyFilter familyFilter = getFamilyFilter("tTestFamily");
 		@SuppressWarnings("unchecked")
-		TreeSet<RatioDifference> entities = (TreeSet<RatioDifference>) (Object) hbaseAssistant
-				.scan(RatioDifference.class, familyFilter);
+		TreeSet<MainRatioAnalysis> entities = (TreeSet<MainRatioAnalysis>) (Object) hbaseAssistant
+				.scan(MainRatioAnalysis.class, familyFilter);
 		return entities;
 	}
 
-	private RowFilter getRowFilter(RatioDifference entity) {
+	private RowFilter getRowFilter(MainRatioAnalysis entity) {
 		return new RowFilter(CompareFilter.CompareOp.EQUAL,
 				new BinaryComparator(entity.getRowKey().getBytes()));
 	}
@@ -132,13 +132,13 @@ public class RatioDifferenceRepository extends RepositoryBase {
 
 	private HBaseRowKey getRowKey(String stockCode, ReportType reportType,
 			int year, int season) {
-		RatioDifference entity = new RatioDifference();
+		MainRatioAnalysis entity = new MainRatioAnalysis();
 		generateRowKey(stockCode, reportType, year, season, entity);
 		return entity.getRowKey();
 	}
 
 	private void generateRowKey(String stockCode, ReportType reportType,
-			int year, int season, RatioDifference entity) {
+			int year, int season, MainRatioAnalysis entity) {
 		entity.new RowKey(stockCode, reportType, year, season, entity);
 	}
 }

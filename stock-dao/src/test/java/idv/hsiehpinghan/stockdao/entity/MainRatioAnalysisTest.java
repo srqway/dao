@@ -1,8 +1,8 @@
 package idv.hsiehpinghan.stockdao.entity;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
-import idv.hsiehpinghan.stockdao.entity.RatioDifference.RowKey;
-import idv.hsiehpinghan.stockdao.entity.RatioDifference.TTestFamily;
+import idv.hsiehpinghan.stockdao.entity.MainRatioAnalysis.RowKey;
+import idv.hsiehpinghan.stockdao.entity.MainRatioAnalysis.TTestFamily;
 import idv.hsiehpinghan.stockdao.enumeration.ReportType;
 
 import java.math.BigDecimal;
@@ -11,7 +11,7 @@ import java.util.Date;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class RatioDifferenceTest {
+public class MainRatioAnalysisTest {
 	private Date ver = DateUtility.getDate(2015, 2, 3);
 	private BigDecimal degreeOfFreedom = new BigDecimal("1.1");
 	private String elementId = "elementId";
@@ -29,12 +29,12 @@ public class RatioDifferenceTest {
 
 	@Test
 	public void bytesConvert() {
-		RatioDifference entity = new RatioDifference();
+		MainRatioAnalysis entity = new MainRatioAnalysis();
 		testRowKey(entity);
 		testTTestFamily(entity);
 	}
 
-	private void testRowKey(RatioDifference entity) {
+	private void testRowKey(MainRatioAnalysis entity) {
 		RowKey key = entity.new RowKey(stockCode, reportType, year, season,
 				entity);
 		Assert.assertEquals(key.getStockCode(), stockCode);
@@ -43,12 +43,12 @@ public class RatioDifferenceTest {
 		Assert.assertEquals(key.getSeason(), season);
 	}
 
-	private void testTTestFamily(RatioDifference entity) {
+	private void testTTestFamily(MainRatioAnalysis entity) {
 		generateTTestFamilyContent(entity);
 		assertTTestFamily(entity);
 	}
 
-	private void generateTTestFamilyContent(RatioDifference entity) {
+	private void generateTTestFamilyContent(MainRatioAnalysis entity) {
 		TTestFamily fam = entity.getTTestFamily();
 		fam.setChineseName(elementId, ver, chineseName);
 		fam.setEnglishName(elementId, ver, englishName);
@@ -60,7 +60,7 @@ public class RatioDifferenceTest {
 		fam.setPValue(elementId, ver, pValue);
 	}
 
-	private void assertTTestFamily(RatioDifference entity) {
+	private void assertTTestFamily(MainRatioAnalysis entity) {
 		TTestFamily fam = entity.getTTestFamily();
 		Assert.assertEquals(fam.getChineseName(elementId), chineseName);
 		Assert.assertEquals(fam.getEnglishName(elementId), englishName);

@@ -2,11 +2,11 @@ package idv.hsiehpinghan.stockdao.repository;
 
 import idv.hsiehpinghan.datetimeutility.utility.DateUtility;
 import idv.hsiehpinghan.stockdao.entity.Xbrl;
-import idv.hsiehpinghan.stockdao.entity.Xbrl.GrowthFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InfoFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.InstanceFamily.InstanceValue;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.ItemFamily;
+import idv.hsiehpinghan.stockdao.entity.Xbrl.MainItemFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.MainRatioFamily;
 import idv.hsiehpinghan.stockdao.entity.Xbrl.RatioFamily;
 import idv.hsiehpinghan.stockdao.enumeration.PeriodType;
@@ -58,7 +58,7 @@ public class XbrlRepositoryTest {
 		generateInfoFamilyContent(entity);
 		generateInstanceFamilyContent(entity);
 		generateItemFamilyContent(entity);
-		generateGrowthFamilyContent(entity);
+		generateMainItemFamilyContent(entity);
 		generateRatioFamilyContent(entity);
 		generateMainRatioFamilyContent(entity);
 		repository.put(entity);
@@ -72,7 +72,7 @@ public class XbrlRepositoryTest {
 		assertInfoFamily(entity);
 		assertEmptyInstanceFamily(entity);
 		assertEmptyItemFamily(entity);
-		assertEmptyGrowthFamily(entity);
+		assertEmptyMainItemFamily(entity);
 		assertEmptyRatioFamily(entity);
 		assertEmptyMainRatioFamily(entity);
 	}
@@ -84,7 +84,7 @@ public class XbrlRepositoryTest {
 		assertEmptyInfoFamily(entity);
 		assertInstanceFamily(entity);
 		assertEmptyItemFamily(entity);
-		assertEmptyGrowthFamily(entity);
+		assertEmptyMainItemFamily(entity);
 		assertEmptyRatioFamily(entity);
 		assertEmptyMainRatioFamily(entity);
 	}
@@ -96,19 +96,19 @@ public class XbrlRepositoryTest {
 		assertEmptyInfoFamily(entity);
 		assertEmptyInstanceFamily(entity);
 		assertItemFamily(entity);
-		assertEmptyGrowthFamily(entity);
+		assertEmptyMainItemFamily(entity);
 		assertEmptyRatioFamily(entity);
 		assertEmptyMainRatioFamily(entity);
 	}
 
 	@Test(dependsOnMethods = { "get" })
-	public void getWithGrowthFamilyOnly() throws Exception {
-		Xbrl entity = repository.getWithGrowthFamilyOnly(stockCode, reportType,
-				year, season);
+	public void getWithMainItemFamilyOnly() throws Exception {
+		Xbrl entity = repository.getWithMainItemFamilyOnly(stockCode,
+				reportType, year, season);
 		assertEmptyInfoFamily(entity);
 		assertEmptyInstanceFamily(entity);
 		assertEmptyItemFamily(entity);
-		assertGrowthFamily(entity);
+		assertMainItemFamily(entity);
 		assertEmptyRatioFamily(entity);
 		assertEmptyMainRatioFamily(entity);
 	}
@@ -120,7 +120,7 @@ public class XbrlRepositoryTest {
 		assertEmptyInfoFamily(entity);
 		assertEmptyInstanceFamily(entity);
 		assertEmptyItemFamily(entity);
-		assertEmptyGrowthFamily(entity);
+		assertEmptyMainItemFamily(entity);
 		assertRatioFamily(entity);
 		assertEmptyMainRatioFamily(entity);
 	}
@@ -132,7 +132,7 @@ public class XbrlRepositoryTest {
 		assertEmptyInfoFamily(entity);
 		assertEmptyInstanceFamily(entity);
 		assertEmptyItemFamily(entity);
-		assertEmptyGrowthFamily(entity);
+		assertEmptyMainItemFamily(entity);
 		assertEmptyRatioFamily(entity);
 		assertMainRatioFamily(entity);
 	}
@@ -143,7 +143,7 @@ public class XbrlRepositoryTest {
 		assertInfoFamily(entity);
 		assertInstanceFamily(entity);
 		assertItemFamily(entity);
-		assertGrowthFamily(entity);
+		assertMainItemFamily(entity);
 		assertRatioFamily(entity);
 		assertMainRatioFamily(entity);
 	}
@@ -212,20 +212,20 @@ public class XbrlRepositoryTest {
 		Assert.assertEquals(fam.getLatestQualifierAndValueAsMap().size(), 0);
 	}
 
-	private void generateGrowthFamilyContent(Xbrl entity) {
-		GrowthFamily fam = entity.getGrowthFamily();
-		fam.setRatio(elementId, periodType, instant, startDate, endDate, ver,
-				ratio);
+	private void generateMainItemFamilyContent(Xbrl entity) {
+		MainItemFamily fam = entity.getMainItemFamily();
+		fam.set(elementId, periodType, instant, startDate, endDate, ver, value);
 	}
 
-	private void assertGrowthFamily(Xbrl entity) {
-		GrowthFamily fam = entity.getGrowthFamily();
-		Assert.assertEquals(fam.getRatio(elementId, periodType, instant,
-				startDate, endDate), ratio);
+	private void assertMainItemFamily(Xbrl entity) {
+		MainItemFamily fam = entity.getMainItemFamily();
+		Assert.assertEquals(
+				fam.get(elementId, periodType, instant, startDate, endDate),
+				value);
 	}
 
-	private void assertEmptyGrowthFamily(Xbrl entity) {
-		GrowthFamily fam = entity.getGrowthFamily();
+	private void assertEmptyMainItemFamily(Xbrl entity) {
+		MainItemFamily fam = entity.getMainItemFamily();
 		Assert.assertEquals(fam.getLatestQualifierAndValueAsMap().size(), 0);
 	}
 

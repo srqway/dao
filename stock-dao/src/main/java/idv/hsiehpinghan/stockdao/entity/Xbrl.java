@@ -24,7 +24,7 @@ public class Xbrl extends HBaseTable {
 	private InfoFamily infoFamily;
 	private InstanceFamily instanceFamily;
 	private ItemFamily itemFamily;
-	private GrowthFamily growthFamily;
+	private MainItemFamily mainItemFamily;
 	private RatioFamily ratioFamily;
 	private MainRatioFamily mainRatioFamily;
 
@@ -59,11 +59,11 @@ public class Xbrl extends HBaseTable {
 		return itemFamily;
 	}
 
-	public GrowthFamily getGrowthFamily() {
-		if (growthFamily == null) {
-			growthFamily = this.new GrowthFamily(this);
+	public MainItemFamily getMainItemFamily() {
+		if (mainItemFamily == null) {
+			mainItemFamily = this.new MainItemFamily(this);
 		}
-		return growthFamily;
+		return mainItemFamily;
 	}
 
 	public RatioFamily getRatioFamily() {
@@ -404,17 +404,6 @@ public class Xbrl extends HBaseTable {
 			return (InstanceValue) super.getLatestValue(qual);
 		}
 
-		public InstanceValue getInstanceValue(String elementId,
-				PeriodType periodType, Date startDate, Date endDate) {
-			return getInstanceValue(elementId, periodType, null, startDate,
-					endDate);
-		}
-
-		public InstanceValue getInstanceValue(String elementId,
-				PeriodType periodType, Date instant) {
-			return getInstanceValue(elementId, periodType, instant, null, null);
-		}
-
 		public void setInstanceValue(String elementId, PeriodType periodType,
 				Date instant, Date startDate, Date endDate, Date ver,
 				UnitType unitType, BigDecimal value) {
@@ -642,16 +631,6 @@ public class Xbrl extends HBaseTable {
 			return val.getValue();
 		}
 
-		public BigDecimal get(String elementId, PeriodType periodType,
-				Date instant) {
-			return get(elementId, periodType, instant, null, null);
-		}
-
-		public BigDecimal get(String elementId, PeriodType periodType,
-				Date startDate, Date endDate) {
-			return get(elementId, periodType, null, startDate, endDate);
-		}
-
 		public void set(String elementId, PeriodType periodType, Date instant,
 				Date startDate, Date endDate, Date ver, BigDecimal value) {
 			HBaseColumnQualifier qual = new ItemQualifier(elementId,
@@ -821,71 +800,53 @@ public class Xbrl extends HBaseTable {
 		}
 	}
 
-	public class GrowthFamily extends HBaseColumnFamily {
-		public static final String RATIO = "ratio";
-
-		private GrowthFamily(Xbrl entity) {
+	public class MainItemFamily extends HBaseColumnFamily {
+		private MainItemFamily(Xbrl entity) {
 			super(entity);
 		}
 
 		@SuppressWarnings("unchecked")
-		public Set<GrowthQualifier> getQualifiers() {
-			return (Set<GrowthQualifier>) (Object) super
+		public Set<MainItemQualifier> getQualifiers() {
+			return (Set<MainItemQualifier>) (Object) super
 					.getQualifierVersionValueMap().keySet();
 		}
 
-		public BigDecimal getRatio(String elementId, PeriodType periodType,
+		public BigDecimal get(String elementId, PeriodType periodType,
 				Date instant, Date startDate, Date endDate) {
-			HBaseColumnQualifier qual = new GrowthQualifier(RATIO, elementId,
+			HBaseColumnQualifier qual = new MainItemQualifier(elementId,
 					periodType, instant, startDate, endDate);
-			GrowthValue val = (GrowthValue) super.getLatestValue(qual);
+			MainItemValue val = (MainItemValue) super.getLatestValue(qual);
 			if (val == null) {
 				return null;
 			}
-			return val.getAsBigDecimal();
+			return val.getValue();
 		}
 
-		public BigDecimal getRatio(String elementId, PeriodType periodType,
-				Date startDate, Date endDate) {
-			return getRatio(elementId, periodType, null, startDate, endDate);
-		}
-
-		public BigDecimal getRatio(String elementId, PeriodType periodType,
-				Date instant) {
-			return getRatio(elementId, periodType, instant, null, null);
-		}
-
-		public void setRatio(String elementId, PeriodType periodType,
-				Date instant, Date startDate, Date endDate, Date ver,
-				BigDecimal ratio) {
-			GrowthQualifier qual = new GrowthQualifier(RATIO, elementId,
+		public void set(String elementId, PeriodType periodType, Date instant,
+				Date startDate, Date endDate, Date ver, BigDecimal value) {
+			HBaseColumnQualifier qual = new MainItemQualifier(elementId,
 					periodType, instant, startDate, endDate);
-			GrowthValue val = new GrowthValue();
-			val.set(ratio);
+			MainItemValue val = new MainItemValue(value);
 			add(qual, ver, val);
 		}
 
 		@Override
 		protected HBaseColumnQualifier generateColumnQualifier(byte[] bytes) {
-			return this.new GrowthQualifier(bytes);
+			return this.new MainItemQualifier(bytes);
 		}
 
 		@Override
 		protected HBaseValue generateValue(byte[] bytes) {
-			return this.new GrowthValue(bytes);
+			return this.new MainItemValue(bytes);
 		}
 
-		public class GrowthQualifier extends HBaseColumnQualifier {
-			private static final int COLUMN_NAME_LENGTH = 30;
+		public class MainItemQualifier extends HBaseColumnQualifier {
 			private static final int ELEMENT_ID_LENGTH = 300;
 			private static final int PERIOD_TYPE_LENGTH = 10;
 			private static final int INSTANT_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int START_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
 			private static final int END_DATE_LENGTH = ByteConvertUtility.DEFAULT_DATE_PATTERN_LENGTH;
-			private static final int COLUMN_NAME_BEGIN_INDEX = 0;
-			private static final int COLUMN_NAME_END_INDEX = COLUMN_NAME_BEGIN_INDEX
-					+ COLUMN_NAME_LENGTH;
-			private static final int ELEMENT_ID_BEGIN_INDEX = COLUMN_NAME_END_INDEX + 1;
+			private static final int ELEMENT_ID_BEGIN_INDEX = 0;
 			private static final int ELEMENT_ID_END_INDEX = ELEMENT_ID_BEGIN_INDEX
 					+ ELEMENT_ID_LENGTH;
 			private static final int PERIOD_TYPE_BEGIN_INDEX = ELEMENT_ID_END_INDEX + 1;
@@ -901,21 +862,18 @@ public class Xbrl extends HBaseTable {
 			private static final int END_DATE_END_INDEX = END_DATE_BEGIN_INDEX
 					+ END_DATE_LENGTH;
 
-			public GrowthQualifier() {
+			public MainItemQualifier() {
 				super();
 			}
 
-			public GrowthQualifier(byte[] bytes) {
+			public MainItemQualifier(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}
 
-			public GrowthQualifier(String columnName, String elementId,
-					PeriodType periodType, Date instant, Date startDate,
-					Date endDate) {
+			public MainItemQualifier(String elementId, PeriodType periodType,
+					Date instant, Date startDate, Date endDate) {
 				super();
-				byte[] columnNameBytes = ByteConvertUtility.toBytes(columnName,
-						COLUMN_NAME_LENGTH);
 				byte[] elementIdBytes = ByteConvertUtility.toBytes(elementId,
 						ELEMENT_ID_LENGTH);
 				byte[] periodTypeBytes = ByteConvertUtility.toBytes(
@@ -924,23 +882,9 @@ public class Xbrl extends HBaseTable {
 				byte[] instantBytes = ByteConvertUtility.toBytes(instant);
 				byte[] startDateBytes = ByteConvertUtility.toBytes(startDate);
 				byte[] endDateBytes = ByteConvertUtility.toBytes(endDate);
-				super.setBytes(ArrayUtility.addAll(columnNameBytes, SPACE,
-						elementIdBytes, SPACE, periodTypeBytes, SPACE,
-						instantBytes, SPACE, startDateBytes, SPACE,
-						endDateBytes));
-			}
-
-			public String getColumnName() {
-				return ByteConvertUtility.getStringFromBytes(getBytes(),
-						COLUMN_NAME_BEGIN_INDEX, COLUMN_NAME_END_INDEX);
-			}
-
-			public void setColumnName(String columnName) {
-				byte[] bytes = getBytes();
-				byte[] subBytes = ByteConvertUtility.toBytes(columnName,
-						COLUMN_NAME_LENGTH);
-				ArrayUtility.replace(bytes, subBytes, COLUMN_NAME_BEGIN_INDEX,
-						COLUMN_NAME_END_INDEX);
+				super.setBytes(ArrayUtility.addAll(elementIdBytes, SPACE,
+						periodTypeBytes, SPACE, instantBytes, SPACE,
+						startDateBytes, SPACE, endDateBytes));
 			}
 
 			public String getElementId() {
@@ -1021,22 +965,28 @@ public class Xbrl extends HBaseTable {
 			}
 		}
 
-		public class GrowthValue extends HBaseValue {
-			public GrowthValue() {
+		public class MainItemValue extends HBaseValue {
+			public MainItemValue() {
 				super();
 			}
 
-			public GrowthValue(byte[] bytes) {
+			public MainItemValue(byte[] bytes) {
 				super();
 				setBytes(bytes);
 			}
 
-			public BigDecimal getAsBigDecimal() {
+			public MainItemValue(BigDecimal value) {
+				super();
+				setValue(value);
+			}
+
+			public BigDecimal getValue() {
 				return ByteConvertUtility.getBigDecimalFromBytes(getBytes());
 			}
 
-			public void set(BigDecimal value) {
-				setBytes(ByteConvertUtility.toBytes(value));
+			public void setValue(BigDecimal value) {
+				byte[] bytes = ByteConvertUtility.toBytes(value);
+				setBytes(bytes);
 			}
 		}
 	}
@@ -1065,16 +1015,6 @@ public class Xbrl extends HBaseTable {
 			return val.getAsBigDecimal();
 		}
 
-		public BigDecimal getRatio(String elementId, PeriodType periodType,
-				Date instant) {
-			return getRatio(elementId, periodType, instant, null, null);
-		}
-
-		public BigDecimal getRatio(String elementId, PeriodType periodType,
-				Date startDate, Date endDate) {
-			return getRatio(elementId, periodType, null, startDate, endDate);
-		}
-
 		public void setRatio(String elementId, PeriodType periodType,
 				Date instant, Date startDate, Date endDate, Date ver,
 				BigDecimal ratio) {
@@ -1083,17 +1023,6 @@ public class Xbrl extends HBaseTable {
 			RatioValue val = new RatioValue();
 			val.set(ratio);
 			add(qual, ver, val);
-		}
-
-		public void setRatio(String elementId, PeriodType periodType,
-				Date instant, Date ver, BigDecimal percent) {
-			setRatio(elementId, periodType, instant, null, null, ver, percent);
-		}
-
-		public void setRatio(String elementId, PeriodType periodType,
-				Date startDate, Date endDate, Date ver, BigDecimal percent) {
-			setRatio(elementId, periodType, null, startDate, endDate, ver,
-					percent);
 		}
 
 		@Override
