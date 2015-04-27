@@ -3,32 +3,39 @@ package idv.hsiehpinghan.stockdao.enumeration;
 import java.util.Locale;
 
 public enum ReportType {
-	CONSOLIDATED_STATEMENT("合併", "consolidated"), INDIVIDUAL_STATEMENT(
-			"個別", "individual"), ENTERPRISE_STATEMENT("個體",
-			"enterprise");
-	private String chineseName;
-	private String englishName;
-
-	private ReportType(String chineseName, String englishName) {
-		this.chineseName = chineseName;
-		this.englishName = englishName;
-	}
-
-	public String getChineseName() {
-		return this.chineseName;
-	}
-
-	public String getEnglishName() {
-		return this.englishName;
-	}
-
-	public String getName(Locale locale) {
-		if (Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
-			return getEnglishName();
-		} else {
-			return getChineseName();
+	CONSOLIDATED_STATEMENT {
+		@Override
+		public String getChineseName() {
+			return "合併";
 		}
-	}
+
+		@Override
+		public String getEnglishName() {
+			return "consolidated";
+		}
+	},
+	INDIVIDUAL_STATEMENT {
+		@Override
+		public String getChineseName() {
+			return "個別";
+		}
+
+		@Override
+		public String getEnglishName() {
+			return "individual";
+		}
+	},
+	ENTERPRISE_STATEMENT {
+		@Override
+		public String getChineseName() {
+			return "個體";
+		}
+
+		@Override
+		public String getEnglishName() {
+			return "enterprise";
+		}
+	};
 
 	public static ReportType getMopsReportType(String code) {
 		switch (code) {
@@ -43,4 +50,17 @@ public enum ReportType {
 					+ ") undefined !!!");
 		}
 	}
+
+	public String getName(Locale locale) {
+		if (Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+			return getEnglishName();
+		} else {
+			return getChineseName();
+		}
+	}
+
+	public abstract String getChineseName();
+
+	public abstract String getEnglishName();
+
 }
